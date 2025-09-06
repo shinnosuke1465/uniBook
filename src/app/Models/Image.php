@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|University whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+
 class Image extends Model
 {
     use HasFactory;
@@ -41,8 +42,6 @@ class Image extends Model
         'path',
     ];
 
-
-    // リレーション
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

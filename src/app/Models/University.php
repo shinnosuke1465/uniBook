@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|University whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+
 class University extends Model
 {
     use HasFactory;
@@ -42,8 +43,6 @@ class University extends Model
         'name',
     ];
 
-
-    // リレーション
     public function faculties(): HasMany
     {
         return $this->hasMany(Faculty::class);
