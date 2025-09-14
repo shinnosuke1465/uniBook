@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Platform\Domains\Shared\Address;
 
 use App\Platform\Domains\Shared\Address\Address;
