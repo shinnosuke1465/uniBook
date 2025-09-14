@@ -26,7 +26,7 @@ abstract readonly class Uuid
 
     public function equals(Uuid $uuid): bool
     {
-        return $this->value === $uuid->getValue();
+        return $this->value === $uuid->value;
     }
 
     public function __toString(): string
