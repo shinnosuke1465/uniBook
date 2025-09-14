@@ -14,7 +14,7 @@ readonly class University
     ) {
     }
 
-    public function create(
+    public static function create(
         String255 $universityName,
     ): self {
         return new self(
