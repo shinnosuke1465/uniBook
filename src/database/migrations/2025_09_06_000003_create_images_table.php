@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->string('id', 36)->primary()->comment('画像ID');
             $table->string('path', 255)->comment('画像パス');
+            $table->string('type', 50)->comment('画像種別');
             $table->timestamps();
         });
     }

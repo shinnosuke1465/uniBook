@@ -40,6 +40,7 @@ class Image extends Model
     protected $fillable = [
         'id',
         'path',
+        'type',
     ];
 
     public function users(): HasMany
