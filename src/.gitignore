@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+.env.testing
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -22,3 +23,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+_ide_helper.php
+.phpstorm.meta.php
+_ide_helper_models.php

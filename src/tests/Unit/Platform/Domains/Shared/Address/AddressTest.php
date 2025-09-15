@@ -13,25 +13,25 @@ class AddressTest extends TestCase
     public function test_オブジェクトが生成できること(): void
     {
        //given
-        $expectName = new String255('愛知県名古屋市中区錦3丁目15-13');
+        $expectAddress = new String255('愛知県名古屋市中区錦3丁目15-13');
 
         //when
-        $actualAddress = new Address($expectName);
+        $actualAddress = new Address($expectAddress);
 
         //then
         $this->assertInstanceOf(Address::class, $actualAddress);
-        $this->assertEquals($expectName, $actualAddress->name);
+        $this->assertEquals($expectAddress, $actualAddress->address);
     }
 
     public function test_staticメソッドから作成できること(): void
     {
         //given
-        $expectName = '愛知県名古屋市中区錦3丁目15-13';
+        $expectAddress = '愛知県名古屋市中区錦3丁目15-13';
 
         //when
-        $actualAddress = Address::create($expectName);
+        $actualAddress = Address::create($expectAddress);
 
         //then
-        $this->assertEquals($expectName, $actualAddress->name->value);
+        $this->assertEquals($expectAddress, $actualAddress->address->value);
     }
 }

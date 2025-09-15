@@ -48,6 +48,17 @@ class User extends Authenticatable
 
     use  HasApiTokens, HasFactory, Notifiable;
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $casts = [
+        'id' => 'string',
+        'image_id' => 'string',
+        'university_id' => 'string',
+        'faculty_id' => 'string',
+    ];
+
     protected $fillable = [
         'id',
         'name',

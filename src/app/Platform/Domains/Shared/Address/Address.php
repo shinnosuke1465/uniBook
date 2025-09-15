@@ -10,7 +10,7 @@ use App\Platform\Domains\Shared\String\String255;
 readonly class Address
 {
     public function __construct(
-        public String255 $name,
+        public String255 $address,
     ) {
     }
 
@@ -18,15 +18,15 @@ readonly class Address
      *@throws DomainException
      */
     public static function create(
-        string $name,
+        string $address,
     ): self {
         return new self(
-            new String255($name),
+            new String255($address),
         );
     }
 
     public function getValue(): string
     {
-        return $this->name->value;
+        return $this->address->value;
     }
 }
