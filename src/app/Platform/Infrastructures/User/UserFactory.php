@@ -26,6 +26,7 @@ class UserFactory
     public static function create(
         UserDB $userDB
     ): User {
+        $imageId = $userDB->image_id ? new ImageId($userDB->image_id) : null;
         return new User(
             new UserId($userDB->id),
             new Name($userDB->name),
@@ -33,7 +34,7 @@ class UserFactory
             new PostCode(new String255($userDB->post_code)),
             new Address(new String255($userDB->address)),
             new MailAddress(new String255($userDB->mail_address)),
-            new ImageId($userDB->image_id),
+            $imageId,
             new FacultyId($userDB->faculty_id),
             new UniversityId($userDB->university_id),
         );
