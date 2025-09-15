@@ -17,5 +17,5 @@ interface UserRepositoryInterface
 
     public function insertWithPassword(User $user, String255 $password): User;
 
-    public function update(User $user): void;
+//    public function update(User $user): void;
 }
