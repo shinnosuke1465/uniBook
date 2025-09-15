@@ -6,6 +6,8 @@ namespace Feature\Platform\Infrastructures\Image;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Platform\Domains\Image\ImageIdList;
+use App\Platform\Domains\Image\ImageList;
 use App\Platform\Infrastructures\Image\ImageRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -75,6 +77,57 @@ class ImageRepositoryTest extends TestCase
         $this->assertNull($actual);
     }
 
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_ImageIdsを指定して取得できること(): void
+    {
+        //given
+        $insertImages = [
+            TestImageFactory::create(),
+            TestImageFactory::create(),
+        ];
 
+        foreach ($insertImages as $image) {
+            $this->repository->insert($image);
+        }
+
+        $searchIds = new ImageIdList([
+            $insertImages[0]->id,
+            $insertImages[1]->id,
+        ]);
+
+        $expectedImageList = new ImageList(
+            [
+                $insertImages[0],
+                $insertImages[1],
+            ]
+        );
+
+        //when
+        $actualImageList = $this->repository->findByIds($searchIds);
+
+        //then
+        $this->assertEquals($expectedImageList, $actualImageList);
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public function test_指定したImageIdsで検索した結果がなければからのImageListが返ること(): void
+    {
+        //given
+        $searchIds = new ImageIdList([
+            new ImageId(),
+            new ImageId(),
+        ]);
+
+        //when
+        $expectedImageList = $this->repository->findByIds($searchIds);
+
+        //then
+        $this->assertEmpty($expectedImageList->toArray());
+    }
 }
 
