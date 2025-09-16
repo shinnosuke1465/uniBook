@@ -6,6 +6,8 @@ namespace App\Platform\Domains\University;
 
 interface UniversityRepositoryInterface
 {
+    public function findAll();
+
     public function findById(UniversityId $universityId): ?University;
 
     public function insert(University $university): void;
