@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Platform\Presentations\User\Controllers;
 
+use App\Platform\UseCases\User\Dtos\UserDto;
+
 readonly class GetUserMeResponseBuilder
 {
-    public static function toArray(UserMeDto $dto): array
+    public static function toArray(UserDto $dto): array
     {
         return [
             'id' => $dto->id,

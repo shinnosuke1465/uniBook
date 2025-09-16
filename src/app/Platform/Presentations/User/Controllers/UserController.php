@@ -6,10 +6,19 @@ namespace App\Platform\Presentations\User\Controllers;
 
 use App\Platform\Presentations\User\Requests\CreateUserRequest;
 use App\Platform\Presentations\User\Requests\GetUserMeRequest;
+use App\Platform\UseCases\User\CreateUserAction;
+use App\Platform\UseCases\User\GetUserMeAction;
 use Illuminate\Http\Response;
+use Exception;
+use Throwable;
 
 readonly class UserController
 {
+    /**
+     * @return array<string, mixed>
+     *
+     * @throws Exception
+     */
     public function me(
         GetUserMeRequest $request,
         GetUserMeAction $action,
@@ -19,6 +28,10 @@ readonly class UserController
         return GetUserMeResponseBuilder::toArray($dto);
     }
 
+    /**
+     * @throws Exception
+     * @throws Throwable
+     */
     public function create(
         CreateUserRequest $request,
         CreateUserAction $action,
@@ -27,5 +40,4 @@ readonly class UserController
 
         return response()->noContent();
     }
-)
 }
