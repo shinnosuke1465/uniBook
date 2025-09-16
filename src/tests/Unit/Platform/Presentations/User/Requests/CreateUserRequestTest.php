@@ -21,7 +21,7 @@ class CreateUserRequestTest extends TestCase
         app()->setLocale('ja');
     }
 
-    public function test_必須項目が正しく入力されている場合バリデーションが成功する()
+    public function test_必須項目が正し���入力されている場合バリデーションが成功する()
     {
         //given
         $inputData = self::createDefaultInput();
@@ -143,25 +143,25 @@ class CreateUserRequestTest extends TestCase
      * }
      */
     private static function createDefaultInput(
-        ?string $name = 'テストユーザー',
-        ?string $password = 'password123',
-        ?string $post_code = '1234567',
-        ?string $address = '東京都千代田区1-1-1',
-        ?string $mail_address = 'sample@example.com',
-        ?string $image_id = null,
-        ?string $faculty_id = '9fe2079e-8422-4a9e-a621-6c7e2b5f5008',
-        ?string $university_id = '9fe2079e-84b4-4bfb-bab3-dccd8ae437da',
+        string $name = 'テストユーザー',
+        string $password = 'password123',
+        string $postCode = '1234567',
+        string $address = '東京都千代田区1-1-1',
+        string $mailAddress = 'sample@example.com',
+        ?string $imageId = null,
+        ?string $facultyId = '1',
+        ?string $universityId = '1',
     ): array {
-        return compact(
-            'name',
-            'password',
-            'post_code',
-            'address',
-            'mail_address',
-            'image_id',
-            'faculty_id',
-            'university_id',
-        );
+        return [
+            'name' => $name,
+            'password' => $password,
+            'post_code' => $postCode,
+            'address' => $address,
+            'mail_address' => $mailAddress,
+            'image_id' => $imageId,
+            'faculty_id' => $facultyId,
+            'university_id' => $universityId,
+        ];
     }
 
 }

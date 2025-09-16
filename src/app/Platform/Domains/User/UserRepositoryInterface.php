@@ -14,6 +14,8 @@ interface UserRepositoryInterface
 
     public function findById(UserId $userId): ?User;
 
+    public function findByLoginId(MailAddress $loginId): ?User;
+
     public function insertWithLoginId(User $user, MailAddress $mailAddress): User;
 
 //    public function update(User $user): void;

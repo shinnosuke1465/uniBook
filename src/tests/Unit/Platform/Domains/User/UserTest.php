@@ -44,9 +44,9 @@ class UserTest extends TestCase
             postCode: $expectPostCode,
             address: $expectAddress,
             mailAddress: $expectMailAddress,
-            image: $image = null,
-            faculty: $expectFaculty,
-            university: $expectUniversity,
+            imageId: null,
+            facultyId: $expectFaculty->id,
+            universityId: $expectUniversity->id,
         );
 
         //then

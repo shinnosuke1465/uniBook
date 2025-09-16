@@ -23,7 +23,7 @@ readonly class UserDto
     /**
      * Userドメインを配列化（パスワードは入れない）
      */
-    public function create(User $user): self
+    public static function create(User $user): self
     {
         return new self(
             $user->id->value,

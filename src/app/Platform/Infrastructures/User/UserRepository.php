@@ -86,6 +86,19 @@ readonly class UserRepository implements UserRepositoryInterface
         return UserFactory::create($userModel);
     }
 
+    /**
+     * @throws DomainException
+     */
+    public function findByLoginId(MailAddress $mailAddress): ?User
+    {
+        $userModel = UserDB::where('mail_address', $mailAddress->mailAddress->value)->first();
+        if ($userModel === null) {
+            return null;
+        }
+
+        return UserFactory::create($userModel);
+    }
+
 //    public function update(User $user): void
 //    {
 //

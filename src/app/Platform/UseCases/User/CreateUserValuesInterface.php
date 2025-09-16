@@ -9,13 +9,14 @@ use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\Shared\Name\Name;
 use App\Platform\Domains\Shared\PostCode\PostCode;
 use App\Platform\Domains\Shared\String\NonEmptyString255;
+use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\University\UniversityId;
 
 interface CreateUserValuesInterface
 {
     public function getName(): Name;
 
-    public function getUserPassword(): NonEmptyString255;
+    public function getUserPassword(): String255;
 
     public function getPostCode(): PostCode;
 
