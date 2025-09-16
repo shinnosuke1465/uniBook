@@ -9,7 +9,7 @@ use App\Platform\UseCases\Faculty\Dtos\FacultyDto;
 readonly class GetFacultiesResponseBuilder
 {
     /**
-     * @param array $dtos
+     * @param FacultyDto[] $dtos
      * @return array<string, array<array<string, mixed>>>
      */
     public static function toArray(array $dtos): array
