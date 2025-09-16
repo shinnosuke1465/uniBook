@@ -9,9 +9,6 @@ use App\Platform\UseCases\User\GetUserMeActionValuesInterface;
 
 class GetUserMeRequest extends BaseRequest implements GetUserMeActionValuesInterface
 {
-    /**
-     * @return array<string, array<int, string>>
-     */
     public function rules(): array
     {
         return [

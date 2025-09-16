@@ -8,6 +8,9 @@ use App\Platform\UseCases\User\Dtos\UserDto;
 
 readonly class GetUserMeResponseBuilder
 {
+    /**
+     * @return array<string, mixed>
+     */
     public static function toArray(UserDto $dto): array
     {
         return [
