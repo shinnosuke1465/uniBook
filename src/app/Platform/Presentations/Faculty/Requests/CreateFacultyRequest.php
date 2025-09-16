@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\Presentations\Faculty\Requests;
 
+use App\Exceptions\DomainException;
 use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\University\UniversityId;
 use App\Platform\Presentations\Shared\BaseRequest;
@@ -30,11 +31,17 @@ class CreateFacultyRequest extends BaseRequest implements CreateFacultyActionVal
         ];
     }
 
+    /**
+     * @throws DomainException
+     */
     public function getName(): String255
     {
         return new String255($this->input('name'));
     }
 
+    /**
+     * @throws DomainException
+     */
     public function getUniversityId(): UniversityId
     {
         return new UniversityId($this->input('university_id'));

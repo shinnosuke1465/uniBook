@@ -14,7 +14,7 @@ readonly class CreateFacultyAction
     }
 
     public function __invoke(
-        CreateFacultyValuesInterface $actionValues,
+        CreateFacultyActionValuesInterface $actionValues,
     ): void {
         $this->facultyRepository->create($actionValues);
     }

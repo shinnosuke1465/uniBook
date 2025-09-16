@@ -12,7 +12,7 @@ readonly class GetFacultyAction
     }
 
     public function __invoke(
-        GetFacultyValuesInterface $actionValues,
+        GetFacultyActionValuesInterface $actionValues,
     ): array {
         return $this->facultyRepository->findById($actionValues);
     }
