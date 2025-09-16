@@ -22,7 +22,7 @@ readonly class UserIdList
     {
         $this->collection = collect($userIds)->mapWithKeys(
             fn (UserId $userId) => [$userId->value => $userId]
-        );
+        )->sortKeys();
         if ($this->collection->count() !== count($userIds)) {
             throw new DomainException('userIdが同じオブジェクトが存在しています。');
         }
