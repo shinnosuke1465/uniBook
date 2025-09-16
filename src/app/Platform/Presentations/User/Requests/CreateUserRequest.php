@@ -28,7 +28,6 @@ class CreateUserRequest extends BaseRequest implements CreateUserValuesInterface
             ],
             'password' => [
                 'required',
-                'string',
                 'min:8',
             ],
             'post_code' => [
