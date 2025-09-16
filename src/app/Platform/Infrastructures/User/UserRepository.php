@@ -68,7 +68,7 @@ readonly class UserRepository implements UserRepositoryInterface
     public function insertWithLoginId(
         User $user, MailAddress $mailAddress
     ): User {
-        if ($this->hasDuplicateLoginId($mailAddress)) {
+        if ($this->hasDuplicateLoginId($user->mailAddress)) {
             throw new DuplicateKeyException('loginIdが重複しています。');
         }
 
@@ -78,7 +78,7 @@ readonly class UserRepository implements UserRepositoryInterface
             'password' => Hash::make($user->password->value),
             'post_code' => $user->postCode->postCode->value,
             'address' => $user->address->address->value,
-            'mail_address' => $mailAddress->mailAddress->value,
+            'mail_address' => $user->mailAddress->mailAddress->value,
             'image_id' => $user->imageId?->value,
             'faculty_id' => $user->facultyId->value,
             'university_id' => $user->universityId->value,

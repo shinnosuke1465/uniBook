@@ -1,5 +1,6 @@
 <?php
 
+use App\Platform\Presentations\User\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,6 +10,12 @@ Route::get('/test', function (Request $request) {
     ],200);
 });
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+//ユーザー作成
+Route::post('/users', [UserController::class, 'create'])
+->name('users.create');
+
+Route::middleware('auth:sanctum')->group(function () {
+    //ユーザー情報取得
+    Route::get('/users/me', [UserController::class, 'me'])
+    ->name('users.me');
+});

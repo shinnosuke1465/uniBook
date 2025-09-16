@@ -14,6 +14,11 @@ use App\Platform\Domains\University\UniversityRepositoryInterface;
 
 readonly class UniversityRepository implements UniversityRepositoryInterface
 {
+    public function findAll()
+    {
+        // TODO: Implement findAll() method.
+    }
+
     /**
      * @throws DomainException
      */
