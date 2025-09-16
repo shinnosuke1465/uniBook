@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 readonly class ImageList
 {
     /**
-     * @var Collection<int, Image>
+     * @var Collection<string, Image>
      */
     private Collection $collection;
 

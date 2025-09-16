@@ -31,24 +31,6 @@ readonly class ImageIdList
         }
     }
 
-    public function equals(self $imageIdList): bool
-    {
-        $thisImageIds = $this->toArray();
-        $inputImageIds = $imageIdList->toArray();
-
-        if (count($thisImageIds) !== count($inputImageIds)) {
-            return false;
-        }
-
-        for ($i = 0; $i < count($thisImageIds); $i++) {
-            if (!$thisImageIds[$i]->equals($inputImageIds[$i])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * @return string[]
      */
