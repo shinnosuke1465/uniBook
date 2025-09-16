@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Platform\UseCases\Faculty;
 
+use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
+
 readonly class GetFacultyAction
 {
     public function __construct(

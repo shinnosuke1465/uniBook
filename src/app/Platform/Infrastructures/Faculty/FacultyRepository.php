@@ -12,6 +12,11 @@ use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Models\Faculty as FacultyDB;
 readonly class FacultyRepository implements FacultyRepositoryInterface
 {
+    public function findAll()
+    {
+        // TODO: Implement findAll() method.
+    }
+
     /**
      * @throws DomainException
      */
