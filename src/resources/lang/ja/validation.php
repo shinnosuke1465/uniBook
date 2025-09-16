@@ -153,6 +153,15 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => '名前',
+        'password' => 'パスワード',
+        'post_code' => '郵便番号',
+        'address' => '住所',
+        'mail_address' => 'メールアドレス',
+        'image_id' => '画像ID',
+        'university_id' => '大学ID',
+        'faculty_id' => '学部ID',
+    ],
 
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Platform\Presentations\User\Requests;
 
+use App\Exceptions\DomainException;
 use App\Platform\Presentations\User\Requests\CreateUserRequest;
 use Tests\CreatesApplication;
 use Tests\TestCase;

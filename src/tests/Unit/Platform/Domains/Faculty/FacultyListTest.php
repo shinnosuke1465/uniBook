@@ -6,9 +6,13 @@ namespace Tests\Unit\Platform\Domains\Faculty;
 
 use App\Platform\Domains\Faculty\FacultyList;
 use Tests\TestCase;
+use App\Exceptions\DomainException;
 
 class FacultyListTest extends TestCase
 {
+    /**
+     * @throws DomainException
+     */
     public function test_要素数を取得できること(): void
     {
         //given
