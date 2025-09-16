@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 readonly class UserList
 {
     /**
-     * @var Collection <string, User>
+     * @var Collection <int, User>
      */
     private Collection $collection;
 
