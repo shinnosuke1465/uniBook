@@ -44,22 +44,23 @@ class LogoutActionTest extends TestCase
     {
         //given
         $this->prepareUserWithFacultyAndUniversity();
-        $this->authenticate('test@example.com', 'password12345');
-        //リクエストパラメータをセット
-        $request = LogoutRequest::create(
-            '',
-            'POST',
-        );
+        $this->authenticate();
+
+        // ログイン状態であることを確認
+        $authenticatedUser = $this->userRepository->getAuthenticatedUser();
+        $this->assertNotNull($authenticatedUser);
+
+        $request = LogoutRequest::create('', 'POST');
 
         //when
-        app()->bind(LogoutAction::class, fn() => new LogoutAction(
-            new UserRepository(),
-        ));
-        (app()->make(LogoutAction::class)($request));
+        $logoutAction = new LogoutAction($this->userRepository);
+        $logoutAction($request);
 
         //then
+        // ログアウト後は認証情報が取得できないことを確認
         $this->expectException(IllegalUserException::class);
         $this->expectExceptionMessage('認証済みユーザー情報が取得できませんでした。');
         $this->userRepository->getAuthenticatedUser();
     }
+
 }

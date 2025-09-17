@@ -11,6 +11,7 @@ use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\University\UniversityId;
 use App\Platform\Infrastructures\User\UserRepository;
 use App\Platform\Presentations\User\Requests\CreateUserRequest;
+use App\Platform\UseCases\Authenticate\CreateTokenAction;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,13 @@ class CreateUserActionTest extends TestCase
         $this->universityRepository = new UniversityRepository();
     }
 
+    /**
+     * @throws Throwable
+     * @throws InvalidValueException
+     * @throws UseCaseException
+     * @throws Exception
+     * @throws IllegalUserException
+     */
     public function test_ユーザーが正常に作成されること(): void
     {
         // given
@@ -79,11 +87,14 @@ class CreateUserActionTest extends TestCase
             new UserRepository(),
             new Transaction(),
         ));
-        app()->make(CreateUserAction::class)($request);
+        $token = app()->make(CreateUserAction::class)($request);
 
         $response = $this->userRepository->findByMailAddress(new MailAddress(new String255('test@example.com')));
 
         // then
         $this->assertEquals('Test User', $response->name->name);
+        $this->assertNotNull($token);
+        $this->assertNotEmpty($token->token);
+        $this->assertIsString($token->token);
     }
 }

@@ -7,6 +7,7 @@ namespace App\Platform\UseCases\User;
 use App\Exceptions\UseCaseException;
 use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\User\User;
+use App\Platform\UseCases\Authenticate\Dtos\AuthenticateTokenDto;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
 use AppLog;
@@ -23,7 +24,7 @@ readonly class CreateUserAction
 
     public function __invoke(
         CreateUserValuesInterface $actionValues,
-    ): void {
+    ): AuthenticateTokenDto {
         AppLog::start(__METHOD__);
 
         $requestParams = [];
@@ -71,9 +72,9 @@ readonly class CreateUserAction
                 $facultyId,
                 $universityId,
             );
-            $this->userRepository->insertWithLoginId($insertUser, $mailAddress);
-
+            $authenticateToken = $this->userRepository->insertWithLoginId($insertUser, $mailAddress);
             $this->transaction->commit();
+            return AuthenticateTokenDto::create($authenticateToken);
         } catch (UseCaseException $e) {
             $this->transaction->rollback();
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);

@@ -8,14 +8,15 @@ use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
 use App\Exceptions\IllegalUserException;
 use App\Platform\Domains\Shared\MailAddress\MailAddress;
+use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\User\AuthenticateToken\AuthenticateToken;
 use App\Platform\Domains\User\UserId;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Platform\Domains\User\User;
 use App\Models\User as UserDB;
+use Hash;
 use App\Platform\Infrastructures\User\AuthenticateToken\AuthenticateTokenFactory;
-use Illuminate\Support\Facades\Hash;
 
 readonly class UserRepository implements UserRepositoryInterface
 {
@@ -37,14 +38,16 @@ readonly class UserRepository implements UserRepositoryInterface
     /**
      * @throws IllegalUserException
      */
-    public function createToken(): AuthenticateToken
+    public function createToken(MailAddress $mailAddress, String255 $password): AuthenticateToken
     {
-        $user = Auth::user();
+        $user = UserDB::where('mail_address', $mailAddress->mailAddress->value)->first();
         if ($user === null) {
             throw new IllegalUserException('認証済みユーザー情報が取得できませんでした。');
         }
 
-        $user->tokens()->where('name', 'authenticate_token')->delete();
+        if (!Hash::check($password->value, $user->password)) {
+            throw new IllegalUserException('パスワードが違います。');
+        }
 
         return AuthenticateTokenFactory::create(
             $user->createToken('authenticate_token')->plainTextToken
@@ -84,7 +87,7 @@ readonly class UserRepository implements UserRepositoryInterface
      */
     public function insertWithLoginId(
         User $user, MailAddress $mailAddress
-    ): User {
+    ): AuthenticateToken {
         if ($this->hasDuplicateLoginId($user->mailAddress)) {
             throw new DuplicateKeyException('loginIdが重複しています。');
         }
@@ -100,7 +103,10 @@ readonly class UserRepository implements UserRepositoryInterface
             'faculty_id' => $user->facultyId->value,
             'university_id' => $user->universityId->value,
         ]);
-        return UserFactory::create($userModel);
+
+        return AuthenticateTokenFactory::create(
+            $userModel->createToken('authenticate_token')->plainTextToken
+        );
     }
 
     /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Platform\UseCases\Authenticate;
 
+use App\Platform\Domains\Shared\MailAddress\MailAddress;
+use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\UseCases\Authenticate\Dtos\AuthenticateTokenDto;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
@@ -24,8 +26,7 @@ readonly class CreateTokenAction
      */
     public function __invoke(
         CreateTokenActionValuesInterface $actionValues,
-    ): AuthenticateTokenDto
-    {
+    ): AuthenticateTokenDto {
         AppLog::start(__METHOD__);
 
         $requestParams = [];
@@ -49,7 +50,7 @@ readonly class CreateTokenAction
                 throw new AuthenticationException('認証に失敗しました');
             }
 
-            $authenticateToken = $this->userRepository->createToken();
+            $authenticateToken = $this->userRepository->createToken($mailAddress, $password);
 
             return AuthenticateTokenDto::create($authenticateToken);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\Presentations\User\Controllers;
 
+use App\Platform\Presentations\AuthenticateToken\Controllers\CreateAuthenticateTokenResponseBuilder;
 use App\Platform\Presentations\User\Requests\CreateUserRequest;
 use App\Platform\Presentations\User\Requests\GetUserMeRequest;
 use App\Platform\UseCases\User\CreateUserAction;
@@ -35,9 +36,9 @@ readonly class UserController
     public function create(
         CreateUserRequest $request,
         CreateUserAction $action,
-    ): Response {
-        $action($request);
-
-        return response()->noContent();
+    ): array {
+        return CreateAuthenticateTokenResponseBuilder::toArray(
+            $action($request)
+        );
     }
 }

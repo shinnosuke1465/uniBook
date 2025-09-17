@@ -6,6 +6,7 @@ namespace Feature\Platform\Infrastructures\User;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Exceptions\IllegalUserException;
 use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
@@ -127,6 +128,65 @@ class UserRepositoryTest extends TestCase
         $this->expectException(DuplicateKeyException::class);
         $this->expectExceptionMessage('loginIdが重複しています。');
         $this->userRepository->insertWithLoginId($inputUser2, $inputUser2->mailAddress);
+    }
+
+    public function test_createTokenで存在しないメールアドレスを指定した場合エラーが発生すること(): void
+    {
+        //given
+        $inputUser = TestUserFactory::create();
+        $nonExistentMailAddress = TestUserFactory::create()->mailAddress;
+
+        //when
+        //then
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('認証済みユーザー情報が取得できませんでした。');
+        $this->userRepository->createToken($nonExistentMailAddress, $inputUser->password);
+    }
+
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_createTokenで間違ったパスワードを指定した場合エラーが発生すること(): void
+    {
+        //given
+        $inputUser = TestUserFactory::create();
+        $wrongPassword = new String255('wrong_password');
+
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        //when
+        //then
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('パスワードが違います。');
+        $this->userRepository->createToken($inputUser->mailAddress, $wrongPassword);
+    }
+
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_createTokenで正しいメールアドレスとパスワードを指定した場合トークンが取得できること(): void
+    {
+        //given
+        $inputUser = TestUserFactory::create();
+
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        //when
+        $token = $this->userRepository->createToken($inputUser->mailAddress, $inputUser->password);
+
+        //then
+        $this->assertNotNull($token);
+        $this->assertNotEmpty($token->token);
     }
 
 
