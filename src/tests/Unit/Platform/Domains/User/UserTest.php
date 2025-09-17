@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Platform\Domains\User;
 
+use App\Exceptions\DomainException;
 use App\Platform\Domains\Faculty\Faculty;
 use App\Platform\Domains\Faculty\FacultyId;
 use App\Platform\Domains\Shared\Address\Address;
@@ -18,6 +19,9 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    /**
+     * @throws DomainException
+     */
     public function test_staticで作成できること(): void
     {
         //given
