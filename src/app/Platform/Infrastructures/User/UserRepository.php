@@ -106,7 +106,7 @@ readonly class UserRepository implements UserRepositoryInterface
     /**
      * @throws DomainException
      */
-    public function findByLoginId(MailAddress $mailAddress): ?User
+    public function findByMailAddress(MailAddress $mailAddress): ?User
     {
         $userModel = UserDB::where('mail_address', $mailAddress->mailAddress->value)->first();
         if ($userModel === null) {

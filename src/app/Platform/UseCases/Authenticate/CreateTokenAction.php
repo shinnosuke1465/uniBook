@@ -31,11 +31,11 @@ readonly class CreateTokenAction
         $requestParams = [];
 
         try {
-            $loginId = $actionValues->getEmail();
+            $mailAddress = $actionValues->getEmail();
             $password = $actionValues->getUserPassword();
 
             $requestParams = [
-                'loginId' => $loginId->mailAddress->value,
+                'mail_address' => $mailAddress->mailAddress->value,
             ];
 
             //ログ出力
@@ -43,9 +43,9 @@ readonly class CreateTokenAction
                 'request' => $requestParams,
             ]);
 
-            $user = $this->userRepository->findByLoginId($loginId);
+            $user = $this->userRepository->findByMailAddress($mailAddress);
 
-            if ($user->password !== $password || $user === null) {
+            if ($user === null || !password_verify($password->value, $user->password->value)) {
                 throw new AuthenticationException('認証に失敗しました');
             }
 

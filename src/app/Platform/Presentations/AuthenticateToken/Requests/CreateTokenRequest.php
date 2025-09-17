@@ -15,7 +15,7 @@ class CreateTokenRequest extends BaseRequest implements CreateTokenActionValuesI
     public function rules(): array
     {
         return [
-            'email' => [
+            'email_address' => [
                 'required',
                 'max:255',
             ],
@@ -32,7 +32,7 @@ class CreateTokenRequest extends BaseRequest implements CreateTokenActionValuesI
      */
     public function getEmail(): MailAddress
     {
-        return new MailAddress(new String255($this->input('mail')));
+        return new MailAddress(new String255($this->input('mail_address')));
     }
 
     /**

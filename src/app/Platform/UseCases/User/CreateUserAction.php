@@ -53,8 +53,8 @@ readonly class CreateUserAction
             ]);
 
             //ログインID = メールアドレス
-            $loginId = new MailAddress($mailAddress->mailAddress);
-            $existUser = $this->userRepository->findByLoginId($loginId);
+            $mailAddress= new MailAddress($mailAddress->mailAddress);
+            $existUser = $this->userRepository->findByMailAddress($mailAddress);
             if ($existUser !== null) {
                 throw new UseCaseException('ユーザーがすでに存在します。');
             }
@@ -71,7 +71,7 @@ readonly class CreateUserAction
                 $facultyId,
                 $universityId,
             );
-            $this->userRepository->insertWithLoginId($insertUser, $loginId);
+            $this->userRepository->insertWithLoginId($insertUser, $mailAddress);
 
             $this->transaction->commit();
         } catch (UseCaseException $e) {

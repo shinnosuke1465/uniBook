@@ -19,7 +19,7 @@ use App\Models\User;
 trait ApiPreLoginTrait
 {
     private function authenticate(
-        string $mailAddress = 'test@exmple.com',
+        string $mailAddress = 'test@example.com',
         string $password = 'password12345',
     ): void {
         $userDB = UserDB::query()
@@ -36,9 +36,8 @@ trait ApiPreLoginTrait
 
     /**
      * テスト用ユーザー・大学・学部をDBに登録し、Eloquentモデルを返す
-     * @throws \App\Exceptions\DuplicateKeyException
-     * @throws \App\Exceptions\DomainException
-     * @throws \App\Exceptions\IllegalUserException
+     * @throws DuplicateKeyException
+     * @throws DomainException
      */
     private function prepareUserWithFacultyAndUniversity(
         ?String255 $password = null,
