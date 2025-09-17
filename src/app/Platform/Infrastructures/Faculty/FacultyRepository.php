@@ -10,6 +10,8 @@ use App\Platform\Domains\Faculty\Faculty;
 use App\Platform\Domains\Faculty\FacultyId;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Models\Faculty as FacultyDB;
+use App\Platform\Domains\University\UniversityId;
+
 readonly class FacultyRepository implements FacultyRepositoryInterface
 {
     public function findAll()
@@ -33,6 +35,21 @@ readonly class FacultyRepository implements FacultyRepositoryInterface
     }
 
     /**
+     * @throws DomainException
+     */
+    public function findByUniversityId(UniversityId $universityId): array
+    {
+        $facultyModels = FacultyDB::where('university_id', $universityId->value)->get();
+
+        $faculties = [];
+        foreach ($facultyModels as $facultyModel) {
+            $faculties[] = FacultyFactory::create($facultyModel);
+        }
+
+        return $faculties;
+    }
+
+    /**
      * @throws DuplicateKeyException
      */
     public function insert(
@@ -45,7 +62,7 @@ readonly class FacultyRepository implements FacultyRepositoryInterface
         FacultyDB::create(
             [
                 'id' => $faculty->id->value,
-                'name' => $faculty->facultyName->value,
+                'name' => $faculty->name->value,
                 'university_id' => $faculty->universityId->value,
             ]
         );

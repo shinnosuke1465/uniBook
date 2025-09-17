@@ -27,13 +27,13 @@ class FacultyTest extends TestCase
         //when
         $actualFaculty = new Faculty(
             id: $expectedId,
-            facultyName: $expectedFacultyName,
+            name: $expectedFacultyName,
             universityId: $expectedUniversityId,
         );
 
         //then
         $this->assertEquals($expectedId, $actualFaculty->id);
-        $this->assertEquals($expectedFacultyName, $actualFaculty->facultyName);
+        $this->assertEquals($expectedFacultyName, $actualFaculty->name);
         $this->assertEquals($expectedUniversityId, $actualFaculty->universityId);
     }
 
@@ -49,12 +49,12 @@ class FacultyTest extends TestCase
 
         //when
         $actualFaculty = Faculty::create(
-            facultyName: $expectedFacultyName,
-            university: $expectedUniversity,
+            name: $expectedFacultyName,
+            universityId: $expectedUniversity->id,
         );
 
         //then
-        $this->assertEquals($expectedFacultyName, $actualFaculty->facultyName);
+        $this->assertEquals($expectedFacultyName, $actualFaculty->name);
         $this->assertEquals($expectedUniversityId, $actualFaculty->universityId);
     }
 }

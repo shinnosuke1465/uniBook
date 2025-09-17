@@ -14,9 +14,9 @@ use App\Platform\Domains\University\UniversityRepositoryInterface;
 
 readonly class UniversityRepository implements UniversityRepositoryInterface
 {
-    public function findAll()
+    public function findAll(): array
     {
-        $universityModels = UniversityDB::query()-get();
+        $universityModels = UniversityDB::query()->get();
 
         return $universityModels->map(
             fn ($universityModel) => UniversityFactory::create($universityModel)

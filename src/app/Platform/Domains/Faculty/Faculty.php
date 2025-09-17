@@ -16,7 +16,7 @@ readonly class Faculty
      */
     public function __construct(
         public FacultyId $id,
-        public String255 $facultyName,
+        public String255 $name,
         public UniversityId $universityId,
     ) {
         if (is_null($this->universityId)) {
@@ -24,14 +24,17 @@ readonly class Faculty
         }
     }
 
+    /**
+     * @throws DomainException
+     */
     public static function create(
-        String255 $facultyName,
-        University $university,
+        String255 $name,
+        UniversityId $universityId,
     ): self {
         return new self(
             new FacultyId(),
-            $facultyName,
-            $university->id,
+            $name,
+            $universityId,
         );
     }
 
