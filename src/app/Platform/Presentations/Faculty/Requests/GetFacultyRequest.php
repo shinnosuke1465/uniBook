@@ -14,18 +14,10 @@ class GetFacultyRequest extends BaseRequest implements GetFacultyActionValuesInt
     public function rules(): array
     {
         return [
-            'id' => [
-                'required',
-                'string',
-            ],
         ];
     }
-
-    /**
-     * @throws DomainException
-     */
-    public function getFacultyId(): FacultyId
-    {
-        return new FacultyId($this->input('id'));
-    }
+//    public function getFacultyId(): FacultyId
+//    {
+//        return new FacultyId($this->input('id'));
+//    }
 }

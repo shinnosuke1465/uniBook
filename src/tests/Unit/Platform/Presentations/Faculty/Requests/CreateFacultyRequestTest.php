@@ -27,12 +27,12 @@ class CreateFacultyRequestTest extends TestCase
         $request = CreateFacultyRequest::create('', 'POST', $inputData);
 
         //when
-        $acutualName = $request->getName();
-        $acutualUniversityId = $request->getUniversityId();
+        $actualName = $request->getName();
+        $actualUniversityId = $request->getUniversityId();
 
         //then
-        $this->assertEquals($inputData['name'], $acutualName->value);
-        $this->assertEquals($inputData['university_id'], $acutualUniversityId->value);
+        $this->assertEquals($inputData['name'], $actualName->value);
+        $this->assertEquals($inputData['university_id'], $actualUniversityId->value);
 
     }
 

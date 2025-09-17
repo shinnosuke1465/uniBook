@@ -16,7 +16,7 @@ Route::get('/test', function (Request $request) {
 });
 
 //ログイン
-Route::post('/tokens/create', [AuthenticateTokenController::class, 'create'])->name('tokens.create');
+Route::post('/login', [AuthenticateTokenController::class, 'create'])->name('tokens.create');
 
 //ユーザー作成
 Route::post('/users', [UserController::class, 'create'])

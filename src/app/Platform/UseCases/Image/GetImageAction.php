@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\Image;
 
 use App\Exceptions\NotFoundException;
+use App\Platform\Domains\Image\ImageId;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use AppLog;
 use App\Platform\Domains\Image\ImageRepositoryInterface;
@@ -21,10 +22,11 @@ readonly class GetImageAction
      */
     public function __invoke(
         GetImageActionValuesInterface $actionValues,
+        string $imageIdString,
     ): ImageDto {
         AppLog::start(__METHOD__);
 
-        $imageId = $actionValues->getImageId();
+        $imageId = new ImageId($imageIdString);
 
         $requestParams = [
             'image_id' => $imageId->value,

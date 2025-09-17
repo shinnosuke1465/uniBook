@@ -6,5 +6,5 @@ use App\Platform\Domains\Faculty\FacultyId;
 
 interface GetFacultyActionValuesInterface
 {
-    public function getFacultyId(): FacultyId;
+//    public function getFacultyId(): FacultyId;
 }

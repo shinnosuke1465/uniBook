@@ -6,6 +6,6 @@ use App\Platform\Domains\Image\ImageId;
 
 interface GetImageActionValuesInterface
 {
-    public function getImageId(): ImageId;
+//    public function getImageId(): ImageId;
 }
 

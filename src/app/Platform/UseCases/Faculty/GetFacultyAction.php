@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\Faculty;
 
 use App\Exceptions\NotFoundException;
+use App\Platform\Domains\Faculty\FacultyId;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use AppLog;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
@@ -22,10 +23,11 @@ readonly class GetFacultyAction
      */
     public function __invoke(
         GetFacultyActionValuesInterface $actionValues,
+        string $facultyIdString,
     ): FacultyDto {
         AppLog::start(__METHOD__);
 
-        $facultyId = $actionValues->getFacultyId();
+        $facultyId = new FacultyId($facultyIdString);
 
         $requestParams = [
             'faculty_id' => $facultyId->value,

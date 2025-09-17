@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\University;
 
 use App\Exceptions\NotFoundException;
+use App\Platform\Domains\University\UniversityId;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use AppLog;
 use App\Platform\Domains\University\UniversityRepositoryInterface;
@@ -22,10 +23,11 @@ readonly class GetUniversityAction
      */
     public function __invoke(
         GetUniversityActionValuesInterface $actionValues,
+        string $universityIdString
     ): UniversityDto {
         AppLog::start(__METHOD__);
 
-        $universityId = $actionValues->getUniversityId();
+        $universityId = new UniversityId($universityIdString);
 
         $requestParams = [
             'university_id' => $universityId->value,

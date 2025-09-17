@@ -6,6 +6,6 @@ use App\Platform\Domains\University\UniversityId;
 
 interface GetUniversityActionValuesInterface
 {
-    public function getUniversityId(): UniversityId;
+//    public function getUniversityId(): UniversityId;
 }
 
