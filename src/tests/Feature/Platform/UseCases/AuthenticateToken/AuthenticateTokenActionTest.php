@@ -16,7 +16,7 @@ use Tests\TestCase;
 use Tests\Feature\Api\ApiPreLoginTrait;
 use Throwable;
 
-class AuthenticateTokenTest extends TestCase
+class AuthenticateTokenActionTest extends TestCase
 {
     use ApiPreLoginTrait;
     use DatabaseTransactions;
