@@ -78,6 +78,9 @@ class ApiPreLoginTraitTest extends TestCase
     /**
      * @throws NotFoundException
      * @throws AuthenticationException
+     * @throws DomainException
+     * @throws IllegalUserException
+     * @throws DuplicateKeyException
      */
     public function test_正しい情報で認証できること(): void
     {

@@ -20,26 +20,26 @@ class UniversityTest extends TestCase
         //when
         $actualUniversity = new University(
             id: $expectedId,
-            universityName: $expectedUniversityName,
+            name: $expectedUniversityName,
         );
 
         //then
         $this->assertEquals($expectedId, $actualUniversity->id);
-        $this->assertEquals($expectedUniversityName, $actualUniversity->universityName);
+        $this->assertEquals($expectedUniversityName, $actualUniversity->name);
     }
 
-    public function test_staicで生成できること(): void
+    public function test_staticで生成できること(): void
     {
         //given
         $expectedUniversityName = new String255('東京大学');
 
         //when
         $actualUniversity = University::create(
-            universityName: $expectedUniversityName,
+            name: $expectedUniversityName,
         );
 
         //then
         $this->assertInstanceOf(University::class, $actualUniversity);
-        $this->assertEquals($expectedUniversityName, $actualUniversity->universityName);
+        $this->assertEquals($expectedUniversityName, $actualUniversity->name);
     }
 }

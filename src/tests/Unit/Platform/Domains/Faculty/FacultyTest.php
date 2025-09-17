@@ -44,7 +44,7 @@ class FacultyTest extends TestCase
         $expectedUniversityId = new UniversityId();
         $expectedUniversity = new University(
             id: $expectedUniversityId,
-            universityName: new String255('東京大学'),
+            name: new String255('東京大学'),
         );
 
         //when

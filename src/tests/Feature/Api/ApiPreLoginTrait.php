@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Api;
 
+use App\Exceptions\DomainException;
+use App\Exceptions\DuplicateKeyException;
 use App\Exceptions\NotFoundException;
 use Hash;
 use Illuminate\Auth\AuthenticationException;
