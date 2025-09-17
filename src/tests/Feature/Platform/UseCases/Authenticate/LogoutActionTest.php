@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Feature\Platform\UseCases\Authenticate;
 
 use App\Exceptions\IllegalUserException;
+use App\Exceptions\InvalidValueException;
 use App\Platform\Infrastructures\User\UserRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
@@ -13,6 +14,7 @@ use App\Platform\UseCases\Authenticate\LogoutAction;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Feature\Api\ApiPreLoginTrait;
+use Throwable;
 
 class LogoutActionTest extends TestCase
 {
@@ -33,6 +35,11 @@ class LogoutActionTest extends TestCase
         $this->universityRepository = new UniversityRepository();
     }
 
+    /**
+     * @throws IllegalUserException
+     * @throws InvalidValueException
+     * @throws Throwable
+     */
     public function test_ログアウトが成功すること(): void
     {
         //given

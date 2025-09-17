@@ -21,11 +21,15 @@ readonly class UserRepository implements UserRepositoryInterface
 {
     /**
      * @throws DomainException
+     * @throws IllegalUserException
      */
     public function getAuthenticatedUser(): User
     {
         /**@var UserDB $user */
         $user = Auth::user();
+        if ($user === null) {
+            throw new IllegalUserException('認証済みユーザー情報が取得できませんでした。');
+        }
 
         return UserFactory::create($user);
     }
