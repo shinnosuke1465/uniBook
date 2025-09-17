@@ -37,7 +37,7 @@ readonly class UserRepository implements UserRepositoryInterface
     {
         $user = Auth::user();
         if ($user === null) {
-            throw new IllegalUserException('認証済みユーザー情報が取得できませんでした');
+            throw new IllegalUserException('認証済みユーザー情報が取得できませんでした。');
         }
 
         $user->tokens()->where('name', 'authenticate_token')->delete();
@@ -45,6 +45,19 @@ readonly class UserRepository implements UserRepositoryInterface
         return AuthenticateTokenFactory::create(
             $user->createToken('authenticate_token')->plainTextToken
         );
+    }
+
+    public function deleteToken(): void
+    {
+        $user = Auth::user();
+        if ($user === null) {
+            throw new IllegalUserException('認証済みユーザー情報が取得できませんでした');
+        }
+        if (!Auth::check()) {
+            throw new IllegalUserException('ログインされていません。');
+        }
+
+        $user->tokens()->where('name', 'authenticate_token')->delete();
     }
 
     /**

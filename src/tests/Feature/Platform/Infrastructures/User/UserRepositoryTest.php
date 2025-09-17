@@ -7,14 +7,12 @@ namespace Feature\Platform\Infrastructures\User;
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
 use App\Platform\Domains\Shared\String\String255;
-use App\Platform\Domains\User\User;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 use App\Models\User as UserDB;
-use Illuminate\Support\Facades\Hash;
+use Hash;
 use Tests\TestCase;
 use Tests\Unit\Platform\Domains\Faculty\TestFacultyFactory;
 use Tests\Unit\Platform\Domains\University\TestUniversityFactory;
@@ -70,7 +68,7 @@ class UserRepositoryTest extends TestCase
 
         //then
         // パスワードはハッシュ値なのでHash::checkで検証
-        $this->assertTrue(\Hash::check($inputUser->password->value, $actualUser->password->value));
+        $this->assertTrue(Hash::check($inputUser->password->value, $actualUser->password->value));
         // パスワード以外のプロパティを配列で比較
         $this->assertEquals(
             $this->userToArrayForTest($inputUser),

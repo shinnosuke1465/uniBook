@@ -12,6 +12,8 @@ interface UserRepositoryInterface
 
     public function createToken(): AuthenticateToken;
 
+    public function deleteToken(): void;
+
     public function findById(UserId $userId): ?User;
 
     public function findByLoginId(MailAddress $loginId): ?User;
