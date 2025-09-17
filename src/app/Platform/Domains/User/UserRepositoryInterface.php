@@ -10,11 +10,15 @@ interface UserRepositoryInterface
 {
     public function getAuthenticatedUser(): User;
 
-    public function createToken(): AuthenticateToken;
+    public function createToken(MailAddress $mailAddress, String255 $password): AuthenticateToken;
+
+    public function deleteToken(): void;
 
     public function findById(UserId $userId): ?User;
 
-    public function insertWithLoginId(User $user, MailAddress $mailAddress): User;
+    public function findByMailAddress(MailAddress $mailAddress): ?User;
+
+    public function insertWithLoginId(User $user, MailAddress $mailAddress): AuthenticateToken;
 
 //    public function update(User $user): void;
 }

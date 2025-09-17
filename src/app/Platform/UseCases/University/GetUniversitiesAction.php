@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Platform\UseCases\University;
 
+use AppLog;
 use App\Platform\Domains\University\UniversityRepositoryInterface;
+use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
+use App\Platform\UseCases\University\Dtos\UniversityDto;
 
 readonly class GetUniversitiesAction
 {
@@ -13,10 +16,23 @@ readonly class GetUniversitiesAction
     ) {
     }
 
+    /**
+     * @return UniversityDto[]
+     */
     public function __invoke(
         GetUniversitiesActionValuesInterface $actionValues,
     ): array {
-        return $this->universityRepository->findById($actionValues);
+        AppLog::start(__METHOD__);
+
+        try {
+            $universities = $this->universityRepository->findAll();
+
+            return collect($universities)->map(
+                fn($university) => UniversityDto::create($university)
+            )->all();
+        } finally {
+            AppLog::end(__METHOD__);
+        }
     }
 }
 

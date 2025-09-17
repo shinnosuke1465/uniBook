@@ -76,9 +76,9 @@ class CreateUserRequest extends BaseRequest implements CreateUserValuesInterface
     /**
      * @throws DomainException
      */
-    public function getUserPassword(): NonEmptyString255
+    public function getUserPassword(): String255
     {
-        return new NonEmptyString255($this->input('password'));
+        return new String255($this->input('password'));
     }
 
     /**

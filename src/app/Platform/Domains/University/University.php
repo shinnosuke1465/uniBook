@@ -10,16 +10,16 @@ readonly class University
 {
     public function __construct(
         public UniversityId $id,
-        public String255 $universityName,
+        public String255 $name,
     ) {
     }
 
     public static function create(
-        String255 $universityName,
+        String255 $name,
     ): self {
         return new self(
             new UniversityId(),
-            $universityName,
+            $name,
         );
     }
 }

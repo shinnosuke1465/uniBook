@@ -14,9 +14,13 @@ use App\Platform\Domains\University\UniversityRepositoryInterface;
 
 readonly class UniversityRepository implements UniversityRepositoryInterface
 {
-    public function findAll()
+    public function findAll(): array
     {
-        // TODO: Implement findAll() method.
+        $universityModels = UniversityDB::query()->get();
+
+        return $universityModels->map(
+            fn ($universityModel) => UniversityFactory::create($universityModel)
+        )->all();
     }
 
     /**
@@ -48,7 +52,7 @@ readonly class UniversityRepository implements UniversityRepositoryInterface
         UniversityDB::create(
             [
                 'id' => $university->id->value,
-                'name' => $university->universityName->value,
+                'name' => $university->name->value,
             ]
         );
     }

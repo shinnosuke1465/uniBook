@@ -50,4 +50,17 @@ readonly class ImageIdList
             fn (ImageId $imageId) => clone $imageId
         )->all();
     }
+
+    public function equals(self $other): bool
+    {
+        if ($this->collection->count() !== $other->collection->count()) {
+            return false;
+        }
+        foreach ($this->collection as $imageId) {
+            if (!$other->collection->has($imageId->value)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

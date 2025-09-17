@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Feature\Platform\UseCases\Authenticate;
+
+use App\Exceptions\IllegalUserException;
+use App\Exceptions\InvalidValueException;
+use App\Platform\Infrastructures\User\UserRepository;
+use App\Platform\Infrastructures\Faculty\FacultyRepository;
+use App\Platform\Infrastructures\University\UniversityRepository;
+use App\Platform\Presentations\Authenticate\Requests\LogoutRequest;
+use App\Platform\UseCases\Authenticate\LogoutAction;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
+use Tests\Feature\Api\ApiPreLoginTrait;
+use Throwable;
+
+class LogoutActionTest extends TestCase
+{
+    use ApiPreLoginTrait;
+    use DatabaseTransactions;
+
+    private UserRepository $userRepository;
+
+    private UniversityRepository $universityRepository;
+
+    private FacultyRepository $facultyRepository;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->userRepository = new UserRepository();
+        $this->facultyRepository = new FacultyRepository();
+        $this->universityRepository = new UniversityRepository();
+    }
+
+    /**
+     * @throws IllegalUserException
+     * @throws InvalidValueException
+     * @throws Throwable
+     */
+    public function test_ログアウトが成功すること(): void
+    {
+        //given
+        $this->prepareUserWithFacultyAndUniversity();
+        $this->authenticate();
+
+        // ログイン状態であることを確認
+        $authenticatedUser = $this->userRepository->getAuthenticatedUser();
+        $this->assertNotNull($authenticatedUser);
+
+        $request = LogoutRequest::create('', 'POST');
+
+        //when
+        $logoutAction = new LogoutAction($this->userRepository);
+        $logoutAction($request);
+
+        //then
+        // ログアウト後は認証情報が取得できないことを確認
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('認証済みユーザー情報が取得できませんでした。');
+        $this->userRepository->getAuthenticatedUser();
+    }
+
+}

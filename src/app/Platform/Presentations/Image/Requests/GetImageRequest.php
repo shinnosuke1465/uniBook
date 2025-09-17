@@ -13,20 +13,12 @@ class GetImageRequest extends BaseRequest implements GetImageActionValuesInterfa
 {
     public function rules(): array
     {
-        return [
-            'id' => [
-                'required',
-                'string'
-            ],
-        ];
+        return [];
     }
 
-    /**
-     * @throws DomainException
-     */
-    public function getImageId(): ImageId
-    {
-        return new ImageId($this->input('id'));
-    }
+//    public function getImageId(): ImageId
+//    {
+//        return new ImageId($this->input('id'));
+//    }
 }
 

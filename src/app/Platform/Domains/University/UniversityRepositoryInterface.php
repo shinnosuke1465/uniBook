@@ -6,7 +6,7 @@ namespace App\Platform\Domains\University;
 
 interface UniversityRepositoryInterface
 {
-    public function findAll();
+    public function findAll(): array;
 
     public function findById(UniversityId $universityId): ?University;
 

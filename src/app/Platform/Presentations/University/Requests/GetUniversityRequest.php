@@ -14,18 +14,11 @@ class GetUniversityRequest extends BaseRequest implements GetUniversityActionVal
     public function rules(): array
     {
         return [
-            'id' => [
-                'required',
-                'string',
-            ],
         ];
     }
 
-    /**
-     * @throws DomainException
-     */
-    public function getUniversityId(): UniversityId
-    {
-        return new UniversityId($this->input('id'));
-    }
+//    public function getUniversityId(): UniversityId
+//    {
+//        return new UniversityId($this->input('id'));
+//    }
 }

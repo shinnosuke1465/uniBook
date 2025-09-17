@@ -40,6 +40,9 @@ class UserListTest extends TestCase
         $this->assertEmpty($userList->toArray());
     }
 
+    /**
+     * @throws DomainException
+     */
     public function test_重複したIDがある場合に例外が発生すること(): void
     {
         //given
@@ -53,6 +56,9 @@ class UserListTest extends TestCase
         new UserList($users);
     }
 
+    /**
+     * @throws DomainException
+     */
     public function test_配列に変換できること(): void
     {
         //given

@@ -18,8 +18,6 @@ use Throwable;
 readonly class AuthenticateController
 {
     /**
-     * @throws InvalidValueException
-     * @throws AuthenticationException
      * @throws Throwable
      */
     public function login(
