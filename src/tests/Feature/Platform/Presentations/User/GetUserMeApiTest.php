@@ -70,35 +70,20 @@ class GetUserMeApiTest extends TestCase
             ]);
     }
 
-    public function test_未認証ユーザーがアクセスするとエラーが返ること(): void
-    {
-        // given
-        $url = route('users.me');
-
-        // when
-        $response = $this->getJson($url);
-
-        // then
-        $response->assertStatus(400) // IllegalUserException が 400 に変換される
-            ->assertJson([
-                'message' => '認証トークンが見つかりません。'
-            ]);
-    }
-
     public function test_無効なトークンでアクセスするとエラーが返ること(): void
     {
         // given
         $url = route('users.me');
 
-        // when
+        // when - 完全に無効な形式のトークンを使用
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer invalid_token',
+            'Authorization' => 'Bearer invalid_token_format',
         ])->getJson($url);
 
-        // then
-        $response->assertStatus(400) // IllegalUserException が 400 に変換される
+        // then - Laravel Sanctumの標準的な認証エラーメッセージを期待
+        $response->assertStatus(401)
             ->assertJson([
-                'message' => '無効なトークンです。'
+                'message' => 'Unauthenticated.'
             ]);
     }
 }

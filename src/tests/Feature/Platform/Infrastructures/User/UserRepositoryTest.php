@@ -218,6 +218,57 @@ class UserRepositoryTest extends TestCase
     /**
      * @throws DomainException
      * @throws DuplicateKeyException
+     * @throws IllegalUserException
+     */
+    public function test_createTokenで同一ユーザーの既存トークンが削除されて新しいトークンが発行されること(): void
+    {
+        //given
+        $inputUser = TestUserFactory::create();
+
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        // 1回目のトークン生成
+        $firstToken = $this->userRepository->createToken($inputUser->mailAddress, $inputUser->password);
+
+        // 1回目のトークンがデータベースに存在することを確認
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $firstToken->token)[1])
+        ]);
+
+        //when
+        // 2回目のトークン生成
+        $secondToken = $this->userRepository->createToken($inputUser->mailAddress, $inputUser->password);
+
+        //then
+        // 2回目のトークンが生成されていることを確認
+        $this->assertNotNull($secondToken);
+        $this->assertNotEmpty($secondToken->token);
+        $this->assertNotEquals($firstToken->token, $secondToken->token);
+
+        // 1回目のトークンがデータベースから削除されていることを確認
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $firstToken->token)[1])
+        ]);
+
+        // 2回目のトークンがデータベースに存在することを確認
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $secondToken->token)[1])
+        ]);
+
+        // authenticate_tokenという名前のトークンが1つだけ存在することを確認
+        $this->assertDatabaseCount('personal_access_tokens', 1);
+    }
+
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
      */
     public function test_deleteTokenで認証済みユーザーのトークンを削除できること(): void
     {

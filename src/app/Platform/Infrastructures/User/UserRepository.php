@@ -58,6 +58,9 @@ readonly class UserRepository implements UserRepositoryInterface
             throw new IllegalUserException('パスワードが違います。');
         }
 
+        // 既存の認証トークンをすべて削除（ログイン時に古いトークンを無効化）
+        $user->tokens()->where('name', 'authenticate_token')->delete();
+
         return AuthenticateTokenFactory::create(
             $user->createToken('authenticate_token')->plainTextToken
         );

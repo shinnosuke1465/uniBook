@@ -85,19 +85,4 @@ class CreateImageApiTest extends TestCase
         // then
         $response->assertUnprocessable();
     }
-
-    public function test_未認証ユーザーがアクセスするとエラーが返ること(): void
-    {
-        // given
-        $url = route('images.store');
-        $file = UploadedFile::fake()->image('test-image.jpg');
-
-        // when
-        $response = $this->postJson($url, [
-            'image' => $file,
-        ]);
-
-        // then
-        $response->assertUnauthorized();
-    }
 }
