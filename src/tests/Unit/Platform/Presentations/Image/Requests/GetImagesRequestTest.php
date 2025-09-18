@@ -35,6 +35,34 @@ class GetImagesRequestTest extends TestCase
         $this->assertCount(count($inputData['ids']), $actualImageIdList->toArray());
     }
 
+    public function test_idsが空配列の場合空のImageIdListが取得できること(): void
+    {
+        //given
+        $inputData = self::createDefaultInput(ids: []);
+        $request = GetImagesRequest::create('', 'POST', $inputData);
+
+        //when
+        $actualImageIdList = $request->getImageIdList();
+
+        //then
+        $this->assertInstanceOf(ImageIdList::class, $actualImageIdList);
+        $this->assertCount(0, $actualImageIdList->toArray());
+    }
+
+    public function test_idsが存在しない場合空のImageIdListが取得できること(): void
+    {
+        //given
+        $inputData = []; // idsキー自体が存在しない
+        $request = GetImagesRequest::create('', 'POST', $inputData);
+
+        //when
+        $actualImageIdList = $request->getImageIdList();
+
+        //then
+        $this->assertInstanceOf(ImageIdList::class, $actualImageIdList);
+        $this->assertCount(0, $actualImageIdList->toArray());
+    }
+
     /**
      * @dataProvider invalidInputProvider
      */
@@ -57,13 +85,13 @@ class GetImagesRequestTest extends TestCase
     public static function invalidInputProvider(): array
     {
         return [
-            'image_idsが空' => [
-                self::createDefaultInput(ids: []),
-                'idsは必ず指定してください。',
+            'idsが文字列でない' => [
+                ['ids' => [123, 456]],
+                'ids.0は文字列を指定してください。',
             ],
-            'image_idsの要素が空' => [
-                self::createDefaultInput(ids: ['']),
-                'ids.0は必ず指定してください。',
+            'idsが配列でない' => [
+                ['ids' => 'not_an_array'],
+                'idsは配列でなくてはなりません。',
             ],
         ];
     }
