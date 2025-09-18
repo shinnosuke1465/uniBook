@@ -16,11 +16,9 @@ class GetImagesRequest extends BaseRequest implements GetImagesActionValuesInter
     {
         return [
             'ids' => [
-                'required',
                 'array'
             ],
             'ids.*' => [
-                'required',
                 'string'
             ],
         ];

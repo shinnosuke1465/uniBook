@@ -33,11 +33,9 @@ readonly class GetImagesAction
                 'request' => $requestParams,
             ]);
 
-            $images = $this->imageRepository->findByIds($imageIdList);
+            $imageList = $this->imageRepository->findByIds($imageIdList);
 
-            return collect($images)->map(
-                fn($image) => ImageDto::create($image)
-            )->all();
+            return ImageDto::createFromList($imageList);
         } finally {
             AppLog::end(__METHOD__);
         }

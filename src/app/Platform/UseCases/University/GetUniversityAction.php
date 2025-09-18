@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\UseCases\University;
 
+use App\Exceptions\DomainException;
 use App\Exceptions\NotFoundException;
 use App\Platform\Domains\University\UniversityId;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
@@ -20,6 +21,7 @@ readonly class GetUniversityAction
 
     /**
      * @throws NotFoundException
+     * @throws DomainException
      */
     public function __invoke(
         GetUniversityActionValuesInterface $actionValues,
@@ -42,7 +44,7 @@ readonly class GetUniversityAction
             $university = $this->universityRepository->findById($universityId);
 
             if ($university === null) {
-                throw new NotFoundException('受給者が見つかりません。');
+                throw new NotFoundException('大学が見つかりません。');
             }
 
             return UniversityDto::create($university);

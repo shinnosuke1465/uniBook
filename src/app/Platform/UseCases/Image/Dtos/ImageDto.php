@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\Image\Dtos;
 
 use App\Platform\Domains\Image\Image;
+use App\Platform\Domains\Image\ImageList;
 
 readonly class ImageDto
 {
@@ -21,6 +22,20 @@ readonly class ImageDto
             $image->path->value,
             $image->type->value,
         );
+    }
+
+    /**
+     * @return ImageDto[]
+     */
+    public static function createFromList(ImageList $imageList): array
+    {
+        return collect($imageList->toArray())->map(
+            fn (Image $image) => new self(
+                $image->id->value,
+                $image->path->value,
+                $image->type->value,
+            )
+        )->all();
     }
 }
 

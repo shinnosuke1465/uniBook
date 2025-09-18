@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Feature\Platform\Presentations\User;
+namespace Feature\Platform\Presentations\Authenticate;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Platform\Domains\Shared\String\String255;
+use App\Platform\Domains\User\UserId;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
@@ -13,7 +15,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Feature\Api\ApiPreLoginTrait;
 
-class GetUserMeApiTest extends TestCase
+class LogoutApiTest extends TestCase
 {
     use DatabaseTransactions, ApiPreLoginTrait;
 
@@ -32,40 +34,29 @@ class GetUserMeApiTest extends TestCase
     /**
      * @throws DomainException
      * @throws DuplicateKeyException
-     * @throws Exception
      */
-    public function test_認証済みユーザーの情報が取得できること(): void
+    public function test_認証済みユーザーがログアウトできること(): void
     {
         // given
         $this->prepareUserWithFacultyAndUniversity();
         $this->authenticate();
 
-        $url = route('users.me');
+        $url = route('logout');
 
         // when
-        $response = $this->getJson($url);
+        $response = $this->postJson($url);
 
         // then
-        $response->assertOk()
-            ->assertJsonStructure([
-                'id',
-                'name',
-                'mail_address',
-                'post_code',
-                'address',
-                'image_id',
-                'university_id',
-                'faculty_id',
-            ]);
+        $response->assertNoContent();
     }
 
-    public function test_未認証ユーザーがアクセスするとエラーが返ること(): void
+    public function test_未認証ユーザーがログアウトしようとするとエラーが返ること(): void
     {
         // given
-        $url = route('users.me');
+        $url = route('logout');
 
         // when
-        $response = $this->getJson($url);
+        $response = $this->postJson($url);
 
         // then
         $response->assertUnauthorized();

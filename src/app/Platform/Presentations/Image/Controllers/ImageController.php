@@ -34,9 +34,10 @@ readonly class ImageController
      */
     public function show(
         GetImageRequest $request,
-        GetImageAction $action
+        GetImageAction $action,
+        string $imageIdString
     ): array {
-        $dto = $action($request);
+        $dto = $action($request, $imageIdString);
         return GetImageResponseBuilder::toArray($dto);
     }
 

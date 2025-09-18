@@ -40,6 +40,7 @@ class UserRepositoryTest extends TestCase
     /**
      * @throws DuplicateKeyException
      * @throws DomainException
+     * @throws IllegalUserException
      */
     public function test_getAuthenticatedUserで認証済みユーザー情報を取得できること(): void
     {
