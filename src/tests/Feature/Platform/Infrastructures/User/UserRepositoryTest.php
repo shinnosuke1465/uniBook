@@ -190,6 +190,73 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEmpty($token->token);
     }
 
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_deleteTokenで認証済みユーザーのトークンを削除できること(): void
+    {
+        //given
+        $inputUser = TestUserFactory::create();
+
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+
+        // ユーザーを作成してトークンを生成
+        $token = $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        // トークンが存在することを確認
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $token->token)[1])
+        ]);
+
+        //when
+        $this->userRepository->deleteToken($token->token);
+
+        //then
+        // トークンが削除されたことを確認
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $token->token)[1])
+        ]);
+    }
+
+    public function test_deleteTokenでトークンが存在しない場合エラーが発生すること(): void
+    {
+        //given
+        // トークンを設定せずにリクエストを作成
+
+        //when
+        //then
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('認証トークンが見つかりません。');
+        $this->userRepository->deleteToken();
+    }
+
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_deleteTokenで無効なトークンを指定した場合エラーが発生すること(): void
+    {
+        //given
+        $inputUser = TestUserFactory::create();
+
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        //when
+        //then
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('無効なトークンです。');
+        $this->userRepository->deleteToken('invalid_token');
+    }
 
     /**
      * Userドメインを配列化（パスワードなど���外）

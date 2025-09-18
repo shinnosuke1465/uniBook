@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Feature\Platform\UseCases\Authenticate;
 
 use App\Exceptions\IllegalUserException;
-use App\Exceptions\InvalidValueException;
+use App\Platform\Domains\Shared\MailAddress\MailAddress;
+use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Infrastructures\User\UserRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
@@ -37,18 +38,29 @@ class LogoutActionTest extends TestCase
 
     /**
      * @throws IllegalUserException
-     * @throws InvalidValueException
      * @throws Throwable
      */
     public function test_ログアウトが成功すること(): void
     {
         //given
         $this->prepareUserWithFacultyAndUniversity();
-        $this->authenticate();
 
-        // ログイン状態であることを確認
-        $authenticatedUser = $this->userRepository->getAuthenticatedUser();
-        $this->assertNotNull($authenticatedUser);
+        // トークンを生成
+        $token = $this->userRepository->createToken(
+            new MailAddress(
+                new String255('test@example.com')
+            ),
+            new String255('password12345')
+        );
+
+        // トークンが存在することを確認
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $token->token)[1])
+        ]);
+
+        // グローバルリクエストにBearerトークンを設定
+        request()->headers->set('Authorization', 'Bearer ' . $token->token);
 
         $request = LogoutRequest::create('', 'POST');
 
@@ -57,10 +69,29 @@ class LogoutActionTest extends TestCase
         $logoutAction($request);
 
         //then
-        // ログアウト後は認証情報が取得できないことを確認
+        // トークンが削除されていることを確認
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'name' => 'authenticate_token',
+            'token' => hash('sha256', explode('|', $token->token)[1])
+        ]);
+    }
+
+    /**
+     * @throws IllegalUserException
+     * @throws Throwable
+     */
+    public function test_トークンが存在しない場合ログアウトでエラーが発生すること(): void
+    {
+        //given
+        $request = LogoutRequest::create('', 'POST');
+
+        //when
+        //then
         $this->expectException(IllegalUserException::class);
-        $this->expectExceptionMessage('認証済みユーザー情報が取得できませんでした。');
-        $this->userRepository->getAuthenticatedUser();
+        $this->expectExceptionMessage('ログアウトに失敗しました。');
+
+        $logoutAction = new LogoutAction($this->userRepository);
+        $logoutAction($request);
     }
 
 }

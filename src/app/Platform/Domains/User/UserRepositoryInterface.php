@@ -12,7 +12,7 @@ interface UserRepositoryInterface
 
     public function createToken(MailAddress $mailAddress, String255 $password): AuthenticateToken;
 
-    public function deleteToken(): void;
+    public function deleteToken(?string $token): void;
 
     public function findById(UserId $userId): ?User;
 
