@@ -1,31 +1,30 @@
 "use server";
 
-import { cookies } from "next/headers";
 export interface University {
   id: string;
   name: string;
 }
 
 export const getUniversities = async (): Promise<University[]> => {
-    const cookieStore = await cookies();
-    const token: string | undefined = cookieStore.get("token")?.value;
+  const url = `${process.env.API_BASE_URL}/api/universities`;
+  console.log("API URL:", url);
 
-    if (!token) {
-        throw new Error("トークンが存在しません");
-    }
-
-    const response = await fetch(`${process.env.API_BASE_URL}/api/universities`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({}),
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
+  console.log("Response status:", response.status);
+
   if (!response.ok) {
-    throw new Error('大学一覧の取得に失敗しました');
+    const errorText = await response.text();
+    console.error("API Error:", errorText);
+    throw new Error(`大学一覧の取得に失敗しました: ${response.status} ${errorText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log("Response data:", data);
+  return data.universities || [];
 };
