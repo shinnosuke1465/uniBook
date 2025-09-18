@@ -40,6 +40,22 @@ readonly class UniversityRepository implements UniversityRepositoryInterface
     }
 
     /**
+     * @throws DomainException
+     */
+    public function findByName(String255 $name): ?University
+    {
+        $universityDB = UniversityDB::where('name', $name->value)->first();
+        if (!$universityDB) {
+            return null;
+        }
+
+        return new University(
+            new UniversityId($universityDB->id),
+            new String255($universityDB->name)
+        );
+    }
+
+    /**
      * @throws DuplicateKeyException
      */
     public function insert(

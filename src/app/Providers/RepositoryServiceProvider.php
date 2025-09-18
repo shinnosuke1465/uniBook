@@ -4,20 +4,28 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Packages\Infrastructures\Shared\Transaction\Transaction;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Platform\Domains\Image\ImageRepositoryInterface;
 use App\Platform\Domains\University\UniversityRepositoryInterface;
+use App\Platform\Domains\User\AuthenticateToken\AuthenticateTokenRepositoryInterface;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\Image\ImageRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(
+            TransactionInterface::class,
+            Transaction::class
+        );
+
         $this->app->bind(
             UniversityRepositoryInterface::class,
             UniversityRepository::class,

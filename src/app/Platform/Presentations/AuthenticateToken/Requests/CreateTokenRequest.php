@@ -15,7 +15,7 @@ class CreateTokenRequest extends BaseRequest implements CreateTokenActionValuesI
     public function rules(): array
     {
         return [
-            'email_address' => [
+            'mail_address' => [
                 'required',
                 'max:255',
             ],

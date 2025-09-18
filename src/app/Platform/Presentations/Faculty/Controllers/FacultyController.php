@@ -25,9 +25,10 @@ readonly class FacultyController
 
     public function show(
         GetFacultyRequest $request,
-        GetFacultyAction $action
+        GetFacultyAction $action,
+        string $facultyIdString
     ): array {
-        $dto = $action($request);
+        $dto = $action($request, $facultyIdString);
 
         return GetFacultyResponseBuilder::toArray($dto);
     }

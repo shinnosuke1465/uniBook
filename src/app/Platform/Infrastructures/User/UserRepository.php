@@ -12,8 +12,8 @@ use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\User\AuthenticateToken\AuthenticateToken;
 use App\Platform\Domains\User\UserId;
 use App\Platform\Domains\User\UserRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
 use App\Platform\Domains\User\User;
+use Laravel\Sanctum\PersonalAccessToken;
 use App\Models\User as UserDB;
 use Hash;
 use App\Platform\Infrastructures\User\AuthenticateToken\AuthenticateTokenFactory;
@@ -26,13 +26,22 @@ readonly class UserRepository implements UserRepositoryInterface
      */
     public function getAuthenticatedUser(): User
     {
-        /**@var UserDB $user */
-        $user = Auth::user();
-        if ($user === null) {
+        $token = request()->bearerToken();
+        if ($token === null) {
+            throw new IllegalUserException('認証トークンが見つかりません。');
+        }
+
+        $accessToken = PersonalAccessToken::findToken($token);
+        if ($accessToken === null) {
+            throw new IllegalUserException('無効なトークンです。');
+        }
+
+        $userModel = $accessToken->tokenable;
+        if (!$userModel instanceof UserDB) {
             throw new IllegalUserException('認証済みユーザー情報が取得できませんでした。');
         }
 
-        return UserFactory::create($user);
+        return UserFactory::create($userModel);
     }
 
     /**
@@ -54,17 +63,19 @@ readonly class UserRepository implements UserRepositoryInterface
         );
     }
 
-    public function deleteToken(): void
+    public function deleteToken(?string $token = null): void
     {
-        $user = Auth::user();
-        if ($user === null) {
-            throw new IllegalUserException('認証済みユーザー情報が取得できませんでした');
-        }
-        if (!Auth::check()) {
-            throw new IllegalUserException('ログインされていません。');
+        $tokenToDelete = $token ?? request()->bearerToken();
+        if ($tokenToDelete === null) {
+            throw new IllegalUserException('認証トークンが見つかりません。');
         }
 
-        $user->tokens()->where('name', 'authenticate_token')->delete();
+        $accessToken = PersonalAccessToken::findToken($tokenToDelete);
+        if ($accessToken === null) {
+            throw new IllegalUserException('無効なトークンです。');
+        }
+
+        $accessToken->delete();
     }
 
     /**

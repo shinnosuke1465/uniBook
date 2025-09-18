@@ -2,30 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Feature\Platform\UseCases\Authenticate;
+namespace Feature\Platform\Presentations\Authenticate;
 
+use App\Exceptions\DomainException;
+use App\Exceptions\DuplicateKeyException;
 use App\Exceptions\IllegalUserException;
 use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\Shared\String\String255;
-use App\Platform\Infrastructures\User\UserRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
-use App\Platform\Presentations\Authenticate\Requests\LogoutRequest;
-use App\Platform\UseCases\Authenticate\LogoutAction;
+use App\Platform\Infrastructures\User\UserRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Feature\Api\ApiPreLoginTrait;
-use Throwable;
 
-class LogoutActionTest extends TestCase
+class LogoutApiTest extends TestCase
 {
-    use ApiPreLoginTrait;
-    use DatabaseTransactions;
+    use DatabaseTransactions, ApiPreLoginTrait;
 
     private UserRepository $userRepository;
-
     private UniversityRepository $universityRepository;
-
     private FacultyRepository $facultyRepository;
 
     protected function setUp(): void
@@ -37,12 +33,13 @@ class LogoutActionTest extends TestCase
     }
 
     /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
      * @throws IllegalUserException
-     * @throws Throwable
      */
-    public function test_ログアウトが成功すること(): void
+    public function test_認証済みユーザーがログアウトできること(): void
     {
-        //given
+        // given
         $this->prepareUserWithFacultyAndUniversity();
 
         // トークンを生成
@@ -59,39 +56,20 @@ class LogoutActionTest extends TestCase
             'token' => hash('sha256', explode('|', $token->token)[1])
         ]);
 
-        // グローバルリクエストにBearerトークンを設定
-        request()->headers->set('Authorization', 'Bearer ' . $token->token);
+        $url = route('logout');
 
-        $request = LogoutRequest::create('', 'POST');
+        // when
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token->token,
+        ])->postJson($url);
 
-        //when
-        $logoutAction = new LogoutAction($this->userRepository);
-        $logoutAction($request);
+        // then
+        $response->assertNoContent();
 
-        //then
         // トークンが削除されていることを確認
         $this->assertDatabaseMissing('personal_access_tokens', [
             'name' => 'authenticate_token',
             'token' => hash('sha256', explode('|', $token->token)[1])
         ]);
     }
-
-    /**
-     * @throws IllegalUserException
-     * @throws Throwable
-     */
-    public function test_トークンが存在しない場合ログアウトでエラーが発生すること(): void
-    {
-        //given
-        $request = LogoutRequest::create('', 'POST');
-
-        //when
-        //then
-        $this->expectException(IllegalUserException::class);
-        $this->expectExceptionMessage('ログアウトに失敗しました。');
-
-        $logoutAction = new LogoutAction($this->userRepository);
-        $logoutAction($request);
-    }
-
 }

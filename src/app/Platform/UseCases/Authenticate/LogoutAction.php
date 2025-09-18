@@ -39,8 +39,7 @@ readonly class LogoutAction
 
             $this->userRepository->deleteToken();
 
-            //ログアウト処理
-            Auth::logout();
+            //ログアウト処理（API認証ではトークン削除のみ）
         } catch (InvalidValueException $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), []);
             throw new InvalidValueException('ログアウトに失敗しました。');

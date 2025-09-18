@@ -24,9 +24,10 @@ readonly class UniversityController
 
     public function show(
         GetUniversityRequest $request,
-        GetUniversityAction $action
+        GetUniversityAction $action,
+        string $universityIdString
     ): array {
-        $dto = $action($request);
+        $dto = $action($request, $universityIdString);
         return GetUniversityResponseBuilder::toArray($dto);
     }
 

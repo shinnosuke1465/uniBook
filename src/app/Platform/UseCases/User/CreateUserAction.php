@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\User;
 
 use App\Exceptions\UseCaseException;
-use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\User\User;
 use App\Platform\UseCases\Authenticate\Dtos\AuthenticateTokenDto;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
@@ -54,7 +53,6 @@ readonly class CreateUserAction
             ]);
 
             //ログインID = メールアドレス
-            $mailAddress= new MailAddress($mailAddress->mailAddress);
             $existUser = $this->userRepository->findByMailAddress($mailAddress);
             if ($existUser !== null) {
                 throw new UseCaseException('ユーザーがすでに存在します。');

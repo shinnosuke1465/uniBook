@@ -16,12 +16,12 @@ readonly class GetUserMeResponseBuilder
         return [
             'id' => $dto->id,
             'name' => $dto->name,
-            'PostCode' => $dto->postCode,
+            'mail_address' => $dto->mailAddress,
+            'post_code' => $dto->postCode,
             'address' => $dto->address,
-            'email' => $dto->mailAddress,
-            'imageId' => $dto->imageId,
-            'facultyId' => $dto->facultyId,
-            'universityId' => $dto->universityId,
+            'image_id' => $dto->imageId,
+            'university_id' => $dto->universityId,
+            'faculty_id' => $dto->facultyId,
         ];
     }
 }
