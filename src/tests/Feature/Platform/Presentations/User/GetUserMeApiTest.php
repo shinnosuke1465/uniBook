@@ -6,6 +6,9 @@ namespace Feature\Platform\Presentations\User;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Exceptions\IllegalUserException;
+use App\Platform\Domains\Shared\MailAddress\MailAddress;
+use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
@@ -32,18 +35,26 @@ class GetUserMeApiTest extends TestCase
     /**
      * @throws DomainException
      * @throws DuplicateKeyException
-     * @throws Exception
+     * @throws IllegalUserException
      */
     public function test_認証済みユーザーの情報が取得できること(): void
     {
         // given
         $this->prepareUserWithFacultyAndUniversity();
-        $this->authenticate();
+
+        $token = $this->userRepository->createToken(
+            new MailAddress(
+                new String255('test@example.com')
+            ),
+            new String255('password12345')
+        );
 
         $url = route('users.me');
 
         // when
-        $response = $this->getJson($url);
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token->token,
+        ])->getJson($url);
 
         // then
         $response->assertOk()
@@ -68,6 +79,26 @@ class GetUserMeApiTest extends TestCase
         $response = $this->getJson($url);
 
         // then
-        $response->assertUnauthorized();
+        $response->assertStatus(400) // IllegalUserException が 400 に変換される
+            ->assertJson([
+                'message' => '認証トークンが見つかりません。'
+            ]);
+    }
+
+    public function test_無効なトークンでアクセスするとエラーが返ること(): void
+    {
+        // given
+        $url = route('users.me');
+
+        // when
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer invalid_token',
+        ])->getJson($url);
+
+        // then
+        $response->assertStatus(400) // IllegalUserException が 400 に変換される
+            ->assertJson([
+                'message' => '無効なトークンです。'
+            ]);
     }
 }

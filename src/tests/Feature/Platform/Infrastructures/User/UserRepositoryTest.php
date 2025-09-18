@@ -12,7 +12,6 @@ use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use App\Models\User as UserDB;
 use Hash;
 use Tests\TestCase;
 use Tests\Unit\Platform\Domains\Faculty\TestFacultyFactory;
@@ -60,10 +59,11 @@ class UserRepositoryTest extends TestCase
         );
         $this->facultyRepository->insert($faculty);
 
-        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
-        $userDB = UserDB::find($inputUser->id->value);
+        // ユーザーとトークンを作成
+        $token = $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
 
-        $this->actingAs($userDB);
+        // グローバルリクエストにBearerトークンを設定
+        request()->headers->set('Authorization', 'Bearer ' . $token->token);
 
         //when
         $actualUser = $this->userRepository->getAuthenticatedUser();
@@ -76,6 +76,31 @@ class UserRepositoryTest extends TestCase
             $this->userToArrayForTest($inputUser),
             $this->userToArrayForTest($actualUser)
         );
+    }
+
+    public function test_getAuthenticatedUserでトークンが存在しない場合エラーが発生すること(): void
+    {
+        //given
+        // トークンを設定せずにテスト
+
+        //when
+        //then
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('認証トークンが見つかりません。');
+        $this->userRepository->getAuthenticatedUser();
+    }
+
+    public function test_getAuthenticatedUserで無効なトークンを指定した場合エラーが発生すること(): void
+    {
+        //given
+        // 無効なトークンを設定
+        request()->headers->set('Authorization', 'Bearer invalid_token');
+
+        //when
+        //then
+        $this->expectException(IllegalUserException::class);
+        $this->expectExceptionMessage('無効なトークンです。');
+        $this->userRepository->getAuthenticatedUser();
     }
 
     /**
