@@ -162,5 +162,6 @@ return [
         'type' => '画像タイプ',
         'university_id' => '大学ID',
         'faculty_id' => '学部ID',
+        'price' => '価格'
     ],
 ];

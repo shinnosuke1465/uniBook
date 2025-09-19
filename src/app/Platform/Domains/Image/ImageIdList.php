@@ -63,4 +63,9 @@ readonly class ImageIdList
         }
         return true;
     }
+
+    public function isNotEmpty(): bool
+    {
+        return $this->collection->isNotEmpty();
+    }
 }
