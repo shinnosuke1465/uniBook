@@ -17,7 +17,6 @@ use Tests\TestCase;
 use Tests\Unit\Platform\Domains\Textbook\TestTextbookFactory;
 use Tests\Unit\Platform\Domains\University\TestUniversityFactory;
 use Tests\Unit\Platform\Domains\Faculty\TestFacultyFactory;
-use App\Models\Textbook as TextbookDB;
 use App\Models\TextbookImage;
 use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\Textbook\Price;
