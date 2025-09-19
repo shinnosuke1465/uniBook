@@ -27,7 +27,7 @@ enum ConditionType: string
             self::SLIGHT_DAMAGE->value => self::SLIGHT_DAMAGE,
             self::DAMAGE->value => self::DAMAGE,
             self::POOR_CONDITION->value => self::POOR_CONDITION,
-            default => throw new DomainException('Invalid condition type'. $type),
+            default => throw new DomainException('Invalid condition type: ' . $type),
         };
     }
 }

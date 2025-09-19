@@ -34,7 +34,6 @@ readonly class Textbook
         FacultyId $facultyId,
         ConditionType $conditionType,
     ): self {
-        $conditionType =ConditionType::create($conditionType);
         return new self(
             new TextbookId(),
             $name,
