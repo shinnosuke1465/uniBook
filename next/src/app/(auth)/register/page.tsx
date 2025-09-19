@@ -1,6 +1,7 @@
 import { getUniversities } from "@/services/universities";
 import { getFaculties } from "@/services/faculties";
 import RegisterForm from "./register-form";
+import { University } from "@/types/response/responseType";
 
 export default async function Page() {
     // Server Componentで大学一覧を取得
