@@ -78,7 +78,7 @@ class Textbook extends Model
         return $this->belongsTo(Faculty::class);
     }
 
-    public function textbookImages(): BelongsToMany
+    public function imageIds(): HasMany
     {
         return $this->hasMany(TextbookImage::class, 'textbook_id', 'id');
     }

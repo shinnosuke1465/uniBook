@@ -16,6 +16,7 @@ use App\Platform\Domains\Textbook\Price;
 use App\Platform\Domains\Textbook\Textbook;
 use App\Platform\Domains\Textbook\TextbookId;
 use App\Platform\Domains\University\UniversityId;
+use App\Models\TextbookImage;
 
 readonly class TextbookFactory
 {
@@ -25,8 +26,8 @@ readonly class TextbookFactory
     public static function create(TextbookDB $textbookDB): Textbook
     {
         // 画像IDリストを作成
-        $imageIds = $textbookDB->imageIds->map(
-            fn (TextbookDB $image) => new ImageId($image->id)
+        $imageIdList = $textbookDB->imageIds->map(
+            fn (TextbookImage $textbookImage) => new ImageId($textbookImage->image_id)
         )->all();
 
         return new Textbook(
@@ -34,7 +35,7 @@ readonly class TextbookFactory
             name: new String255($textbookDB->name),
             price: new Price($textbookDB->price),
             description: new Text($textbookDB->description ?? ''),
-            imageIdList: new ImageIdList($imageIds),
+            imageIdList: new ImageIdList($imageIdList),
             universityId: new UniversityId($textbookDB->university_id),
             facultyId: new FacultyId($textbookDB->faculty_id),
             conditionType: ConditionType::create($textbookDB->condition_type),

@@ -28,7 +28,7 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
      */
     public function findAll(): array
     {
-        $textbookModels = TextbookDB::query()->get();
+        $textbookModels = TextbookDB::query()->with('imageIds')->get();
 
         return $textbookModels->map(
             fn ($textbookModel) => TextbookFactory::create($textbookModel)
@@ -40,7 +40,11 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
      */
     public function findById(TextbookId $textbookId): ?Textbook
     {
-        $textbookDB = TextbookDB::with('images')->find($textbookId->value);
+        $textbookDB = TextbookDB::query()
+            ->with('imageIds')
+            ->where('id',$textbookId->value)
+            ->first();
+
         if (!$textbookDB) {
             return null;
         }
@@ -50,15 +54,15 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
 
 
     /**
-     * @throws RepositoryException
+     * @throws DuplicateKeyException
      */
     public function insert(Textbook $textbook): void
     {
         $textbookModel = TextbookDB::query()
             ->where('id',$textbook->id->value);
 
-        if (!$textbookModel) {
-            throw new RepositoryException('指定された教科書が見つかりません。textbookId: '. $textbook->id->value);
+        if ($textbookModel->exists()) {
+            throw new DuplicateKeyException('指定された教科書は既に存在します。textbookId: '. $textbook->id->value);
         }
 
         TextbookDB::create([
@@ -90,7 +94,8 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     public function update(Textbook $textbook): void
     {
         $textbookModel = TextbookDB::query()
-            ->where('id',$textbook->id->value);
+            ->where('id',$textbook->id->value)
+            ->first();
 
         if (!$textbookModel) {
             throw new RepositoryException('指定された教科書が見つかりません。textbookId: '. $textbook->id->value);
@@ -122,7 +127,8 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     public function delete(TextbookId $textbookId): void
     {
         $textbookModel = TextbookDB::query()
-            ->where('id',$textbookId->value);
+            ->where('id',$textbookId->value)
+            ->first();
 
         if (!$textbookModel) {
             throw new RepositoryException('指定された教科書が見つかりません。textbookId: '. $textbookId->value);
