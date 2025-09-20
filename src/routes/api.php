@@ -3,6 +3,7 @@
 use App\Platform\Presentations\Authenticate\Controllers\AuthenticateController;
 use App\Platform\Presentations\AuthenticateToken\Controllers\AuthenticateTokenController;
 use App\Platform\Presentations\Image\Controllers\ImageController;
+use App\Platform\Presentations\Textbook\Controllers\TextbookController;
 use App\Platform\Presentations\User\Controllers\UserController;
 use App\Platform\Presentations\University\Controllers\UniversityController;
 use App\Platform\Presentations\Faculty\Controllers\FacultyController;
@@ -63,6 +64,22 @@ Route::apiResource(
         'faculties' => 'facultyIdString',
     ])
     ->whereUuid('facultyIdString');
+
+//画像
+Route::apiResource(
+    '/textbooks',
+    TextbookController::class
+)->only(['index','show', 'store', 'update', 'destroy'])->names([
+    'index' => 'textbooks.index',
+    'show' => 'textbooks.show',
+    'store' => 'textbooks.store',
+    'update' => 'textbooks.update',
+    'destroy' => 'textbooks.destroy',
+])
+    ->parameters([
+        'textbooks' => 'textbookIdString',
+    ])
+    ->whereUuid('textbookIdString');
 
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト

@@ -34,7 +34,7 @@ readonly class CreateTextbookAction
             $name = $actionValues->getName();
             $price = $actionValues->getPrice();
             $description = $actionValues->getDescription();
-            $imageIds = $actionValues->getImageIds();
+            $imageIds = $actionValues->getImageIdList();
             $universityId = $actionValues->getUniversityId();
             $facultyId = $actionValues->getFacultyId();
             $conditionType = $actionValues->getConditionType();
