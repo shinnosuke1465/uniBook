@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Platform\Presentations\Textbook\Controllers;
 
+use App\Exceptions\DomainException;
+use App\Exceptions\NotFoundException;
 use App\Platform\Presentations\Textbook\Requests\CreateTextbookRequest;
 use App\Platform\Presentations\Textbook\Requests\GetTextbooksRequest;
 use App\Platform\Presentations\Textbook\Requests\GetTextbookRequest;
@@ -26,6 +28,10 @@ readonly class TextbookController
         return GetTextbooksResponseBuilder::toArray($dtos);
     }
 
+    /**
+     * @throws DomainException
+     * @throws NotFoundException
+     */
     public function show(
         GetTextbookRequest $request,
         GetTextbookAction $action,
@@ -35,6 +41,9 @@ readonly class TextbookController
         return GetTextbookResponseBuilder::toArray($dto);
     }
 
+    /**
+     * @throws DomainException
+     */
     public function store(
         CreateTextbookRequest $request,
         CreateTextbookAction $action
@@ -43,6 +52,10 @@ readonly class TextbookController
         return response()->noContent();
     }
 
+    /**
+     * @throws DomainException
+     * @throws NotFoundException
+     */
     public function update(
         UpdateTextbookRequest $request,
         UpdateTextbookAction $action,
@@ -52,6 +65,10 @@ readonly class TextbookController
         return response()->noContent();
     }
 
+    /**
+     * @throws NotFoundException
+     * @throws DomainException
+     */
     public function destroy(
         DeleteTextbookRequest $request,
         DeleteTextbookAction $action,

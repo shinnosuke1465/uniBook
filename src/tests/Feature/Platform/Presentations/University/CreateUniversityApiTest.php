@@ -8,6 +8,7 @@ use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;

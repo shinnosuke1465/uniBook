@@ -77,9 +77,6 @@ class CreateTextbookRequest extends BaseRequest implements CreateTextbookActionV
         return new Price($this->input('price'));
     }
 
-    /**
-     * @throws DomainException
-     */
     public function getDescription(): Text
     {
         return new Text($this->input('description') ?? '');
