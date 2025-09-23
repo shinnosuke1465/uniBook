@@ -5,29 +5,28 @@ declare(strict_types=1);
 namespace App\Platform\Domains\Deal;
 
 use App\Platform\Domains\Textbook\TextbookId;
-use App\Platform\Domains\User\UserId;
 
 readonly class Deal
 {
     public function __construct(
         public DealId $id,
-        public UserId $sellerId,
-        public UserId $buyerId,
+        public Seller $seller,
+        public Buyer $buyer,
         public TextbookId $textbookId,
         public DealStatus $dealStatus,
     ) {
     }
 
     public static function create(
-        UserId $sellerId,
-        UserId $buyerId,
+        Seller $seller,
+        Buyer $buyer,
         TextbookId $textbookId,
         DealStatus $dealStatus,
     ): self {
         return new self(
             new DealId(),
-            $sellerId,
-            $buyerId,
+            $seller,
+            $buyer,
             $textbookId,
             $dealStatus,
         );
