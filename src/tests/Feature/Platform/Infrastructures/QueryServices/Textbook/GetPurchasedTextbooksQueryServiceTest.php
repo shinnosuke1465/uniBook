@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Platform\Infrastructures\QueryServices\Product;
+namespace Feature\Platform\Infrastructures\QueryServices\Textbook;
 
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealStatus;
@@ -12,7 +12,7 @@ use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Infrastructures\Deal\DealRepository;
 use App\Platform\Infrastructures\DealEvent\DealEventRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
-use App\Platform\Infrastructures\QueryServices\Product\GetPurchasedProductsQueryService;
+use App\Platform\Infrastructures\QueryServices\Textbook\GetPurchasedTextbooksQueryService;
 use App\Platform\Infrastructures\Textbook\TextbookRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
@@ -25,11 +25,11 @@ use Tests\Unit\Platform\Domains\Textbook\TestTextbookFactory;
 use Tests\Unit\Platform\Domains\University\TestUniversityFactory;
 use Tests\Unit\Platform\Domains\User\TestUserFactory;
 
-class GetPurchasedProductsQueryServiceTest extends TestCase
+class GetPurchasedTextbooksQueryServiceTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private GetPurchasedProductsQueryService $queryService;
+    private GetPurchasedTextbooksQueryService $queryService;
     private DealRepository $dealRepository;
     private DealEventRepository $dealEventRepository;
     private UserRepository $userRepository;
@@ -40,7 +40,7 @@ class GetPurchasedProductsQueryServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->queryService = new GetPurchasedProductsQueryService();
+        $this->queryService = new GetPurchasedTextbooksQueryService();
         $this->dealRepository = new DealRepository();
         $this->dealEventRepository = new DealEventRepository();
         $this->userRepository = new UserRepository();
@@ -49,7 +49,7 @@ class GetPurchasedProductsQueryServiceTest extends TestCase
         $this->facultyRepository = new FacultyRepository();
     }
 
-    public function test_getPurchasedProductsByUserで購入済み商品一覧を取得できること(): void
+    public function test_getPurchasedTextbooksByUserで購入済み教科書一覧を取得できること(): void
     {
         // given
         // seller用のユーザーを作成
@@ -116,7 +116,7 @@ class GetPurchasedProductsQueryServiceTest extends TestCase
         $this->dealRepository->insert($listingDeal);
 
         // when
-        $result = $this->queryService->getPurchasedProductsByUser($buyerUser->id);
+        $result = $this->queryService->getPurchasedTextbooksByUser($buyerUser->id);
 
         // then
         $this->assertCount(1, $result);
@@ -129,7 +129,7 @@ class GetPurchasedProductsQueryServiceTest extends TestCase
         $this->assertNotEmpty($result->first()->dealEvents);
     }
 
-    public function test_getPurchasedProductsByUserで購入済み商品がない場合は空の配列を返すこと(): void
+    public function test_getPurchasedTextbooksByUserで購入済み教科書がない場合は空の配列を返すこと(): void
     {
         // given
         $buyerUser = TestUserFactory::create(mailAddress: new MailAddress(new String255('buyer@test.com')));
@@ -140,7 +140,7 @@ class GetPurchasedProductsQueryServiceTest extends TestCase
         $this->userRepository->insertWithLoginId($buyerUser, $buyerUser->mailAddress);
 
         // when
-        $result = $this->queryService->getPurchasedProductsByUser($buyerUser->id);
+        $result = $this->queryService->getPurchasedTextbooksByUser($buyerUser->id);
 
         // then
         $this->assertCount(0, $result);

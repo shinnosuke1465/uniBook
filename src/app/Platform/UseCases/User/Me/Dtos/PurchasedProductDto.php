@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Platform\UseCases\Product\Dtos;
+namespace App\Platform\UseCases\User\Me\Dtos;
 
 readonly class PurchasedProductDto
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Platform\Infrastructures\QueryServices\Product;
+namespace Tests\Unit\Platform\Infrastructures\QueryServices\Textbook;
 
 use App\Models\Deal;
 use App\Models\DealEvent;
@@ -11,11 +11,11 @@ use App\Models\Textbook;
 use App\Models\TextbookImage;
 use App\Models\University;
 use App\Models\User;
-use App\Platform\Infrastructures\QueryServices\Product\GetPurchasedProductsDtoFactory;
+use App\Platform\Infrastructures\QueryServices\Textbook\GetPurchasedTextbooksDtoFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
-class GetPurchasedProductsDtoFactoryTest extends TestCase
+class GetPurchasedTextbooksDtoFactoryTest extends TestCase
 {
     public function test_createFromDealsでDealからPurchasedProductDtoを正しく作成できること(): void
     {
@@ -80,7 +80,7 @@ class GetPurchasedProductsDtoFactoryTest extends TestCase
         $deals = new Collection([$deal]);
 
         // when
-        $result = GetPurchasedProductsDtoFactory::createFromDeals($deals);
+        $result = GetPurchasedTextbooksDtoFactory::createFromDeals($deals);
 
         // then
         $this->assertCount(1, $result);
@@ -129,7 +129,7 @@ class GetPurchasedProductsDtoFactoryTest extends TestCase
         $deals = new Collection([]);
 
         // when
-        $result = GetPurchasedProductsDtoFactory::createFromDeals($deals);
+        $result = GetPurchasedTextbooksDtoFactory::createFromDeals($deals);
 
         // then
         $this->assertCount(0, $result);
@@ -175,7 +175,7 @@ class GetPurchasedProductsDtoFactoryTest extends TestCase
         $deals = new Collection([$deal]);
 
         // when
-        $result = GetPurchasedProductsDtoFactory::createFromDeals($deals);
+        $result = GetPurchasedTextbooksDtoFactory::createFromDeals($deals);
 
         // then
         $this->assertCount(1, $result);

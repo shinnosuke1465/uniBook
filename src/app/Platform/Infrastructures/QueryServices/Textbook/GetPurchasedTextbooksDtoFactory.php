@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Platform\Infrastructures\QueryServices\Product;
+namespace App\Platform\Infrastructures\QueryServices\Textbook;
 
 use App\Models\Deal;
-use App\Platform\UseCases\Product\Dtos\PurchasedProductDto;
+use App\Platform\UseCases\User\Me\Dtos\PurchasedProductDto;
 use Illuminate\Database\Eloquent\Collection;
 
-readonly class GetPurchasedProductsDtoFactory
+readonly class GetPurchasedTextbooksDtoFactory
 {
     /**
      * DealモデルのコレクションからPurchasedProductDtoの配列を作成
@@ -34,7 +34,6 @@ readonly class GetPurchasedProductsDtoFactory
                     'id' => $deal->seller->id,
                     'nickname' => $deal->seller->name,
                     'profile_image_url' => $deal->seller->image_id,
-                    'description' => $deal->seller->description ?? '', // TODO: Userモデルにdescriptionフィールドが必要
                 ],
                 'buyer_shipping_info' => [
                     'id' => $deal->buyer->id,
@@ -43,7 +42,6 @@ readonly class GetPurchasedProductsDtoFactory
                     'address' => $deal->buyer->address ?? '',
                     'nickname' => $deal->buyer->name,
                     'profile_image_url' => $deal->buyer->image_id,
-                    'description' => $deal->buyer->description ?? '',
                 ],
                 'status' => strtolower($deal->deal_status),
                 'deal_events' => $deal->dealEvents->map(function ($event) {

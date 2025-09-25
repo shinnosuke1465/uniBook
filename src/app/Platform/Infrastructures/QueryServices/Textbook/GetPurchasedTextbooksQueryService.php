@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Platform\Infrastructures\QueryServices\Product;
+namespace App\Platform\Infrastructures\QueryServices\Textbook;
 
 use App\Models\Deal;
 use App\Platform\Domains\User\UserId;
 use Illuminate\Database\Eloquent\Collection;
 
-readonly class GetPurchasedProductsQueryService
+readonly class GetPurchasedTextbooksQueryService
 {
     /**
-     * 指定したユーザーが購入した商品一覧を取得
+     * 指定したユーザーが購入した教科書一覧を取得
      *
      * @param UserId $userId
      * @return Collection<Deal>
      */
-    public function getPurchasedProductsByUser(UserId $userId): Collection
+    public function getPurchasedTextbooksByUser(UserId $userId): Collection
     {
         return Deal::query()
             ->with([
