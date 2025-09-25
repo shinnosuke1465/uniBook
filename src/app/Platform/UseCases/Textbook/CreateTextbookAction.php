@@ -5,8 +5,20 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\Textbook;
 
 use App\Exceptions\DomainException;
+use App\Platform\Domains\Deal\Deal;
+use App\Platform\Domains\Deal\DealRepositoryInterface;
+use App\Platform\Domains\Deal\DealStatus;
+use App\Platform\Domains\Deal\Seller;
+use App\Platform\Domains\Deal\Buyer;
+use App\Platform\Domains\DealEvent\DealEvent;
+use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
+use App\Platform\Domains\DealEvent\ActorType;
+use App\Platform\Domains\DealEvent\EventType;
+use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
 use App\Platform\Domains\Textbook\Textbook;
+use App\Platform\Domains\University\UniversityRepositoryInterface;
+use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
 use AppLog;
@@ -17,6 +29,11 @@ readonly class CreateTextbookAction
     public function __construct(
         private TransactionInterface $transaction,
         private TextbookRepositoryInterface $textbookRepository,
+        private UniversityRepositoryInterface $universityRepository,
+        private FacultyRepositoryInterface $facultyRepository,
+        private DealRepositoryInterface $dealRepository,
+        private DealEventRepositoryInterface $dealEventRepository,
+        private UserRepositoryInterface $userRepository,
     ) {
     }
 
@@ -53,6 +70,24 @@ readonly class CreateTextbookAction
                 'request' => $requestParams,
             ]);
 
+            //大学チェック
+            $university = $this->universityRepository->findById($universityId);
+            if ($university === null) {
+                throw new DomainException('指定された大学は存在しません。universityId: '. $universityId->value);
+            }
+
+            //学部チェック
+            $faculty = $this->facultyRepository->findById($facultyId);
+            if ($faculty === null) {
+                throw new DomainException('指定された学部は存在しません。facultyId: '. $facultyId->value);
+            }
+
+            //認証されたユーザーを取得
+            $authenticatedUser = $this->userRepository->getAuthenticatedUser();
+            if ($authenticatedUser === null) {
+                throw new DomainException('認証済みユーザー情報が取得できませんでした。');
+            }
+
             $textbook = Textbook::create(
                 $name,
                 $price,
@@ -63,10 +98,27 @@ readonly class CreateTextbookAction
                 $conditionType,
             );
 
-            $this->transaction->begin();
-            $this->textbookRepository->insert(
-                $textbook
+            //Dealを作成（売り手として）
+            $seller = new Seller($authenticatedUser->getUserId());
+            $deal = Deal::create(
+                $seller,
+                null,
+                $textbook->id,
+                DealStatus::create('Listing')
             );
+
+            //DealEventを作成（出品イベント）
+            $dealEvent = DealEvent::create(
+                $authenticatedUser->getUserId(),
+                $deal->id,
+                ActorType::create('seller'),
+                EventType::create('Listing')
+            );
+
+            $this->transaction->begin();
+            $this->textbookRepository->insert($textbook);
+            $this->dealRepository->insert($deal);
+            $this->dealEventRepository->insert($dealEvent);
             $this->transaction->commit();
         } catch (Exception $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);

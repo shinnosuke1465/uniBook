@@ -23,7 +23,7 @@ readonly class DealRepository implements DealRepositoryInterface
         DealDB::create([
             'id' => $deal->id->value,
             'seller_id' => $deal->seller->userId->value,
-            'buyer_id' => $deal->buyer->userId->value,
+            'buyer_id' => $deal->buyer?->userId->value,
             'textbook_id' => $deal->textbookId->value,
             'deal_status' => $deal->dealStatus->value,
         ]);

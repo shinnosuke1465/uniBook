@@ -11,7 +11,7 @@ readonly class Deal
     public function __construct(
         public DealId $id,
         public Seller $seller,
-        public Buyer $buyer,
+        public ?Buyer $buyer,
         public TextbookId $textbookId,
         public DealStatus $dealStatus,
     ) {
@@ -19,7 +19,7 @@ readonly class Deal
 
     public static function create(
         Seller $seller,
-        Buyer $buyer,
+        ?Buyer $buyer,
         TextbookId $textbookId,
         DealStatus $dealStatus,
     ): self {

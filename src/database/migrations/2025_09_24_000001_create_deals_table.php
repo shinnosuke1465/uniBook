@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->string('id', 36)->primary()->comment('取引ID');
             $table->string('seller_id', 36)->comment('出品者ID');
-            $table->string('buyer_id', 36)->comment('購入者ID');
+            $table->string('buyer_id', 36)->nullable()->comment('購入者ID');
             $table->string('textbook_id', 36)->comment('教科書ID');
             $table->enum('deal_status', [
                 'Listing',    // 出品中

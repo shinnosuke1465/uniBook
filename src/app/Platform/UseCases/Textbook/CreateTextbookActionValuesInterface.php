@@ -9,6 +9,7 @@ use App\Platform\Domains\Shared\Text\Text;
 use App\Platform\Domains\Textbook\ConditionType;
 use App\Platform\Domains\Textbook\Price;
 use App\Platform\Domains\University\UniversityId;
+use App\Platform\Domains\User\UserId;
 
 interface CreateTextbookActionValuesInterface
 {
