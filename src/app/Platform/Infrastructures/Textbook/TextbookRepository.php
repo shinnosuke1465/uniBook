@@ -55,6 +55,24 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     }
 
     /**
+     * IDで関連データと共にTextbookDBモデルを取得（プレゼンテーション層向け）
+     */
+    public function findByIdWithRelations(TextbookId $textbookId): ?TextbookDB
+    {
+        return TextbookDB::query()
+            ->with([
+                'imageIds',
+                'deal.seller',
+                'comments.user',
+                'likes',
+                'university',
+                'faculty'
+            ])
+            ->where('id', $textbookId->value)
+            ->first();
+    }
+
+    /**
      * @throws DomainException
      */
     public function findById(TextbookId $textbookId): ?Textbook

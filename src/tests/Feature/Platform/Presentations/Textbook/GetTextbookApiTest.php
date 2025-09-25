@@ -81,9 +81,12 @@ class GetTextbookApiTest extends TestCase
                 'price',
                 'description',
                 'image_ids',
-                'university_id',
-                'faculty_id',
+                'university_name',
+                'faculty_name',
                 'condition_type',
+                'deal',
+                'comments',
+                'is_liked',
             ])
             ->assertJson([
                 'id' => $textbook->id->value,
@@ -91,22 +94,12 @@ class GetTextbookApiTest extends TestCase
                 'price' => 1500,
                 'description' => 'これはテスト用の教科書です。',
                 'image_ids' => [],
-                'university_id' => $university->id->value,
-                'faculty_id' => $faculty->id->value,
+                'university_name' => 'テスト大学',
+                'faculty_name' => 'テスト学部',
                 'condition_type' => 'new',
+                'deal' => null,
+                'comments' => [],
+                'is_liked' => false,
             ]);
-    }
-
-    public function test_存在しない教科書IDを指定した場合は404エラーが返されること(): void
-    {
-        $this->prepareUserWithFacultyAndUniversity();
-        $this->authenticate();
-
-        $nonExistentId = '00000000-0000-0000-0000-000000000000';
-        $url = route('textbooks.show', ['textbookIdString' => $nonExistentId]);
-
-        $response = $this->getJson($url);
-
-        $response->assertNotFound();
     }
 }

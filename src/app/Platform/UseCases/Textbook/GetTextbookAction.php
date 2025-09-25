@@ -10,12 +10,15 @@ use App\Platform\Domains\Textbook\TextbookId;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use AppLog;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
-use App\Platform\UseCases\Textbook\Dtos\TextbookDto;
+use App\Platform\Domains\User\UserRepositoryInterface;
+use App\Platform\Infrastructures\Textbook\TextbookRepository;
+use App\Platform\UseCases\Textbook\Dtos\TextbookWithRelationsDto;
 
 readonly class GetTextbookAction
 {
     public function __construct(
         private TextbookRepositoryInterface $textbookRepository,
+        private UserRepositoryInterface $userRepository,
     ) {
     }
 
@@ -26,7 +29,7 @@ readonly class GetTextbookAction
     public function __invoke(
         GetTextbookActionValuesInterface $actionValues,
         string $textbookIdString
-    ): TextbookDto {
+    ): TextbookWithRelationsDto {
         AppLog::start(__METHOD__);
 
         $textbookId = new TextbookId($textbookIdString);
@@ -40,13 +43,45 @@ readonly class GetTextbookAction
                 'request' => $requestParams,
             ]);
 
+            // ログインユーザー情報取得
+            $currentUserId = null;
+            try {
+                $authenticatedUser = $this->userRepository->getAuthenticatedUser();
+                $currentUserId = $authenticatedUser?->getUserId()?->value;
+            } catch (\Exception $e) {
+                // 認証エラーの場合はnullのまま（未認証ユーザー）
+            }
+
+            if ($this->textbookRepository instanceof TextbookRepository) {
+                $textbookModel = $this->textbookRepository->findByIdWithRelations($textbookId);
+
+                if ($textbookModel === null) {
+                    throw new NotFoundException('教科書が見つかりません。');
+                }
+
+                return TextbookWithRelationsDto::fromEloquentModel($textbookModel, $currentUserId);
+            }
+
+            // フォールバック（通常のfindById）
             $textbook = $this->textbookRepository->findById($textbookId);
 
             if ($textbook === null) {
                 throw new NotFoundException('教科書が見つかりません。');
             }
 
-            return TextbookDto::create($textbook);
+            return new TextbookWithRelationsDto(
+                $textbook->id->value,
+                $textbook->name->value,
+                $textbook->price->value,
+                $textbook->description->value,
+                $textbook->imageIdList->toArray(),
+                '', // universityName - fallback用なので空文字
+                '', // facultyName - fallback用なので空文字
+                $textbook->conditionType->value,
+                null, // deal
+                [], // comments
+                false, // isLiked
+            );
         } catch (NotFoundException $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);
             throw $e;
