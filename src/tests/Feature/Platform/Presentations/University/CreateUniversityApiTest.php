@@ -13,7 +13,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
 use App\Exceptions\NotFoundException;
-use App\Exceptions\AuthenticationException;
 use Tests\TestCase;
 use Tests\Feature\Api\ApiPreLoginTrait;
 
@@ -37,7 +36,6 @@ class CreateUniversityApiTest extends TestCase
      * @throws DomainException
      * @throws DuplicateKeyException
      * @throws NotFoundException
-     * @throws AuthenticationException
      */
     public function test_認証済みユーザーが大学を作成できること(): void
     {
@@ -67,7 +65,6 @@ class CreateUniversityApiTest extends TestCase
      * @throws DomainException
      * @throws DuplicateKeyException
      * @throws NotFoundException
-     * @throws AuthenticationException
      */
     public function test_必須項目が欠けている場合エラーが返ること(): void
     {

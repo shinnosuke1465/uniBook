@@ -14,6 +14,8 @@ use App\Platform\Infrastructures\Textbook\TextbookRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
+use App\Platform\Infrastructures\Deal\DealRepository;
+use App\Platform\Infrastructures\DealEvent\DealEventRepository;
 use DomainException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -31,7 +33,8 @@ class CreateTextbookApiTest extends TestCase
     private TextbookRepository $textbookRepository;
     private UniversityRepository $universityRepository;
     private FacultyRepository $facultyRepository;
-
+    private DealRepository $dealRepository;
+    private DealEventRepository $dealEventRepository;
     private ImageRepository $imageRepository;
 
     protected function setUp(): void
@@ -41,6 +44,8 @@ class CreateTextbookApiTest extends TestCase
         $this->textbookRepository = new TextbookRepository();
         $this->universityRepository = new UniversityRepository();
         $this->facultyRepository = new FacultyRepository();
+        $this->dealRepository = new DealRepository();
+        $this->dealEventRepository = new DealEventRepository();
         $this->imageRepository = new ImageRepository();
     }
 

@@ -81,6 +81,18 @@ Route::apiResource(
     ])
     ->whereUuid('textbookIdString');
 
+//コメント
+Route::apiResource(
+    '/textbooks/{textbookId}/comments',
+    \App\Platform\Presentations\Comment\Controllers\CommentController::class
+)->only(['store'])->names([
+    'store' => 'comments.store',
+])
+    ->parameters([
+        'textbooks' => 'textbookIdString',
+    ])
+    ->whereUuid('textbookIdString');
+
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト
     Route::post('/logout', [AuthenticateController::class, 'logout'])->name('logout');

@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Faculty;
+use App\Platform\Domains\Comment\CommentRepositoryInterface;
+use App\Platform\Infrastructures\Comment\CommentRepository;
+use App\Platform\Domains\Deal\DealRepositoryInterface;
+use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
+use App\Platform\Infrastructures\Deal\DealRepository;
+use App\Platform\Infrastructures\DealEvent\DealEventRepository;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Platform\Domains\Image\ImageRepositoryInterface;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
@@ -60,6 +66,21 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TextbookRepositoryInterface::class,
             TextbookRepository::class
+        );
+
+        $this->app->bind(
+            DealEventRepositoryInterface::class,
+            DealEventRepository::class
+        );
+
+        $this->app->bind(
+            DealRepositoryInterface::class,
+            DealRepository::class
+        );
+
+        $this->app->bind(
+            CommentRepositoryInterface::class,
+            CommentRepository::class
         );
     }
 

@@ -55,4 +55,8 @@ readonly class User
         );
     }
 
+    public function getUserId(): UserId
+    {
+        return $this->id;
+    }
 }
