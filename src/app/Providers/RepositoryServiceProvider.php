@@ -7,15 +7,20 @@ namespace App\Providers;
 use App\Packages\Infrastructures\Shared\Transaction\Transaction;
 use App\Platform\Domains\Comment\CommentRepositoryInterface;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
+use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Platform\Domains\Image\ImageRepositoryInterface;
+use App\Platform\Domains\Like\LikeRepositoryInterface;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
 use App\Platform\Domains\University\UniversityRepositoryInterface;
 use App\Platform\Domains\User\AuthenticateToken\AuthenticateTokenRepositoryInterface;
 use App\Platform\Domains\User\UserRepositoryInterface;
+use App\Platform\Infrastructures\Comment\CommentRepository;
 use App\Platform\Infrastructures\Deal\DealRepository;
+use App\Platform\Infrastructures\DealEvent\DealEventRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\Image\ImageRepository;
+use App\Platform\Infrastructures\Like\LikeRepository;
 use App\Platform\Infrastructures\Textbook\TextbookRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
@@ -69,6 +74,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             CommentRepositoryInterface::class,
             CommentRepository::class,
+        );
+
+        $this->app->bind(
+            LikeRepositoryInterface::class,
+            LikeRepository::class,
         );
     }
 }

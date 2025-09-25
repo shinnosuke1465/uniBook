@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Platform\Presentations\University\Controllers;
 
+use App\Exceptions\DomainException;
+use App\Exceptions\NotFoundException;
 use App\Platform\Presentations\University\Requests\CreateUniversityRequest;
 use App\Platform\Presentations\University\Requests\GetUniversitiesRequest;
 use App\Platform\Presentations\University\Requests\GetUniversityRequest;
@@ -22,6 +24,10 @@ readonly class UniversityController
         return GetUniversitiesResponseBuilder::toArray($dtos);
     }
 
+    /**
+     * @throws DomainException
+     * @throws NotFoundException
+     */
     public function show(
         GetUniversityRequest $request,
         GetUniversityAction $action,
@@ -31,6 +37,9 @@ readonly class UniversityController
         return GetUniversityResponseBuilder::toArray($dto);
     }
 
+    /**
+     * @throws DomainException
+     */
     public function store(
         CreateUniversityRequest $request,
         CreateUniversityAction $action

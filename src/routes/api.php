@@ -9,6 +9,8 @@ use App\Platform\Presentations\University\Controllers\UniversityController;
 use App\Platform\Presentations\Faculty\Controllers\FacultyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Platform\Presentations\Comment\Controllers\CommentController;
+use App\Platform\Presentations\Like\Controllers\LikeController;
 
 Route::get('/test', function (Request $request) {
     return response()->json([
@@ -84,9 +86,21 @@ Route::apiResource(
 //コメント
 Route::apiResource(
     '/textbooks/{textbookId}/comments',
-    \App\Platform\Presentations\Comment\Controllers\CommentController::class
+    CommentController::class
 )->only(['store'])->names([
     'store' => 'comments.store',
+])
+    ->parameters([
+        'textbooks' => 'textbookIdString',
+    ])
+    ->whereUuid('textbookIdString');
+
+//いいね
+Route::apiResource(
+    '/textbooks/{textbookId}/likes',
+    LikeController::class
+)->only(['store'])->names([
+    'store' => 'likes.store',
 ])
     ->parameters([
         'textbooks' => 'textbookIdString',
