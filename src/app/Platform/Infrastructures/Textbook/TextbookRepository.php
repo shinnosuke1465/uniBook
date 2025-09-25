@@ -20,6 +20,7 @@ use App\Platform\Domains\Textbook\Textbook;
 use App\Platform\Domains\Textbook\TextbookId;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
 use App\Platform\Domains\University\UniversityId;
+use Illuminate\Support\Collection;
 
 readonly class TextbookRepository implements TextbookRepositoryInterface
 {
@@ -33,6 +34,24 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
         return $textbookModels->map(
             fn ($textbookModel) => TextbookFactory::create($textbookModel)
         )->all();
+    }
+
+    /**
+     * 関連データと共にTextbookDBモデルを取得（プレゼンテーション層向け）
+     * @return Collection
+     */
+    public function findAllWithRelations(): Collection
+    {
+        return TextbookDB::query()
+            ->with([
+                'imageIds',
+                'deal.seller',
+                'comments.user',
+                'likes',
+                'university',
+                'faculty'
+            ])
+            ->get();
     }
 
     /**

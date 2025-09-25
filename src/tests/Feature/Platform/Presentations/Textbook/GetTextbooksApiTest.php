@@ -86,9 +86,12 @@ class GetTextbooksApiTest extends TestCase
                         'price',
                         'description',
                         'image_ids',
-                        'university_id',
-                        'faculty_id',
+                        'university_name',
+                        'faculty_name',
                         'condition_type',
+                        'deal',
+                        'comments',
+                        'is_liked',
                     ]
                 ]
             ])
@@ -97,6 +100,15 @@ class GetTextbooksApiTest extends TestCase
         $responseData = $response->json();
         $this->assertContains($textbook1->id->value, array_column($responseData['textbooks'], 'id'));
         $this->assertContains($textbook2->id->value, array_column($responseData['textbooks'], 'id'));
+
+        // 大学名・学部名が正しく返されることを確認
+        foreach ($responseData['textbooks'] as $textbook) {
+            $this->assertEquals('テスト大学', $textbook['university_name']);
+            $this->assertEquals('テスト学部', $textbook['faculty_name']);
+            $this->assertIsArray($textbook['comments']);
+            $this->assertIsBool($textbook['is_liked']);
+            $this->assertEquals(false, $textbook['is_liked']); // 認証ユーザーだがlikeしていない
+        }
     }
 
     public function test_認証済みユーザーが空の教科書一覧を取得できること(): void

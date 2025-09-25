@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\Textbook\Dtos;
 
 use App\Platform\Domains\Textbook\Textbook;
+use App\Models\Textbook as TextbookDB;
 
 readonly class TextbookDto
 {
