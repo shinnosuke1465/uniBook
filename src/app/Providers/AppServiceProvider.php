@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Faculty;
+use App\Platform\Domains\Comment\CommentRepositoryInterface;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
 use App\Platform\Infrastructures\Deal\DealRepository;
@@ -74,6 +75,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DealRepositoryInterface::class,
             DealRepository::class
+        );
+
+        $this->app->bind(
+            CommentRepositoryInterface::class,
+            CommentRepository::class
         );
     }
 

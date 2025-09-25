@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Packages\Infrastructures\Shared\Transaction\Transaction;
+use App\Platform\Domains\Comment\CommentRepositoryInterface;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Platform\Domains\Image\ImageRepositoryInterface;
@@ -63,6 +64,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             DealEventRepositoryInterface::class,
             DealEventRepository::class,
+        );
+
+        $this->app->bind(
+            CommentRepositoryInterface::class,
+            CommentRepository::class,
         );
     }
 }
