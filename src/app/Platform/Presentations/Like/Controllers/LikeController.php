@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Platform\Presentations\Comment\Controllers;
+namespace App\Platform\Presentations\Like\Controllers;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\NotFoundException;
-use App\Platform\Presentations\Comment\Requests\CreateCommentRequest;
+use App\Platform\Presentations\Like\Requests\CreateLikeRequest;
 use Illuminate\Http\Response;
-use App\Platform\UseCases\Comment\CreateCommentAction;
+use App\Platform\UseCases\Like\CreateLikeAction;
 
-readonly class CommentController
+readonly class LikeController
 {
     /**
      * @throws DomainException
      * @throws NotFoundException
      */
     public function store(
-        CreateCommentRequest $request,
-        CreateCommentAction $action,
+        CreateLikeRequest $request,
+        CreateLikeAction $action,
         string $id
     ): Response {
         $action($request, $id);
