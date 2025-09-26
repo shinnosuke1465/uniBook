@@ -20,6 +20,17 @@ use App\Models\Textbook;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read User $user
  * @property-read Textbook $textbook
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereTextbookId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereUserId($value)
+ * @mixin \Eloquent
  */
 class Like extends Model
 {

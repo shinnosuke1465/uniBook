@@ -7,8 +7,10 @@ namespace App\Platform\Presentations\Like\Controllers;
 use App\Exceptions\DomainException;
 use App\Exceptions\NotFoundException;
 use App\Platform\Presentations\Like\Requests\CreateLikeRequest;
+use App\Platform\Presentations\Like\Requests\DeleteLikeRequest;
 use Illuminate\Http\Response;
 use App\Platform\UseCases\Like\CreateLikeAction;
+use App\Platform\UseCases\Like\DeleteLikeAction;
 
 readonly class LikeController
 {
@@ -22,6 +24,19 @@ readonly class LikeController
         string $id
     ): Response {
         $action($request, $id);
+        return response()->noContent();
+    }
+
+    /**
+     * @throws DomainException
+     * @throws NotFoundException
+     */
+    public function destroy(
+        DeleteLikeRequest $request,
+        DeleteLikeAction $action,
+        string $textbookIdString
+    ): Response {
+        $action($request, $textbookIdString);
         return response()->noContent();
     }
 }

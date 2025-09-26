@@ -38,11 +38,9 @@ readonly class GetPurchasedProductsController
         QueryPurchasedTextbookDealRequest $request,
         QueryPurchasedTextbookDealAction $action,
         string $textbookIdString
-    ): JsonResponse {
+    ): array {
         $result = $action($request, $textbookIdString);
 
-        $responseData = GetPurchasedTextbookDealResponseBuilder::toArray($result);
-
-        return response()->json($responseData);
+        return GetPurchasedTextbookDealResponseBuilder::toArray($result);
     }
 }

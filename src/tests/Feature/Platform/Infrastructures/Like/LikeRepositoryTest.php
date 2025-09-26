@@ -117,4 +117,147 @@ class LikeRepositoryTest extends TestCase
         $this->expectExceptionMessage('いいねが重複しています。');
         $this->likeRepository->insert($inputLike2);
     }
+
+    /**
+     * @throws DuplicateKeyException
+     * @throws DomainException
+     */
+    public function test_deleteでいいねを削除できること(): void
+    {
+        //given
+        // 必要な関連データを作成
+        $inputUser = TestUserFactory::create();
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        $inputTextbook = TestTextbookFactory::create(
+            universityId: $inputUser->universityId,
+            facultyId: $inputUser->facultyId
+        );
+        $this->textbookRepository->insert($inputTextbook);
+
+        // Likeを作成・挿入
+        $inputLike = TestLikeFactory::create(
+            userId: $inputUser->id,
+            textbookId: $inputTextbook->id
+        );
+        $this->likeRepository->insert($inputLike);
+
+        // 削除前に存在することを確認
+        $this->assertDatabaseHas('likes', [
+            'user_id' => $inputLike->userId->value,
+            'textbook_id' => $inputLike->textbookId->value,
+        ]);
+
+        //when
+        $this->likeRepository->delete($inputUser->id, $inputTextbook->id);
+
+        //then
+        $this->assertDatabaseMissing('likes', [
+            'user_id' => $inputLike->userId->value,
+            'textbook_id' => $inputLike->textbookId->value,
+        ]);
+    }
+
+    /**
+     * @throws DuplicateKeyException
+     * @throws DomainException
+     */
+    public function test_findByUserIdAndTextbookIdで存在するいいねを取得できること(): void
+    {
+        //given
+        // 必要な関連データを作成
+        $inputUser = TestUserFactory::create();
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        $inputTextbook = TestTextbookFactory::create(
+            universityId: $inputUser->universityId,
+            facultyId: $inputUser->facultyId
+        );
+        $this->textbookRepository->insert($inputTextbook);
+
+        // Likeを作成・挿入
+        $inputLike = TestLikeFactory::create(
+            userId: $inputUser->id,
+            textbookId: $inputTextbook->id
+        );
+        $this->likeRepository->insert($inputLike);
+
+        //when
+        $result = $this->likeRepository->findByUserIdAndTextbookId($inputUser->id, $inputTextbook->id);
+
+        //then
+        $this->assertNotNull($result);
+        $this->assertEquals($inputLike->id->value, $result->id->value);
+        $this->assertEquals($inputLike->userId->value, $result->userId->value);
+        $this->assertEquals($inputLike->textbookId->value, $result->textbookId->value);
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public function test_findByUserIdAndTextbookIdで存在しないいいねの場合nullが返されること(): void
+    {
+        //given
+        // 必要な関連データを作成
+        $inputUser = TestUserFactory::create();
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        $inputTextbook = TestTextbookFactory::create(
+            universityId: $inputUser->universityId,
+            facultyId: $inputUser->facultyId
+        );
+        $this->textbookRepository->insert($inputTextbook);
+
+        // Likeは挿入しない
+
+        //when
+        $result = $this->likeRepository->findByUserIdAndTextbookId($inputUser->id, $inputTextbook->id);
+
+        //then
+        $this->assertNull($result);
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public function test_deleteで存在しないいいねを削除してもエラーにならないこと(): void
+    {
+        //given
+        // 必要な関連データを作成
+        $inputUser = TestUserFactory::create();
+        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+        $this->universityRepository->insert($university);
+        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+        $this->facultyRepository->insert($faculty);
+        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+
+        $inputTextbook = TestTextbookFactory::create(
+            universityId: $inputUser->universityId,
+            facultyId: $inputUser->facultyId
+        );
+        $this->textbookRepository->insert($inputTextbook);
+
+        // Likeは挿入しない（存在しない状態）
+
+        //when・then（例外が発生しないことを確認）
+        $this->likeRepository->delete($inputUser->id, $inputTextbook->id);
+
+        // データベースに該当レコードが存在しないことを確認
+        $this->assertDatabaseMissing('likes', [
+            'user_id' => $inputUser->id->value,
+            'textbook_id' => $inputTextbook->id->value,
+        ]);
+    }
 }

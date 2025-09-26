@@ -19,6 +19,7 @@ use App\Platform\Infrastructures\DealEvent\DealEventRepository;
 use DomainException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Runner\Exception;
 use Tests\TestCase;
 use Tests\Feature\Api\ApiPreLoginTrait;
 use Tests\Unit\Platform\Domains\Faculty\TestFacultyFactory;
@@ -54,6 +55,7 @@ class CreateTextbookApiTest extends TestCase
      * @throws DuplicateKeyException
      * @throws NotFoundException
      * @throws AuthenticationException
+     * @throws Exception
      */
     public function test_認証済みユーザーが教科書を作成できること(): void
     {
