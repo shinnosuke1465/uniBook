@@ -8,6 +8,7 @@ use App\Platform\Presentations\User\Controllers\UserController;
 use App\Platform\Presentations\University\Controllers\UniversityController;
 use App\Platform\Presentations\Faculty\Controllers\FacultyController;
 use App\Platform\Presentations\User\Me\Controllers\GetPurchasedProductsController;
+use App\Platform\Presentations\User\Me\Controllers\GetPurchasedTextbookDealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Platform\Presentations\Comment\Controllers\CommentController;
@@ -108,12 +109,18 @@ Route::apiResource(
     ])
     ->whereUuid('textbookIdString');
 
+//購入商品一覧取得
 Route::apiResource(
     '/me/purchased_products',
     GetPurchasedProductsController::class
-)->only(['index'])->names([
+)->only(['index', 'show'])->names([
     'index' => 'me.purchased_products',
-]);
+    'show' => 'me.purchased_products.show',
+])
+    ->parameters([
+        'purchased_products' => 'textbookIdString',
+    ])
+    ->whereUuid('textbookIdString');
 
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト
