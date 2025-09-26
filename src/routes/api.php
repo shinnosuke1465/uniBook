@@ -102,8 +102,9 @@ Route::apiResource(
 Route::apiResource(
     '/textbooks/{textbookId}/likes',
     LikeController::class
-)->only(['store'])->names([
+)->only(['store', 'destroy'])->names([
     'store' => 'likes.store',
+    'destroy' => 'likes.destroy',
 ])
     ->parameters([
         'textbooks' => 'textbookIdString',
