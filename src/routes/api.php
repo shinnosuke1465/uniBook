@@ -7,6 +7,7 @@ use App\Platform\Presentations\Textbook\Controllers\TextbookController;
 use App\Platform\Presentations\User\Controllers\UserController;
 use App\Platform\Presentations\University\Controllers\UniversityController;
 use App\Platform\Presentations\Faculty\Controllers\FacultyController;
+use App\Platform\Presentations\User\Me\Controllers\GetListedTextbooksController;
 use App\Platform\Presentations\User\Me\Controllers\GetPurchasedProductsController;
 use App\Platform\Presentations\User\Me\Controllers\GetPurchasedTextbookDealController;
 use Illuminate\Http\Request;
@@ -109,7 +110,7 @@ Route::apiResource(
     ])
     ->whereUuid('textbookIdString');
 
-//購入商品一覧取得
+//購入商品取得
 Route::apiResource(
     '/me/purchased_products',
     GetPurchasedProductsController::class
@@ -119,6 +120,19 @@ Route::apiResource(
 ])
     ->parameters([
         'purchased_products' => 'textbookIdString',
+    ])
+    ->whereUuid('textbookIdString');
+
+//出品商品取得
+Route::apiResource(
+    '/me/listed_products',
+GetListedTextbooksController::class
+)->only(['index', 'show'])->names([
+    'index' => 'me.listed_products',
+    'show' => 'me.listed_products.show',
+])
+    ->parameters([
+        'listed_products' => 'textbookIdString',
     ])
     ->whereUuid('textbookIdString');
 
