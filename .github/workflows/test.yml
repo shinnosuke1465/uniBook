@@ -27,7 +27,7 @@ jobs:
 
       - name: Setup Laravel
         run: |
-          docker compose exec -T php cp .env.example .env
+          docker compose exec -T -u root php sh -c "cp .env.example .env && chown www-data:www-data .env"
           docker compose exec -T php sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env
           docker compose exec -T php sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=db/' .env
           docker compose exec -T php sed -i 's/# DB_PORT=3306/DB_PORT=3306/' .env
