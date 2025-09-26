@@ -46,5 +46,5 @@ jobs:
 
       - name: Migrate & Test
         run: |
-          docker compose exec -T php php artisan migrate --force
-          docker compose exec -T php php artisan test
+          docker compose exec -T -u root php php artisan migrate --force
+          docker compose exec -T -u root php php artisan test
