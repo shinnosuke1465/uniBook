@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\University;
@@ -29,6 +30,11 @@ use App\Models\Faculty;
  * @property-read Collection<int, TextbookImage> $imageIds
  * @property-read int|null $textbook_images_count
  * @property-read University $university
+ * @property-read Deal|null $deal
+ * @property-read Collection<int, Comment> $comments
+ * @property-read int|null $comments_count
+ * @property-read Collection<int, Like> $likes
+ * @property-read int|null $likes_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Textbook newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Textbook newQuery()
@@ -81,6 +87,21 @@ class Textbook extends Model
     public function imageIds(): HasMany
     {
         return $this->hasMany(TextbookImage::class, 'textbook_id', 'id');
+    }
+
+    public function deal(): HasOne
+    {
+        return $this->hasOne(Deal::class, 'textbook_id', 'id');
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'textbook_id', 'id');
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class, 'textbook_id', 'id');
     }
 
 }

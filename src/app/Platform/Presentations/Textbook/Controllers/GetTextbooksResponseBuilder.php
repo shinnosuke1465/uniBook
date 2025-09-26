@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\Presentations\Textbook\Controllers;
 
-use App\Platform\UseCases\Textbook\Dtos\TextbookDto;
+use App\Platform\UseCases\Textbook\Dtos\TextbookWithRelationsDto;
 
 readonly class GetTextbooksResponseBuilder
 {
@@ -16,15 +16,18 @@ readonly class GetTextbooksResponseBuilder
     {
         return [
             'textbooks' => collect($dtos)->map(
-                fn (TextbookDto $dto) => [
+                fn (TextbookWithRelationsDto $dto) => [
                     'id' => $dto->id,
                     'name' => $dto->name,
                     'price' => $dto->price,
                     'description' => $dto->description,
                     'condition_type' => $dto->conditionType,
-                    'university_id' => $dto->universityId,
-                    'faculty_id' => $dto->facultyId,
+                    'university_name' => $dto->universityName,
+                    'faculty_name' => $dto->facultyName,
                     'image_ids' => $dto->imageIds,
+                    'deal' => $dto->deal,
+                    'comments' => $dto->comments,
+                    'is_liked' => $dto->isLiked,
                 ]
             )->values()->all(),
         ];
