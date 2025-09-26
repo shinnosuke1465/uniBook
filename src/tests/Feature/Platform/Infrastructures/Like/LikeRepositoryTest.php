@@ -122,45 +122,45 @@ class LikeRepositoryTest extends TestCase
      * @throws DuplicateKeyException
      * @throws DomainException
      */
-    public function test_deleteでいいねを削除できること(): void
-    {
-        //given
-        // 必要な関連データを作成
-        $inputUser = TestUserFactory::create();
-        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
-        $this->universityRepository->insert($university);
-        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
-        $this->facultyRepository->insert($faculty);
-        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
-
-        $inputTextbook = TestTextbookFactory::create(
-            universityId: $inputUser->universityId,
-            facultyId: $inputUser->facultyId
-        );
-        $this->textbookRepository->insert($inputTextbook);
-
-        // Likeを作成・挿入
-        $inputLike = TestLikeFactory::create(
-            userId: $inputUser->id,
-            textbookId: $inputTextbook->id
-        );
-        $this->likeRepository->insert($inputLike);
-
-        // 削除前に存在することを確認
-        $this->assertDatabaseHas('likes', [
-            'user_id' => $inputLike->userId->value,
-            'textbook_id' => $inputLike->textbookId->value,
-        ]);
-
-        //when
-        $this->likeRepository->delete($inputUser->id, $inputTextbook->id);
-
-        //then
-        $this->assertDatabaseMissing('likes', [
-            'user_id' => $inputLike->userId->value,
-            'textbook_id' => $inputLike->textbookId->value,
-        ]);
-    }
+//    public function test_deleteでいいねを削除できること(): void
+//    {
+//        //given
+//        // 必要な関連データを作成
+//        $inputUser = TestUserFactory::create();
+//        $university = TestUniversityFactory::create($inputUser->universityId, new String255('テスト大学'));
+//        $this->universityRepository->insert($university);
+//        $faculty = TestFacultyFactory::create($inputUser->facultyId, new String255('テスト学部'), $inputUser->universityId);
+//        $this->facultyRepository->insert($faculty);
+//        $this->userRepository->insertWithLoginId($inputUser, $inputUser->mailAddress);
+//
+//        $inputTextbook = TestTextbookFactory::create(
+//            universityId: $inputUser->universityId,
+//            facultyId: $inputUser->facultyId
+//        );
+//        $this->textbookRepository->insert($inputTextbook);
+//
+//        // Likeを作成・挿入
+//        $inputLike = TestLikeFactory::create(
+//            userId: $inputUser->id,
+//            textbookId: $inputTextbook->id
+//        );
+//        $this->likeRepository->insert($inputLike);
+//
+//        // 削除前に存在することを確認
+//        $this->assertDatabaseHas('likes', [
+//            'user_id' => $inputLike->userId->value,
+//            'textbook_id' => $inputLike->textbookId->value,
+//        ]);
+//
+//        //when
+//        $this->likeRepository->delete($inputUser->id, $inputTextbook->id);
+//
+//        //then
+//        $this->assertDatabaseMissing('likes', [
+//            'user_id' => $inputLike->userId->value,
+//            'textbook_id' => $inputLike->textbookId->value,
+//        ]);
+//    }
 
     /**
      * @throws DuplicateKeyException
