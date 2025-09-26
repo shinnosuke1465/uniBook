@@ -27,6 +27,7 @@ jobs:
 
       - name: Setup Laravel
         run: |
+          docker compose exec -T -u root php composer install
           docker compose exec -T -u root php sh -c "
             cp .env.example .env &&
             sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env &&
@@ -38,7 +39,6 @@ jobs:
             chown www-data:www-data .env
           "
           docker compose exec -T -u root php php artisan key:generate
-          docker compose exec -T -u root php composer install
 
       - name: Migrate & Test
         run: |
