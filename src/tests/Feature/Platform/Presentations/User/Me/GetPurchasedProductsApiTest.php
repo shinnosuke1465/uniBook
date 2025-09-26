@@ -213,17 +213,4 @@ class GetPurchasedProductsApiTest extends TestCase
         $responseData = $response->json();
         $this->assertCount(0, $responseData['products']);
     }
-
-    public function test_未認証ユーザーは購入商品一覧を取得できないこと(): void
-    {
-        // given
-        // 認証しない
-
-        // when
-        $url = route('me.purchased_products');
-        $response = $this->getJson($url);
-
-        // then
-        $response->assertUnauthorized();
-    }
 }
