@@ -27,15 +27,18 @@ jobs:
 
       - name: Setup Laravel
         run: |
-          docker compose exec -T -u root php sh -c "cp .env.example .env && chown www-data:www-data .env"
-          docker compose exec -T php sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env
-          docker compose exec -T php sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=db/' .env
-          docker compose exec -T php sed -i 's/# DB_PORT=3306/DB_PORT=3306/' .env
-          docker compose exec -T php sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=laravel/' .env
-          docker compose exec -T php sed -i 's/# DB_USERNAME=root/DB_USERNAME=laraveluser/' .env
-          docker compose exec -T php sed -i 's/# DB_PASSWORD=/DB_PASSWORD=laravel/' .env
-          docker compose exec -T php php artisan key:generate
-          docker compose exec -T php composer install
+          docker compose exec -T -u root php sh -c "
+            cp .env.example .env &&
+            sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env &&
+            sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=db/' .env &&
+            sed -i 's/# DB_PORT=3306/DB_PORT=3306/' .env &&
+            sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=laravel/' .env &&
+            sed -i 's/# DB_USERNAME=root/DB_USERNAME=laraveluser/' .env &&
+            sed -i 's/# DB_PASSWORD=/DB_PASSWORD=laravel/' .env &&
+            chown www-data:www-data .env
+          "
+          docker compose exec -T -u root php php artisan key:generate
+          docker compose exec -T -u root php composer install
 
       - name: Migrate & Test
         run: |
