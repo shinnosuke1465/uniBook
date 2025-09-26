@@ -31,12 +31,12 @@ readonly class LikeController
      * @throws DomainException
      * @throws NotFoundException
      */
-    public function delete(
+    public function destroy(
         DeleteLikeRequest $request,
         DeleteLikeAction $action,
-        string $id
+        string $textbookIdString
     ): Response {
-        $action($request, $id);
+        $action($request, $textbookIdString);
         return response()->noContent();
     }
 }
