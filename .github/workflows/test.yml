@@ -1,0 +1,43 @@
+name: Laravel Testing
+
+on:
+  pull_request:
+
+jobs:
+  laravel-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Version
+        run: docker version
+
+      - name: Build Docker Image
+        run: docker compose build
+
+      - name: Start Docker Containers
+        run: docker compose up -d
+
+      - name: Wait for DB
+        run: |
+          for i in {1..30}; do
+            docker compose exec -T php php -r 'try { new PDO("mysql:host=db;dbname=laravel", "laraveluser", "laravel"); exit(0); } catch (Exception $e) { echo "Waiting for DB...\n"; sleep(2); }'
+          done
+
+      - name: Setup Laravel
+        run: |
+          docker compose exec -T php cp .env.example .env
+          docker compose exec -T php sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env
+          docker compose exec -T php sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=db/' .env
+          docker compose exec -T php sed -i 's/# DB_PORT=3306/DB_PORT=3306/' .env
+          docker compose exec -T php sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=laravel/' .env
+          docker compose exec -T php sed -i 's/# DB_USERNAME=root/DB_USERNAME=laraveluser/' .env
+          docker compose exec -T php sed -i 's/# DB_PASSWORD=/DB_PASSWORD=laravel/' .env
+          docker compose exec -T php php artisan key:generate
+          docker compose exec -T php composer install
+
+      - name: Migrate & Test
+        run: |
+          docker compose exec -T php php artisan migrate --force
+          docker compose exec -T php php artisan test
