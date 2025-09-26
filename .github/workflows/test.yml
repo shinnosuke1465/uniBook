@@ -36,7 +36,11 @@ jobs:
             sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=laravel/' .env &&
             sed -i 's/# DB_USERNAME=root/DB_USERNAME=laraveluser/' .env &&
             sed -i 's/# DB_PASSWORD=/DB_PASSWORD=laravel/' .env &&
-            chown www-data:www-data .env
+            chown www-data:www-data .env &&
+            chmod -R 775 storage &&
+            chown -R www-data:www-data storage &&
+            chmod -R 775 bootstrap/cache &&
+            chown -R www-data:www-data bootstrap/cache
           "
           docker compose exec -T -u root php php artisan key:generate
 
