@@ -7,6 +7,7 @@ use App\Platform\Presentations\Textbook\Controllers\TextbookController;
 use App\Platform\Presentations\User\Controllers\UserController;
 use App\Platform\Presentations\University\Controllers\UniversityController;
 use App\Platform\Presentations\Faculty\Controllers\FacultyController;
+use App\Platform\Presentations\User\Me\Controllers\GetLikedTextbooksController;
 use App\Platform\Presentations\User\Me\Controllers\GetListedTextbooksController;
 use App\Platform\Presentations\User\Me\Controllers\GetPurchasedProductsController;
 use App\Platform\Presentations\User\Me\Controllers\GetPurchasedTextbookDealController;
@@ -110,6 +111,14 @@ Route::apiResource(
         'textbooks' => 'textbookIdString',
     ])
     ->whereUuid('textbookIdString');
+
+//いいねした教科書一覧取得
+Route::apiResource(
+    '/me/likes',
+    GetLikedTextbooksController::class
+)->only(['index'])->names([
+    'index' => 'me.likes',
+]);
 
 //購入商品取得
 Route::apiResource(
