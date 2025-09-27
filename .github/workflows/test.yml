@@ -7,6 +7,11 @@ jobs:
   laravel-testing:
     runs-on: ubuntu-latest
 
+    env:
+      DB_DATABASE: ${{ secrets.DB_DATABASE || 'laravel' }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME || 'laraveluser' }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'laravel' }}
+
     steps:
       - uses: actions/checkout@v3
 
@@ -22,7 +27,7 @@ jobs:
       - name: Wait for DB
         run: |
           for i in {1..30}; do
-            docker compose exec -T php php -r 'try { new PDO("mysql:host=db;dbname=laravel", "laraveluser", "laravel"); exit(0); } catch (Exception $e) { echo "Waiting for DB...\n"; sleep(2); }'
+            docker compose exec -T php php -r "try { new PDO('mysql:host=db;dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}'); exit(0); } catch (Exception \$e) { echo 'Waiting for DB...\n'; sleep(2); }"
           done
 
       - name: Setup Laravel
@@ -33,9 +38,9 @@ jobs:
             sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env &&
             sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=db/' .env &&
             sed -i 's/# DB_PORT=3306/DB_PORT=3306/' .env &&
-            sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=laravel/' .env &&
-            sed -i 's/# DB_USERNAME=root/DB_USERNAME=laraveluser/' .env &&
-            sed -i 's/# DB_PASSWORD=/DB_PASSWORD=laravel/' .env &&
+            sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=${DB_DATABASE}/' .env &&
+            sed -i 's/# DB_USERNAME=root/DB_USERNAME=${DB_USERNAME}/' .env &&
+            sed -i 's/# DB_PASSWORD=/DB_PASSWORD=${DB_PASSWORD}/' .env &&
             chown www-data:www-data .env &&
             chmod -R 775 storage &&
             chown -R www-data:www-data storage &&
