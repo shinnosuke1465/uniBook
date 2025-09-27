@@ -4,13 +4,13 @@ use App\Platform\Presentations\Authenticate\Controllers\AuthenticateController;
 use App\Platform\Presentations\AuthenticateToken\Controllers\AuthenticateTokenController;
 use App\Platform\Presentations\Image\Controllers\ImageController;
 use App\Platform\Presentations\Textbook\Controllers\TextbookController;
+use App\Platform\Presentations\TextbookDeal\Controllers\TextbookDealController;
 use App\Platform\Presentations\User\Controllers\UserController;
 use App\Platform\Presentations\University\Controllers\UniversityController;
 use App\Platform\Presentations\Faculty\Controllers\FacultyController;
 use App\Platform\Presentations\User\Me\Controllers\GetLikedTextbooksController;
 use App\Platform\Presentations\User\Me\Controllers\GetListedTextbooksController;
 use App\Platform\Presentations\User\Me\Controllers\GetPurchasedProductsController;
-use App\Platform\Presentations\User\Me\Controllers\GetPurchasedTextbookDealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Platform\Presentations\Comment\Controllers\CommentController;
@@ -122,29 +122,32 @@ Route::apiResource(
 
 //購入商品取得
 Route::apiResource(
-    '/me/purchased_products',
+    '/me/purchased_textbooks',
     GetPurchasedProductsController::class
 )->only(['index', 'show'])->names([
-    'index' => 'me.purchased_products',
-    'show' => 'me.purchased_products.show',
+    'index' => 'me.purchased_textbooks',
+    'show' => 'me.purchased_textbooks.show',
 ])
     ->parameters([
-        'purchased_products' => 'textbookIdString',
+        'purchased_textbooks' => 'textbookIdString',
     ])
     ->whereUuid('textbookIdString');
 
 //出品商品取得
 Route::apiResource(
-    '/me/listed_products',
+    '/me/listed_textbooks',
 GetListedTextbooksController::class
 )->only(['index', 'show'])->names([
-    'index' => 'me.listed_products',
-    'show' => 'me.listed_products.show',
+    'index' => 'me.listed_textbooks',
+    'show' => 'me.listed_textbooks.show',
 ])
     ->parameters([
-        'listed_products' => 'textbookIdString',
+        'listed_textbooks' => 'textbookIdString',
     ])
     ->whereUuid('textbookIdString');
+
+Route::post('/textbooks/{textbookId}/deal/payment_intent',
+    [TextbookDealController::class, 'createPaymentIntent']);
 
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト

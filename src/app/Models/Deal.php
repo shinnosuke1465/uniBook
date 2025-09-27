@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,22 @@ use App\Models\DealEvent;
  * @property-read User $buyer
  * @property-read Textbook $textbook
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DealEvent[] $dealEvents
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Deal onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereBuyerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereSellerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereTextbookId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereDealStatus($value)
+ * @method static \Illuminate\Database\Query\Builder|Deal withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Deal withoutTrashed()
+ * @mixin Eloquent
  */
 class Deal extends Model
 {
@@ -49,6 +66,10 @@ class Deal extends Model
         'textbook_id',
         'deal_status',
     ];
+
+    public static function create(array $array)
+    {
+    }
 
     public function seller(): BelongsTo
     {

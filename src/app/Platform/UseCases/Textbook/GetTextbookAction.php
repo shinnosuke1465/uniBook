@@ -75,12 +75,12 @@ readonly class GetTextbookAction
                 $textbook->price->value,
                 $textbook->description->value,
                 $textbook->imageIdList->toArray(),
-                '', // universityName - fallback用なので空文字
-                '', // facultyName - fallback用なので空文字
+                '',
+                '',
                 $textbook->conditionType->value,
-                null, // deal
+                null,
                 [], // comments
-                false, // isLiked
+                false,
             );
         } catch (NotFoundException $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);
