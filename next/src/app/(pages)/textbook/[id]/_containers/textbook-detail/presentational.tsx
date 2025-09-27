@@ -1,0 +1,177 @@
+import type { Textbook } from "@/app/types/textbook";
+
+interface TextbookDetailPresentationProps {
+  textbook: Textbook;
+}
+
+export function TextbookDetailPresentation({
+  textbook,
+}: TextbookDetailPresentationProps) {
+  const conditionLabels = {
+    new: "新品",
+    like_new: "ほぼ新品",
+    good: "良い",
+    fair: "可",
+    poor: "難あり",
+  };
+
+  const dealStatusLabels: Record<string, string> = {
+    pending: "取引待ち",
+    in_progress: "取引中",
+    completed: "取引完了",
+    canceled: "キャンセル",
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {/* 画像セクション */}
+        <div className="space-y-4">
+          <div className="aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
+            {textbook.image_ids.length > 0 ? (
+              <div className="flex h-full items-center justify-center text-gray-400">
+                {/* 画像表示は後で実装 */}
+                <span className="text-2xl">画像</span>
+              </div>
+            ) : (
+              <div className="flex h-full items-center justify-center text-gray-400">
+                <span className="text-2xl">No Image</span>
+              </div>
+            )}
+          </div>
+          {/* サムネイル画像（複数画像がある場合） */}
+          {textbook.image_ids.length > 1 && (
+            <div className="grid grid-cols-4 gap-2">
+              {textbook.image_ids.map((imageId) => (
+                <div
+                  key={imageId}
+                  className="aspect-square overflow-hidden rounded border border-gray-200 bg-gray-100"
+                >
+                  <div className="flex h-full items-center justify-center text-xs text-gray-400">
+                    画像
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 詳細情報セクション */}
+        <div className="space-y-6">
+          {/* タイトルと価格 */}
+          <div>
+            <h1 className="mb-2 text-3xl font-bold">{textbook.name}</h1>
+            <div className="flex items-center space-x-4">
+              <span className="text-4xl font-bold text-blue-600">
+                ¥{textbook.price.toLocaleString()}
+              </span>
+              <span
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  textbook.condition_type === "new"
+                    ? "bg-green-100 text-green-800"
+                    : textbook.condition_type === "like_new"
+                      ? "bg-blue-100 text-blue-800"
+                      : textbook.condition_type === "good"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-gray-100 text-gray-800"
+                }`}
+              >
+                {conditionLabels[textbook.condition_type]}
+              </span>
+            </div>
+          </div>
+
+          {/* 大学・学部情報 */}
+          <div className="rounded-lg bg-gray-50 p-4">
+            <h2 className="mb-2 text-sm font-semibold text-gray-600">
+              出品者の所属
+            </h2>
+            <p className="text-lg">{textbook.university_name}</p>
+            <p className="text-gray-600">{textbook.faculty_name}</p>
+          </div>
+
+          {/* 説明文 */}
+          <div>
+            <h2 className="mb-2 text-lg font-semibold">商品説明</h2>
+            <p className="whitespace-pre-wrap text-gray-700">
+              {textbook.description}
+            </p>
+          </div>
+
+          {/* 取引状態 */}
+          {textbook.deal && (
+            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-orange-800">
+                  取引状況
+                </span>
+                <span className="rounded bg-orange-200 px-3 py-1 text-sm font-medium text-orange-800">
+                  {dealStatusLabels[textbook.deal.status] ||
+                    textbook.deal.status}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* アクションボタン */}
+          <div className="space-y-3">
+            {!textbook.deal ? (
+              <>
+                <button className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700">
+                  購入する
+                </button>
+                <button className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50">
+                  コメントする
+                </button>
+              </>
+            ) : (
+              <button
+                disabled
+                className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
+              >
+                現在取引中です
+              </button>
+            )}
+          </div>
+
+          {/* いいね・コメント数 */}
+          <div className="flex items-center space-x-6 border-t pt-4">
+            <button className="flex items-center space-x-2 text-gray-600 transition hover:text-red-600">
+              <span className="text-2xl">
+                {textbook.is_liked ? "❤️" : "🤍"}
+              </span>
+              <span>いいね</span>
+            </button>
+            <div className="flex items-center space-x-2 text-gray-600">
+              <span className="text-2xl">💬</span>
+              <span>{textbook.comments.length} コメント</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* コメントセクション */}
+      {textbook.comments.length > 0 && (
+        <div className="mt-12">
+          <h2 className="mb-6 text-2xl font-bold">コメント</h2>
+          <div className="space-y-4">
+            {textbook.comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="rounded-lg border border-gray-200 bg-white p-4"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="font-semibold">{comment.user_name}</span>
+                  <span className="text-sm text-gray-500">
+                    {new Date(comment.created_at).toLocaleDateString("ja-JP")}
+                  </span>
+                </div>
+                <p className="text-gray-700">{comment.content}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

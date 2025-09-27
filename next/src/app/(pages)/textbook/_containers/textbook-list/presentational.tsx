@@ -1,0 +1,118 @@
+import Link from "next/link";
+import type { Textbook } from "@/app/types/textbook";
+
+interface TextbookListPresentationProps {
+  textbooks: Textbook[];
+}
+
+export function TextbookListPresentation({
+  textbooks,
+}: TextbookListPresentationProps) {
+  if (textbooks.length === 0) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <p className="text-gray-500">教科書が見つかりませんでした</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {textbooks.map((textbook) => (
+        <TextbookCard key={textbook.id} textbook={textbook} />
+      ))}
+    </div>
+  );
+}
+
+interface TextbookCardProps {
+  textbook: Textbook;
+}
+
+function TextbookCard({ textbook }: TextbookCardProps) {
+  const conditionLabels = {
+    new: "新品",
+    like_new: "ほぼ新品",
+    good: "良い",
+    fair: "可",
+    poor: "難あり",
+  };
+
+  return (
+    <Link
+      href={`/textbook/${textbook.id}`}
+      className="block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+    >
+      {/* 画像エリア */}
+      <div className="aspect-[4/3] bg-gray-100">
+        {textbook.image_ids.length > 0 ? (
+          <div className="flex h-full items-center justify-center text-gray-400">
+            {/* 画像表示は後で実装 */}
+            <span>画像</span>
+          </div>
+        ) : (
+          <div className="flex h-full items-center justify-center text-gray-400">
+            <span>No Image</span>
+          </div>
+        )}
+      </div>
+
+      {/* コンテンツエリア */}
+      <div className="p-4">
+        <h3 className="mb-2 line-clamp-2 text-lg font-semibold">
+          {textbook.name}
+        </h3>
+
+        <div className="mb-3 space-y-1 text-sm text-gray-600">
+          <p>{textbook.university_name}</p>
+          <p>{textbook.faculty_name}</p>
+        </div>
+
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-2xl font-bold text-blue-600">
+            ¥{textbook.price.toLocaleString()}
+          </span>
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-medium ${
+              textbook.condition_type === "new"
+                ? "bg-green-100 text-green-800"
+                : textbook.condition_type === "like_new"
+                  ? "bg-blue-100 text-blue-800"
+                  : textbook.condition_type === "good"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-gray-100 text-gray-800"
+            }`}
+          >
+            {conditionLabels[textbook.condition_type]}
+          </span>
+        </div>
+
+        {/* 取引状態 */}
+        {textbook.deal && (
+          <div className="mb-2">
+            <span className="inline-block rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
+              取引中
+            </span>
+          </div>
+        )}
+
+        {/* 説明文 */}
+        <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+          {textbook.description}
+        </p>
+
+        {/* いいね・コメント */}
+        <div className="flex items-center justify-between border-t pt-3">
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <span className="flex items-center">
+              {textbook.is_liked ? "❤️" : "🤍"} いいね
+            </span>
+            <span className="flex items-center">
+              💬 {textbook.comments.length}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}

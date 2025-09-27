@@ -68,6 +68,9 @@ export default function RegisterForm({ initialUniversities, onUniversityChange }
             try {
                 const token = await register(data);
                 console.log(token);
+
+                // 会員登録成功後、教科書一覧ページへリダイレクト
+                router.push('/textbook');
             } catch (e) {
                 setError((e as Error).message);
             }
