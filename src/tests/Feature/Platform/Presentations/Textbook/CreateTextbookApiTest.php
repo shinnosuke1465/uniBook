@@ -7,6 +7,7 @@ namespace Feature\Platform\Presentations\Textbook;
 use App\Exceptions\DuplicateKeyException;
 use App\Exceptions\NotFoundException;
 use App\Platform\Domains\Faculty\FacultyId;
+use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\University\UniversityId;
 use App\Platform\Infrastructures\Image\ImageRepository;
@@ -61,7 +62,15 @@ class CreateTextbookApiTest extends TestCase
     {
         //given
         $this->prepareUserWithFacultyAndUniversity();
-        $this->authenticate();
+
+        // トークンを生成
+        $token = $this->userRepository->createToken(
+            new MailAddress(
+                new String255('test@example.com')
+            ),
+            new String255('password12345')
+        );
+
         $university = TestUniversityFactory::create(id: new UniversityId('de23bfca-fb58-4802-8eb3-270ba67815a6'), name: new String255('テスト大学'));
         $this->universityRepository->insert($university);
         $faculty = TestFacultyFactory::create(id: new FacultyId('e0d11e80-77ad-4b4c-b539-0a6118ad36bf'), name: new String255('テスト学部'), universityId: $university->id);
@@ -83,7 +92,9 @@ class CreateTextbookApiTest extends TestCase
             'image_ids' => [$image1->id->value, $image2->id->value],
         ];
 
-        $response = $this->postJson($url, $requestData);
+        $response = $this->postJson($url, $requestData, [
+            'Authorization' => 'Bearer ' . $token->token,
+        ]);
 
         $response->assertNoContent();
 

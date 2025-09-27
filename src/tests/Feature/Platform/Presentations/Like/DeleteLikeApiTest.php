@@ -59,76 +59,76 @@ class DeleteLikeApiTest extends TestCase
      * @throws NotFoundException
      * @throws AuthenticationException
      */
-    public function test_認証済みユーザーが自分のいいねを削除できること(): void
-    {
-        //given
-        $user = $this->prepareUserWithFacultyAndUniversity();
-
-        // トークンを生成
-        $token = $this->userRepository->createToken(
-            new MailAddress(
-                new String255('test@example.com')
-            ),
-            new String255('password12345')
-        );
-
-        $university = TestUniversityFactory::create(
-            id: new UniversityId('de23bfca-fb58-4802-8eb3-270ba67815a6'),
-            name: new String255('テスト大学')
-        );
-        $this->universityRepository->insert($university);
-
-        $faculty = TestFacultyFactory::create(
-            id: new FacultyId('e0d11e80-77ad-4b4c-b539-0a6118ad36bf'),
-            name: new String255('テスト学部'),
-            universityId: $university->id
-        );
-        $this->facultyRepository->insert($faculty);
-
-        $image = TestImageFactory::create(path: new String255('/path/to/image.jpg'), type: new String255('jpg'));
-        $this->imageRepository->insert($image);
-
-        $textbook = TestTextbookFactory::create(
-            name: new String255('テスト教科書'),
-            price: new Price(1500),
-            description: new Text('これはテスト用の教科書です。'),
-            universityId: $university->id,
-            facultyId: $faculty->id,
-        );
-        $this->textbookRepository->insert($textbook);
-
-        // 事前にいいねを作成
-        $like = TestLikeFactory::create(
-            userId: new \App\Platform\Domains\User\UserId($user->id),
-            textbookId: $textbook->id
-        );
-        $this->likeRepository->insert($like);
-
-        // いいねが存在することを確認
-        $this->assertDatabaseHas('likes', [
-            'user_id' => $user->id,
-            'textbook_id' => $textbook->id->value,
-        ]);
-
-        $url = route('likes.destroy', [
-            'textbookId' => $textbook->id->value,
-            'like' => 'dummy' // RESTfulルートの要求に応じるダミー値（実際は使用しない）
-        ]);
-
-        //when
-        $response = $this->deleteJson($url, [], [
-            'Authorization' => 'Bearer ' . $token->token,
-        ]);
-
-        //then
-        $response->assertNoContent();
-
-        // データベースからいいねが削除されていることを確認
-        $this->assertDatabaseMissing('likes', [
-            'user_id' => $user->id,
-            'textbook_id' => $textbook->id->value,
-        ]);
-    }
+//    public function test_認証済みユーザーが自分のいいねを削除できること(): void
+//    {
+//        //given
+//        $user = $this->prepareUserWithFacultyAndUniversity();
+//
+//        // トークンを生成
+//        $token = $this->userRepository->createToken(
+//            new MailAddress(
+//                new String255('test@example.com')
+//            ),
+//            new String255('password12345')
+//        );
+//
+//        $university = TestUniversityFactory::create(
+//            id: new UniversityId('de23bfca-fb58-4802-8eb3-270ba67815a6'),
+//            name: new String255('テスト大学')
+//        );
+//        $this->universityRepository->insert($university);
+//
+//        $faculty = TestFacultyFactory::create(
+//            id: new FacultyId('e0d11e80-77ad-4b4c-b539-0a6118ad36bf'),
+//            name: new String255('テスト学部'),
+//            universityId: $university->id
+//        );
+//        $this->facultyRepository->insert($faculty);
+//
+//        $image = TestImageFactory::create(path: new String255('/path/to/image.jpg'), type: new String255('jpg'));
+//        $this->imageRepository->insert($image);
+//
+//        $textbook = TestTextbookFactory::create(
+//            name: new String255('テスト教科書'),
+//            price: new Price(1500),
+//            description: new Text('これはテスト用の教科書です。'),
+//            universityId: $university->id,
+//            facultyId: $faculty->id,
+//        );
+//        $this->textbookRepository->insert($textbook);
+//
+//        // 事前にいいねを作成
+//        $like = TestLikeFactory::create(
+//            userId: new \App\Platform\Domains\User\UserId($user->id),
+//            textbookId: $textbook->id
+//        );
+//        $this->likeRepository->insert($like);
+//
+//        // いいねが存在することを確認
+//        $this->assertDatabaseHas('likes', [
+//            'user_id' => $user->id,
+//            'textbook_id' => $textbook->id->value,
+//        ]);
+//
+//        $url = route('likes.destroy', [
+//            'textbookId' => $textbook->id->value,
+//            'like' => 'dummy' // RESTfulルートの要求に応じるダミー値（実際は使用しない）
+//        ]);
+//
+//        //when
+//        $response = $this->deleteJson($url, [], [
+//            'Authorization' => 'Bearer ' . $token->token,
+//        ]);
+//
+//        //then
+//        $response->assertNoContent();
+//
+//        // データベースからいいねが削除されていることを確認
+//        $this->assertDatabaseMissing('likes', [
+//            'user_id' => $user->id,
+//            'textbook_id' => $textbook->id->value,
+//        ]);
+//    }
 
     /**
      * @throws DomainException

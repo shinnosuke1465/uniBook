@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Feature\Platform\Infrastructures\DealEvent;
 
 use App\Exceptions\DuplicateKeyException;
+use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Infrastructures\Deal\DealRepository;
 use App\Platform\Infrastructures\DealEvent\DealEventRepository;
@@ -22,7 +23,6 @@ use Tests\Unit\Platform\Domains\University\TestUniversityFactory;
 use Tests\Unit\Platform\Domains\User\TestUserFactory;
 use App\Platform\Domains\Deal\Seller;
 use App\Platform\Domains\Deal\Buyer;
-use App\Platform\Domains\User\MailAddress;
 
 class DealEventRepositoryTest extends TestCase
 {
