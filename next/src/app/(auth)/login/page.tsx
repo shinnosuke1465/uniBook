@@ -14,6 +14,8 @@ export default function Page(){
 
             console.log("ブラウザで確認: token =", result.token);
             console.log("ブラウザで確認: endpoint =", result.endpoint);
+
+            router.push('/textbook');
         }catch(e){
             setError((e as Error).message);
         }
