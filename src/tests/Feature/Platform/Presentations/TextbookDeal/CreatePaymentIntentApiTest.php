@@ -149,26 +149,6 @@ class CreatePaymentIntentApiTest extends TestCase
         // 教科書と取引を作成
         $textbook = $this->createTextbookWithDeal($seller->id);
 
-        // デバッグ: 作成されたTextbook IDを確認
-        dump('Created textbook ID:', $textbook->id->value);
-
-        // デバッグ: Dealが実際にデータベースに保存されているか確認
-        $dealInDb = \App\Models\Deal::where('textbook_id', $textbook->id->value)->first();
-        dump('Deal found in DB:ああああ', $dealInDb ? 'YES' : 'NO');
-        if ($dealInDb) {
-            dump('Deal data:', [
-                'id' => $dealInDb->id,
-                'textbook_id' => $dealInDb->textbook_id,
-                'seller_id' => $dealInDb->seller_id,
-                'buyer_id' => $dealInDb->buyer_id,
-                'deal_status' => $dealInDb->deal_status,
-            ]);
-        }
-
-        // デバッグ: DealRepositoryを使って検索
-        $dealFromRepo = $this->dealRepository->findByTextbookId($textbook->id);
-        dump('Deal found via Repository:', $dealFromRepo ? 'YES' : 'NO');
-
         // 購入者として認証
         $token = $this->userRepository->createToken(
             new MailAddress(new String255('buyer@example.com')),
@@ -181,9 +161,6 @@ class CreatePaymentIntentApiTest extends TestCase
         $response = $this->postJson($url, [], [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
-
-        // レスポンス内容をダンプ
-        $response->dump();
 
         // then: 成功してclient_secretが返される
         $response->assertOk()->assertJsonStructure([
@@ -232,27 +209,11 @@ class CreatePaymentIntentApiTest extends TestCase
             $dealStatus
         );
 
-        // デバッグ: Deal作成時の情報を確認
-        dump('Deal created:', [
-            'id' => $deal->id->value,
-            'seller_id' => $deal->seller->userId->value,
-            'textbook_id' => $deal->textbookId->value,
-            'deal_status' => $deal->dealStatus->value,
-        ]);
-
         try {
             $this->dealRepository->insert($deal);
-            dump('Deal insert: SUCCESS');
         } catch (\Exception $e) {
-            dump('Deal insert: ERROR', $e->getMessage());
             throw $e;
         }
-
-        // デバッグ: dealsテーブルの全データをダンプ
-        dump('All deals in DB:', \DB::table('deals')->get()->toArray());
-
-        // デバッグ: 現在のDB名をダンプ
-        dump('Current DB:', \DB::connection()->getDatabaseName());
 
         return $textbook;
     }
@@ -284,34 +245,6 @@ class CreatePaymentIntentApiTest extends TestCase
         $this->userRepository->insertWithLoginId($buyerUser, $buyerUser->mailAddress);
 
         return $buyerUser;
-    }
-
-    private function prepareIncompleteBuyerUser()
-    {
-        $incompleteUser = TestUserFactory::create(
-            name: null,
-            password: new String255('password12345'),
-            postCode: null, // 氏名なし
-            address: null, // 郵便番号なし
-            mailAddress: new MailAddress(new String255('incomplete@example.com')) // 住所なし
-        );
-
-        $university = TestUniversityFactory::create(
-            $incompleteUser->universityId,
-            new String255('不完全ユーザー大学')
-        );
-        $this->universityRepository->insert($university);
-
-        $faculty = TestFacultyFactory::create(
-            $incompleteUser->facultyId,
-            new String255('不完全ユーザー学部'),
-            $incompleteUser->universityId
-        );
-        $this->facultyRepository->insert($faculty);
-
-        $this->userRepository->insertWithLoginId($incompleteUser, $incompleteUser->mailAddress);
-
-        return $incompleteUser;
     }
 
     /**

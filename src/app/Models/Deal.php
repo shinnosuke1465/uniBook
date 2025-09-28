@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,7 +41,7 @@ use App\Models\DealEvent;
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereDealStatus($value)
  * @method static \Illuminate\Database\Query\Builder|Deal withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Deal withoutTrashed()
- * @mixin Eloquent
+ * @mixin \Eloquent
  */
 class Deal extends Model
 {
@@ -66,10 +65,6 @@ class Deal extends Model
         'textbook_id',
         'deal_status',
     ];
-
-    public static function create(array $array)
-    {
-    }
 
     public function seller(): BelongsTo
     {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Platform\Domains\Deal\Deal;
-use App\Platform\Domains\User\User;
+use App\Models\Deal;
+use App\Models\User;
 
 readonly class DealPolicy
 {
@@ -19,7 +19,7 @@ readonly class DealPolicy
     public function purchaseDeal(User $user, Deal $deal): bool
     {
         // 出品者が自分ではない場合のみアクセス可
-        return $user->id != $deal->seller->userId->value;
+        return $user->id != $deal->seller_id;
     }
 
     /**
@@ -32,7 +32,7 @@ readonly class DealPolicy
     public function cancelDeal(User $user, Deal $deal): bool
     {
         // 出品者が自分である場合のみアクセス可
-        return $user->id == $deal->seller->userId->value;
+        return $user->id == $deal->seller_id;
     }
 
     /**
@@ -45,7 +45,7 @@ readonly class DealPolicy
     public function reportDeliveryDeal(User $user, Deal $deal): bool
     {
         // 出品者が自分である場合のみアクセス可
-        return $user->id == $deal->seller->userId->value;
+        return $user->id == $deal->seller_id;
     }
 
     /**
@@ -58,6 +58,6 @@ readonly class DealPolicy
     public function reportReceiptDeal(User $user, Deal $deal): bool
     {
         // 購入者が自分である場合のみアクセス可
-        return $user->id == $deal->buyer->userId->value;
+        return $user->id == $deal->buyer_id;
     }
 }
