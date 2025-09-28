@@ -147,7 +147,8 @@ GetListedTextbooksController::class
     ->whereUuid('textbookIdString');
 
 Route::post('/textbooks/{textbookId}/deal/payment_intent',
-    [TextbookDealController::class, 'createPaymentIntent']);
+    [TextbookDealController::class, 'createPaymentIntent']
+)->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.store');
 
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト

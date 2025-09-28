@@ -15,7 +15,7 @@ readonly class PaymentIntentMockRepository implements PaymentIntentRepositoryInt
     public function createPaymentIntent(Textbook $textbook, User $buyer): PaymentIntent
     {
         // PaymentIntentをモックするために固定の値を返す
-        return (new ServicePaymentIntent())::constructFrom([
+        $servicePaymentIntent = (new ServicePaymentIntent())::constructFrom([
             'id' => 'pi_123',
             'amount' => $textbook->price->value,
             'currency' => 'jpy',
@@ -25,5 +25,7 @@ readonly class PaymentIntentMockRepository implements PaymentIntentRepositoryInt
             ],
             'client_secret' => 'pi_123_secret_123',
         ]);
+
+        return PaymentIntentFactory::create($servicePaymentIntent);
     }
 }

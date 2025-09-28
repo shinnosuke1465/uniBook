@@ -23,6 +23,6 @@ readonly class TextbookDealController
         string $textbookId
     ): array {
         $dtos = $action($request, $textbookId);
-        return createPaymentIntentResponseBuilder::toArray($dtos);
+        return CreatePaymentIntentResponseBuilder::toArray($dtos);
     }
 }
