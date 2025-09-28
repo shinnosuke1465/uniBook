@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Platform\Infrastructures\Deal;
 
+use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
 use App\Models\Deal as DealDB;
 use App\Platform\Domains\Deal\Deal;
 use App\Platform\Domains\Deal\DealId;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
+use App\Platform\Domains\Textbook\TextbookId;
 
 readonly class DealRepository implements DealRepositoryInterface
 {
@@ -27,6 +29,18 @@ readonly class DealRepository implements DealRepositoryInterface
             'textbook_id' => $deal->textbookId->value,
             'deal_status' => $deal->dealStatus->value,
         ]);
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public function findByTextbookId(TextbookId $textbookId): ?Deal
+    {
+        $dealModel = DealDB::where('textbook_id', $textbookId->value)->first();
+        if ($dealModel === null) {
+            return null;
+        }
+        return DealFactory::create($dealModel);
     }
 
     private function hasDuplicate(DealId $dealId): bool

@@ -33,10 +33,7 @@ readonly class UniversityRepository implements UniversityRepositoryInterface
         if (!$universityDB) {
             return null;
         }
-        return new University(
-            new UniversityId($universityDB->id),
-            new String255($universityDB->name)
-        );
+        return UniversityFactory::create($universityDB);
     }
 
     /**
@@ -49,10 +46,7 @@ readonly class UniversityRepository implements UniversityRepositoryInterface
             return null;
         }
 
-        return new University(
-            new UniversityId($universityDB->id),
-            new String255($universityDB->name)
-        );
+        return UniversityFactory::create($universityDB);
     }
 
     /**

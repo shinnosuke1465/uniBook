@@ -123,7 +123,7 @@ class GetPurchasedProductsApiTest extends TestCase
         $this->dealRepository->insert($listingDeal);
 
         // when
-        $url = route('me.purchased_products');
+        $url = route('me.purchased_textbooks');
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
@@ -199,7 +199,7 @@ class GetPurchasedProductsApiTest extends TestCase
         );
 
         // when
-        $url = route('me.purchased_products');
+        $url = route('me.purchased_textbooks');
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);

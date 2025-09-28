@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Faculty;
 use App\Platform\Domains\Comment\CommentRepositoryInterface;
 use App\Platform\Domains\Like\LikeRepositoryInterface;
+use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
 use App\Platform\Infrastructures\Comment\CommentRepository;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
@@ -18,10 +19,13 @@ use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\Image\ImageRepository;
 use App\Platform\Infrastructures\Like\LikeRepository;
+use App\Platform\Infrastructures\StripeService\PaymentIntentMockRepository;
+use App\Platform\Infrastructures\StripeService\PaymentIntentRepository;
 use App\Platform\Infrastructures\Textbook\TextbookRepository;
 use App\Platform\Infrastructures\University\UniversityRepository;
 use App\Platform\Infrastructures\User\UserRepository;
 use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use App\Services\App\AppLogger;
 use App\Packages\Infrastructures\Shared\Transaction\Transaction;
@@ -47,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
         // TransactionInterfaceのバインド
         $this->app->bind(
             TransactionInterface::class,
-            Transaction::class // 実装クラス名に合わせて修正
+            Transaction::class
         );
 
         $this->app->bind(
@@ -89,6 +93,19 @@ class AppServiceProvider extends ServiceProvider
             LikeRepositoryInterface::class,
             LikeRepository::class
         );
+
+        // envがtestingか、services.stripe.secretが設定されていない場合はStripeServiceのモックを返す
+        if (app()->environment('testing') || empty(config('services.stripe.secret'))) {
+            $this->app->bind(
+                PaymentIntentRepositoryInterface::class,
+                PaymentIntentMockRepository::class
+            );
+        } else {
+            $this->app->bind(
+                PaymentIntentRepositoryInterface::class,
+                PaymentIntentRepository::class
+            );
+        }
     }
 
     /**
@@ -96,6 +113,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        JsonResource::withoutWrapping();
     }
 }

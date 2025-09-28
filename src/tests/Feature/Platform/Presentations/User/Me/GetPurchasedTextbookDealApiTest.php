@@ -93,7 +93,7 @@ class GetPurchasedTextbookDealApiTest extends TestCase
         $this->dealEventRepository->insert($dealEvent);
 
         // when
-        $url = route('me.purchased_products.show', ['textbookIdString' => $textbook->id->value]);
+        $url = route('me.purchased_textbooks.show', ['textbookIdString' => $textbook->id->value]);
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
@@ -195,7 +195,7 @@ class GetPurchasedTextbookDealApiTest extends TestCase
         $this->dealRepository->insert($completedDeal);
 
         // when
-        $url = route('me.purchased_products.show', ['textbookIdString' => $textbook->id->value]);
+        $url = route('me.purchased_textbooks.show', ['textbookIdString' => $textbook->id->value]);
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
@@ -218,7 +218,7 @@ class GetPurchasedTextbookDealApiTest extends TestCase
 
         // when
         $nonExistentId = '00000000-0000-0000-0000-000000000000';
-        $url = route('me.purchased_products.show', ['textbookIdString' => $nonExistentId]);
+        $url = route('me.purchased_textbooks.show', ['textbookIdString' => $nonExistentId]);
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);

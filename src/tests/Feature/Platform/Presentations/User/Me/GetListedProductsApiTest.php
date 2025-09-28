@@ -117,7 +117,7 @@ class GetListedProductsApiTest extends TestCase
         $this->dealEventRepository->insert($dealEvent2);
 
         // when
-        $url = route('me.listed_products');
+        $url = route('me.listed_textbooks');
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
@@ -196,7 +196,7 @@ class GetListedProductsApiTest extends TestCase
         );
 
         // when
-        $url = route('me.listed_products');
+        $url = route('me.listed_textbooks');
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
@@ -241,7 +241,7 @@ class GetListedProductsApiTest extends TestCase
         $this->dealRepository->insert($listingDeal);
 
         // when
-        $url = route('me.listed_products');
+        $url = route('me.listed_textbooks');
         $response = $this->getJson($url, [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
