@@ -80,6 +80,27 @@ readonly class DealRoomRepository implements DealRoomRepositoryInterface
         )->all();
     }
 
+    /**
+     * ユーザーが参加している取引ルームをリレーション付きで取得
+     * @param UserId $userId
+     * @return array<DealRoomDB>
+     */
+    public function findByUserIdWithRelations(UserId $userId): array
+    {
+        return DealRoomDB::query()
+            ->with([
+                'deal.seller',
+                'deal.textbook.imageIds',
+                'users'
+            ])
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('users.id', $userId->value);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->all();
+    }
+
     private function hasDuplicate(DealRoomId $dealRoomId): bool
     {
         return DealRoomDB::find($dealRoomId->value) !== null;

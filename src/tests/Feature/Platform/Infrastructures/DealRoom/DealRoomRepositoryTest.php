@@ -237,6 +237,133 @@ class DealRoomRepositoryTest extends TestCase
     }
 
     /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_findByUserIdWithRelationsでリレーション付き取引ルームを取得できること(): void
+    {
+        // given
+        $users = $this->createTestUsers();
+        $textbook = $this->createTestTextbook($users['seller']);
+        $deal = $this->createTestDeal($users['seller'], $users['buyer'], $textbook);
+
+        $userIds = new UserIdList([$users['seller']->id, $users['buyer']->id]);
+        $dealRoom = TestDealRoomFactory::create(
+            dealId: $deal->id,
+            userIds: $userIds
+        );
+        $this->dealRoomRepository->insert($dealRoom);
+
+        // when
+        $result = $this->dealRoomRepository->findByUserIdWithRelations($users['seller']->id);
+
+        // then
+        $this->assertCount(1, $result);
+        $this->assertEquals($dealRoom->id->value, $result[0]->id);
+
+        // リレーションのチェック
+        $this->assertNotNull($result[0]->deal);
+        $this->assertEquals($deal->id->value, $result[0]->deal->id);
+
+        // Seller情報のチェック
+        $this->assertNotNull($result[0]->deal->seller);
+        $this->assertEquals($users['seller']->id->value, $result[0]->deal->seller->id);
+
+        // Textbook情報のチェック
+        $this->assertNotNull($result[0]->deal->textbook);
+        $this->assertEquals($textbook->id->value, $result[0]->deal->textbook->id);
+
+        // Users情報のチェック
+        $this->assertCount(2, $result[0]->users);
+    }
+
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_findByUserIdWithRelationsで複数の取引ルームを作成日時の降順で取得できること(): void
+    {
+        // given
+        $users = $this->createTestUsers();
+
+        // 複数の取引ルームを作成
+        $textbook1 = $this->createTestTextbook($users['seller']);
+        $deal1 = $this->createTestDeal($users['seller'], $users['buyer'], $textbook1);
+        $userIds = new UserIdList([$users['seller']->id, $users['buyer']->id]);
+        $dealRoom1 = TestDealRoomFactory::create(dealId: $deal1->id, userIds: $userIds);
+        $this->dealRoomRepository->insert($dealRoom1);
+
+        // 2秒待機して作成日時に差をつける
+        sleep(1);
+
+        $textbook2 = TestTextbookFactory::create(
+            universityId: $users['seller']->universityId,
+            facultyId: $users['seller']->facultyId
+        );
+        $this->textbookRepository->insert($textbook2);
+        $deal2 = TestDealFactory::create(
+            seller: new Seller($users['seller']->id),
+            buyer: new Buyer($users['buyer']->id),
+            textbookId: $textbook2->id,
+            dealStatus: DealStatus::Purchased
+        );
+        $this->dealRepository->insert($deal2);
+        $dealRoom2 = TestDealRoomFactory::create(dealId: $deal2->id, userIds: $userIds);
+        $this->dealRoomRepository->insert($dealRoom2);
+
+        // when
+        $result = $this->dealRoomRepository->findByUserIdWithRelations($users['seller']->id);
+
+        // then
+        $this->assertCount(2, $result);
+        // 新しい方が最初に来ることを確認（降順）
+        $this->assertEquals($dealRoom2->id->value, $result[0]->id);
+        $this->assertEquals($dealRoom1->id->value, $result[1]->id);
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public function test_findByUserIdWithRelationsで参加していない取引ルームは取得されないこと(): void
+    {
+        // given
+        // 3人のユーザーを作成
+        $seller = TestUserFactory::create(mailAddress: new MailAddress(new String255('seller_not_member@test.com')));
+        $sellerUniversity = TestUniversityFactory::create($seller->universityId, new String255('売り手大学3'));
+        $this->universityRepository->insert($sellerUniversity);
+        $sellerFaculty = TestFacultyFactory::create($seller->facultyId, new String255('売り手学部3'), $seller->universityId);
+        $this->facultyRepository->insert($sellerFaculty);
+        $this->userRepository->insertWithLoginId($seller, $seller->mailAddress);
+
+        $buyer = TestUserFactory::create(mailAddress: new MailAddress(new String255('buyer_member@test.com')));
+        $buyerUniversity = TestUniversityFactory::create($buyer->universityId, new String255('買い手大学3'));
+        $this->universityRepository->insert($buyerUniversity);
+        $buyerFaculty = TestFacultyFactory::create($buyer->facultyId, new String255('買い手学部3'), $buyer->universityId);
+        $this->facultyRepository->insert($buyerFaculty);
+        $this->userRepository->insertWithLoginId($buyer, $buyer->mailAddress);
+
+        $otherUser = TestUserFactory::create(mailAddress: new MailAddress(new String255('other_user@test.com')));
+        $otherUniversity = TestUniversityFactory::create($otherUser->universityId, new String255('その他大学'));
+        $this->universityRepository->insert($otherUniversity);
+        $otherFaculty = TestFacultyFactory::create($otherUser->facultyId, new String255('その他学部'), $otherUser->universityId);
+        $this->facultyRepository->insert($otherFaculty);
+        $this->userRepository->insertWithLoginId($otherUser, $otherUser->mailAddress);
+
+        // sellerとbuyerでDealRoomを作成
+        $textbook = $this->createTestTextbook($seller);
+        $deal = $this->createTestDeal($seller, $buyer, $textbook);
+        $userIds = new UserIdList([$seller->id, $buyer->id]);
+        $dealRoom = TestDealRoomFactory::create(dealId: $deal->id, userIds: $userIds);
+        $this->dealRoomRepository->insert($dealRoom);
+
+        // when - 参加していないotherUserで検索
+        $result = $this->dealRoomRepository->findByUserIdWithRelations($otherUser->id);
+
+        // then
+        $this->assertCount(0, $result);
+    }
+
+    /**
      * テスト用のDealデータを作成
      */
     private function createTestDeal($sellerUser, $buyerUser, $textbook)
