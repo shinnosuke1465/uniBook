@@ -37,7 +37,7 @@ readonly class DealRoomRepository implements DealRoomRepositoryInterface
         foreach ($dealRoom->userIds->toArray() as $userId) {
             $dealRoomUserData[] = [
                 'deal_room_id' => $dealRoom->id->value,
-                'user_id' => $userId->value,
+                'user_id' => $userId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
