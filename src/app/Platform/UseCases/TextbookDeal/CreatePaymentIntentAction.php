@@ -74,31 +74,16 @@ readonly class CreatePaymentIntentAction
 
             //購入者の氏名、郵便番号、住所が未登録の場合は購入できない
             if (empty($buyer->name) || empty($buyer->postCode) || empty($buyer->address)) {
-                AppLog::error(__METHOD__, [
-                    'error' => 'Buyer information incomplete',
-                    'name' => $buyer->name?->value ?? 'null',
-                    'postCode' => $buyer->postCode?->value ?? 'null',
-                    'address' => $buyer->address?->value ?? 'null',
-                ]);
                 throw new AuthorizationException();
             }
 
             //出品者が購入しようとした場合は認可エラー
             if ($deal->seller->userId->value === $buyer->id->value) {
-                AppLog::error(__METHOD__, [
-                    'error' => 'Seller trying to buy own product',
-                    'seller_id' => $deal->seller->userId->value,
-                    'buyer_id' => $buyer->id->value,
-                ]);
                 throw new AuthorizationException();
             }
 
             //取引ステータスが出品中以外の場合は認可エラー
             if (!in_array($deal->dealStatus, [DealStatus::Listing])) {
-                AppLog::error(__METHOD__, [
-                    'error' => 'Deal status not listing',
-                    'deal_status' => $deal->dealStatus->value,
-                ]);
                 throw new AuthorizationException();
             }
 
