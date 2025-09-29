@@ -1,25 +1,24 @@
+"use client";
+
+import { useState } from "react";
 import type { Textbook } from "@/app/types/textbook";
 
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
+  children?: React.ReactNode;
 }
 
 export function TextbookDetailPresentation({
   textbook,
+  children,
 }: TextbookDetailPresentationProps) {
+  const [showPayment, setShowPayment] = useState(false);
   const conditionLabels = {
     new: "新品",
     like_new: "ほぼ新品",
     good: "良い",
     fair: "可",
     poor: "難あり",
-  };
-
-  const dealStatusLabels: Record<string, string> = {
-    pending: "取引待ち",
-    in_progress: "取引中",
-    completed: "取引完了",
-    canceled: "キャンセル",
   };
 
   return (
@@ -98,39 +97,59 @@ export function TextbookDetailPresentation({
             </p>
           </div>
 
-          {/* 取引状態 */}
+          {/* 出品者情報 */}
           {textbook.deal && (
-            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-orange-800">
-                  取引状況
-                </span>
-                <span className="rounded bg-orange-200 px-3 py-1 text-sm font-medium text-orange-800">
-                  {dealStatusLabels[textbook.deal.status] ||
-                    textbook.deal.status}
-                </span>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <h2 className="mb-3 text-sm font-semibold text-gray-600">
+                出品者情報
+              </h2>
+              <div className="flex items-center space-x-3">
+                {textbook.deal.seller_info.profile_image_url ? (
+                  <img
+                    src={textbook.deal.seller_info.profile_image_url}
+                    alt={textbook.deal.seller_info.nickname}
+                    className="h-12 w-12 rounded-full"
+                  />
+                ) : (
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-300">
+                    <span className="text-lg">👤</span>
+                  </div>
+                )}
+                <div>
+                  <p className="font-semibold">{textbook.deal.seller_info.nickname}</p>
+                  {!textbook.deal.is_purchasable && (
+                    <span className="text-xs text-red-600">現在取引中</span>
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {/* アクションボタン */}
           <div className="space-y-3">
-            {!textbook.deal ? (
+            {textbook.deal?.is_purchasable ? (
               <>
-                <button className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700">
+                <button
+                  onClick={() => setShowPayment(true)}
+                  className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700"
+                >
                   購入する
                 </button>
                 <button className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50">
                   コメントする
                 </button>
               </>
-            ) : (
+            ) : textbook.deal ? (
               <button
                 disabled
                 className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
               >
                 現在取引中です
               </button>
+            ) : (
+              <div className="text-center text-gray-500">
+                商品情報を読み込んでいます...
+              </div>
             )}
           </div>
 
@@ -161,15 +180,36 @@ export function TextbookDetailPresentation({
                 className="rounded-lg border border-gray-200 bg-white p-4"
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="font-semibold">{comment.user_name}</span>
+                  <div className="flex items-center space-x-2">
+                    {comment.user.profile_image_url ? (
+                      <img
+                        src={comment.user.profile_image_url}
+                        alt={comment.user.name}
+                        className="h-8 w-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
+                        <span className="text-xs">👤</span>
+                      </div>
+                    )}
+                    <span className="font-semibold">{comment.user.name}</span>
+                  </div>
                   <span className="text-sm text-gray-500">
                     {new Date(comment.created_at).toLocaleDateString("ja-JP")}
                   </span>
                 </div>
-                <p className="text-gray-700">{comment.content}</p>
+                <p className="text-gray-700">{comment.text}</p>
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* 支払い画面セクション */}
+      {showPayment && (
+        <div className="mt-12">
+          <h2 className="mb-6 text-2xl font-bold">支払い情報入力</h2>
+          {children}
         </div>
       )}
     </div>
