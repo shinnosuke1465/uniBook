@@ -1,18 +1,27 @@
+export interface SellerInfo {
+  id: string;
+  nickname: string;
+  profile_image_url: string | null;
+}
+
 export interface Deal {
   id: string;
-  status: string;
-  buyer_id: string;
-  seller_id: string;
-  created_at: string;
-  updated_at: string;
+  is_purchasable: boolean;
+  seller_info: SellerInfo;
+  user: any;
+}
+
+export interface CommentUser {
+  id: string;
+  name: string;
+  profile_image_url: string | null;
 }
 
 export interface Comment {
   id: string;
-  content: string;
-  user_id: string;
-  user_name: string;
+  text: string;
   created_at: string;
+  user: CommentUser;
 }
 
 export interface Textbook {
