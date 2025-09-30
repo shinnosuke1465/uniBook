@@ -9,4 +9,6 @@ interface DealRepositoryInterface
     public function insert(Deal $deal): void;
 
     public function findByTextbookId(TextbookId $textbookId): ?Deal;
+
+    public function update(Deal $deal): void;
 }

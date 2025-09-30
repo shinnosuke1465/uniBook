@@ -31,4 +31,17 @@ readonly class Deal
             $dealStatus,
         );
     }
+
+    public function update(
+        ?Buyer $buyer,
+        DealStatus $dealStatus
+    ): self{
+        return new self(
+            $this->id,
+            $this->seller,
+            $buyer,
+            $this->textbookId,
+            $dealStatus
+        );
+    }
 }

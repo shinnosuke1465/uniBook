@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Platform\Domains\PaymentIntent;
 
-use App\Platform\Domains\Shared\String\String255;
 
 readonly class PaymentIntent
 {
@@ -15,21 +14,6 @@ readonly class PaymentIntent
         public PaymentCurrency $currency,
         public PaymentStatus $status,
     ) {
-    }
-
-    public static function create(
-        ClientSecret $clientSecret,
-        PaymentAmount $amount,
-        PaymentCurrency $currency,
-        PaymentStatus $status,
-    ): self {
-        return new self(
-            new PaymentIntentId(),
-            $clientSecret,
-            $amount,
-            $currency,
-            $status,
-        );
     }
 
     public function getClientSecret(): string

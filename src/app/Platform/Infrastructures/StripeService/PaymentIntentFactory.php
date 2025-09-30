@@ -22,7 +22,7 @@ class PaymentIntentFactory
     public static function create(StripePaymentIntent $stripePaymentIntent): PaymentIntent
     {
         return new PaymentIntent(
-            new PaymentIntentId(),
+            new PaymentIntentId($stripePaymentIntent->id),
             new ClientSecret($stripePaymentIntent->client_secret),
             new PaymentAmount($stripePaymentIntent->amount),
             new PaymentCurrency($stripePaymentIntent->currency),

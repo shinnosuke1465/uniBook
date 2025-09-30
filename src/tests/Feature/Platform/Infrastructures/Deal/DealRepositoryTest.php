@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace Feature\Platform\Infrastructures\Deal;
 
+use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Exceptions\NotFoundException;
+use App\Platform\Domains\Deal\Deal;
+use App\Platform\Domains\Deal\DealId;
+use App\Models\Deal as DealDB;
+use App\Platform\Domains\Deal\DealStatus;
 use App\Platform\Domains\Shared\String\String255;
+use App\Platform\Domains\Textbook\TextbookId;
+use App\Platform\Domains\User\UserId;
 use App\Platform\Infrastructures\Deal\DealRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\Textbook\TextbookRepository;
@@ -21,10 +29,11 @@ use Tests\Unit\Platform\Domains\User\TestUserFactory;
 use App\Platform\Domains\Deal\Seller;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Shared\MailAddress\MailAddress;
+use Tests\Feature\Api\ApiPreLoginTrait;
 
 class DealRepositoryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, apiPreLoginTrait;
 
     private DealRepository $dealRepository;
     private UserRepository $userRepository;
@@ -131,5 +140,57 @@ class DealRepositoryTest extends TestCase
         $this->expectException(DuplicateKeyException::class);
         $this->expectExceptionMessage('取引が重複しています。');
         $this->dealRepository->insert($inputDeal2);
+    }
+
+    /**
+     * @throws DuplicateKeyException
+     * @throws DomainException
+     * @throws NotFoundException
+     */
+    public function test_updateでdealを更新できること(): void
+    {
+        // given: 既存のDealDBレコードを作成
+        // seller用のユーザーを作成
+        $sellerUser = TestUserFactory::create(mailAddress: new MailAddress(new String255('seller2@test.com')));
+        $sellerUniversity = TestUniversityFactory::create($sellerUser->universityId, new String255('売り手大学2'));
+        $this->universityRepository->insert($sellerUniversity);
+        $sellerFaculty = TestFacultyFactory::create($sellerUser->facultyId, new String255('売り手学部2'), $sellerUser->universityId);
+        $this->facultyRepository->insert($sellerFaculty);
+        $this->userRepository->insertWithLoginId($sellerUser, $sellerUser->mailAddress);
+
+        // buyer用のユーザーを作成
+        $buyerUser = TestUserFactory::create(mailAddress: new MailAddress(new String255('buyer2@test.com')));
+        $buyerUniversity = TestUniversityFactory::create($buyerUser->universityId, new String255('買い手大学2'));
+        $this->universityRepository->insert($buyerUniversity);
+        $buyerFaculty = TestFacultyFactory::create($buyerUser->facultyId, new String255('買い手学部2'), $buyerUser->universityId);
+        $this->facultyRepository->insert($buyerFaculty);
+        $this->userRepository->insertWithLoginId($buyerUser, $buyerUser->mailAddress);
+
+        // textbook用のデータを作成
+        $textbook = TestTextbookFactory::create(
+            universityId: $sellerUser->universityId,
+            facultyId: $sellerUser->facultyId
+        );
+        $this->textbookRepository->insert($textbook);
+
+        $inputDeal1 = TestDealFactory::create(
+            seller: new Seller($sellerUser->id),
+            buyer: new Buyer($buyerUser->id),
+            textbookId: $textbook->id
+        );
+        $this->dealRepository->insert($inputDeal1);
+
+        $deal = $inputDeal1->update(
+            new Buyer($buyerUser->id),
+            DealStatus::create('Purchased'),
+        );
+
+        // when: updateを実行
+        $this->dealRepository->update($deal);
+
+        // then: DBの内容が更新されていること
+        $updated = DealDB::find($inputDeal1->id->value);
+        $this->assertEquals($buyerUser->id->value, $updated->buyer_id);
+        $this->assertEquals('Purchased', $updated->deal_status);
     }
 }

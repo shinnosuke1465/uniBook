@@ -30,14 +30,8 @@ readonly class DealRoom
     public static function create(
         DealId $dealId,
         UserIdList $userIds,
-        DealStatus $textbookDealStatus,
     ): self {
-        // ビジネスルール1: textbookが出品中（Listing or Cancelled or Purchased）でないとDealRoom作成不可
-        if (!self::isTextbookAvailableForDealRoom($textbookDealStatus)) {
-            throw new DomainException('教科書が購入済みでないため、取引ルームを作成できません。');
-        }
-
-        // ビジネスルール2: チャットルームにはユーザーが二人必要
+        // ビジネスルール: チャットルームにはユーザーが二人必要
         if (!self::hasRequiredUsers($userIds)) {
             throw new DomainException('取引ルームには2人のユーザーが必要です。');
         }
@@ -57,17 +51,6 @@ readonly class DealRoom
     public function getUserIds(): array
     {
         return $this->userIds->toStringArray();
-    }
-
-    /**
-     * 教科書が取引ルーム作成可能な状態かチェック
-     *
-     * @param DealStatus $dealStatus
-     * @return bool
-     */
-    private static function isTextbookAvailableForDealRoom(DealStatus $dealStatus): bool
-    {
-        return $dealStatus === DealStatus::Purchased;
     }
 
     /**

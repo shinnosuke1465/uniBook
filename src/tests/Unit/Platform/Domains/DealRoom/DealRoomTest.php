@@ -46,13 +46,11 @@ class DealRoomTest extends TestCase
         // given
         $dealId = new DealId();
         $userIds = new UserIdList([new UserId(), new UserId()]);
-        $dealStatus = DealStatus::Purchased;
 
         // when
         $actualDealRoom = DealRoom::create(
             dealId: $dealId,
             userIds: $userIds,
-            textbookDealStatus: $dealStatus,
         );
 
         // then
@@ -85,34 +83,11 @@ class DealRoomTest extends TestCase
     /**
      * @throws DomainException
      */
-    public function test_購入済み以外の状態では取引ルームが作成できないこと(): void
-    {
-        // given
-        $dealId = new DealId();
-        $userIds = new UserIdList([new UserId(), new UserId()]);
-        $dealStatus = DealStatus::Listing; // 購入済み以外
-
-        // then
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('教科書が購入済みでないため、取引ルームを作成できません。');
-
-        // when
-        DealRoom::create(
-            dealId: $dealId,
-            userIds: $userIds,
-            textbookDealStatus: $dealStatus,
-        );
-    }
-
-    /**
-     * @throws DomainException
-     */
     public function test_ユーザーが1人の場合は取引ルームが作成できないこと(): void
     {
         // given
         $dealId = new DealId();
         $userIds = new UserIdList([new UserId()]); // 1人のみ
-        $dealStatus = DealStatus::Purchased;
 
         // then
         $this->expectException(DomainException::class);
@@ -122,7 +97,6 @@ class DealRoomTest extends TestCase
         DealRoom::create(
             dealId: $dealId,
             userIds: $userIds,
-            textbookDealStatus: $dealStatus,
         );
     }
 
@@ -134,7 +108,6 @@ class DealRoomTest extends TestCase
         // given
         $dealId = new DealId();
         $userIds = new UserIdList([new UserId(), new UserId(), new UserId()]); // 3人
-        $dealStatus = DealStatus::Purchased;
 
         // then
         $this->expectException(DomainException::class);
@@ -144,30 +117,6 @@ class DealRoomTest extends TestCase
         DealRoom::create(
             dealId: $dealId,
             userIds: $userIds,
-            textbookDealStatus: $dealStatus,
-        );
-    }
-
-    /**
-     * @dataProvider invalidDealStatusProvider
-     *
-     * @throws DomainException
-     */
-    public function test_無効な取引状態では取引ルームが作成できないこと(DealStatus $invalidStatus): void
-    {
-        // given
-        $dealId = new DealId();
-        $userIds = new UserIdList([new UserId(), new UserId()]);
-
-        // then
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('教科書が購入済みでないため、取引ルームを作成できません。');
-
-        // when
-        DealRoom::create(
-            dealId: $dealId,
-            userIds: $userIds,
-            textbookDealStatus: $invalidStatus,
         );
     }
 

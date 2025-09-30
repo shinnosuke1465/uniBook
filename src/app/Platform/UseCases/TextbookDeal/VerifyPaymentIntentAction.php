@@ -9,38 +9,49 @@ use App\Exceptions\NotFoundException;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Deal\DealStatus;
+use App\Platform\Domains\DealEvent\ActorType;
+use App\Platform\Domains\DealEvent\DealEvent;
+use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
+use App\Platform\Domains\DealEvent\EventType;
+use App\Platform\Domains\DealRoom\DealRoom;
+use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
 use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
 use App\Platform\Domains\Textbook\TextbookId;
-use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
+use App\Platform\Domains\User\UserIdList;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
-use App\Platform\UseCases\TextbookDeal\Dtos\PaymentIntentDto;
+use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
 use AppLog;
 use Illuminate\Auth\Access\AuthorizationException;
 
-readonly class CreatePaymentIntentAction
+readonly class VerifyPaymentIntentAction
 {
     public function __construct(
-        private UserRepositoryInterface $userRepository,
+        private TransactionInterface $transaction,
         private DealRepositoryInterface $dealRepository,
+        private DealEventRepositoryInterface $dealEventRepository,
+        private UserRepositoryInterface $userRepository,
+        private DealRoomRepositoryInterface $dealRoomRepository,
         private PaymentIntentRepositoryInterface $paymentIntentRepository,
-        private TextbookRepositoryInterface $textbookRepository,
     ) {
     }
+
     /**
      * @throws DomainException
      * @throws NotFoundException
      * @throws AuthorizationException
      */
     public function __invoke(
-        CreatePaymentIntentActionValuesInterface $values,
+        VerifyPaymentIntentActionValuesInterface $values,
         string $textbookId,
-    ): PaymentIntentDto {
+    ): void {
         AppLog::start(__METHOD__);
         $textbookId = new TextbookId($textbookId);
+        $paymentIntentId = $values->getPaymentIntentId();
 
         $requestParams = [
             'textbook_id' => $textbookId->value,
+            'payment_intent_id' => $paymentIntentId->value,
         ];
 
         try {
@@ -72,15 +83,47 @@ readonly class CreatePaymentIntentAction
             //認可処理
             $this->validateDealAndBuyer($buyer, $deal);
 
-            //教科書を取得
-            $textbook = $this->textbookRepository->findById($textbookId);
-            if ($textbook === null) {
-                throw new NotFoundException('教科書が見つかりません。');
+            //paymentIntentのチェック
+            if (!$this->paymentIntentRepository->verifyPaymentIntent($paymentIntentId)) {
+                throw new AuthorizationException('PaymentIntentの検証に失敗しました。');
             }
 
-            $paymentIntent = $this->paymentIntentRepository->createPaymentIntent($textbook, $buyer);
+            $updateDeal = $deal->update(
+                new Buyer($buyer->id),
+                DealStatus::create('Purchased'),
+            );
 
-            return PaymentIntentDto::create($paymentIntent);
+            $dealEvent = DealEvent::create(
+                $authenticatedUser->getUserId(),
+                $deal->id,
+                ActorType::create('buyer'),
+                EventType::create('Purchase')
+            );
+
+            // 参加ユーザーIDリスト
+            $userIds = new UserIdList([
+                $deal->seller->userId,
+                $buyer->id,
+            ]);
+
+            $dealRoom = DealRoom::create(
+                $deal->id,
+                $userIds,
+            );
+
+
+            $this->transaction->begin();
+            //取引の購入者のuseridを挿入
+            //取引のstatusが出品中から購入済みに変更
+            $this->dealRepository->update($updateDeal);
+
+            //DealEventにbuyerが購入した履歴を追加
+            $this->dealEventRepository->insert($dealEvent);
+
+            //取引ルーム作成
+            $this->dealRoomRepository->insert($dealRoom);
+
+            $this->transaction->commit();
 
         } catch (NotFoundException $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);

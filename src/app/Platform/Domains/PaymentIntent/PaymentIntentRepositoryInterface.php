@@ -10,4 +10,6 @@ use App\Platform\Domains\PaymentIntent\PaymentIntent;
 interface PaymentIntentRepositoryInterface
 {
     public function createPaymentIntent(Textbook $textbook, User $buyer): PaymentIntent;
+
+    public function verifyPaymentIntent(PaymentIntentId $paymentIntentId): bool;
 }
