@@ -9,9 +9,11 @@ use App\Exceptions\NotFoundException;
 use App\Platform\Presentations\TextbookDeal\Requests\CancelRequest;
 use App\Platform\Presentations\TextbookDeal\Requests\CreatePaymentIntentRequest;
 use App\Platform\Presentations\TextbookDeal\Requests\ReportDeliveryRequest;
+use App\Platform\Presentations\TextbookDeal\Requests\ReportReceiptRequest;
 use App\Platform\Presentations\TextbookDeal\Requests\VerifyPaymentIntentRequest;
 use App\Platform\UseCases\TextbookDeal\CreatePaymentIntentAction;
 use App\Platform\UseCases\TextbookDeal\ReportDeliveryAction;
+use App\Platform\UseCases\TextbookDeal\ReportReceiptAction;
 use App\Platform\UseCases\TextbookDeal\VerifyPaymentIntentAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Response;
@@ -72,6 +74,18 @@ readonly class TextbookDealController
     public function reportDelivery(
         ReportDeliveryRequest $request,
         ReportDeliveryAction $action,
+        string $textbookId
+    ): Response {
+        $action($request, $textbookId);
+        return response()->noContent();
+    }
+
+    /**
+     * 受取報告API
+     */
+    public function reportReceipt(
+        ReportReceiptRequest $request,
+        ReportReceiptAction $action,
         string $textbookId
     ): Response {
         $action($request, $textbookId);
