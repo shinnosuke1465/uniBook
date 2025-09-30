@@ -9,7 +9,7 @@ use App\Exceptions\NotFoundException;
 use App\Platform\Presentations\DealRoom\Requests\GetDealRoomsRequest;
 use App\Platform\Presentations\DealRoom\Requests\GetDealRoomRequest;
 use App\Platform\UseCases\DealRoom\GetDealRoomsAction;
-use App\Platform\UseCases\DealRoom\GetDealRoomAction;
+//use App\Platform\UseCases\DealRoom\GetDealRoomAction;
 
 readonly class DealRoomController
 {

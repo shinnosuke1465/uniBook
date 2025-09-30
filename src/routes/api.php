@@ -155,6 +155,18 @@ Route::apiResource(
     'index' => 'dealrooms.index',
 ]);
 
+//取引メッセージ
+Route::apiResource(
+    '/me/dealrooms/{dealRoomId}/messages',
+    DealRoomController::class
+)->only(['store'])->names([
+    'store' => 'dealmessages.store',
+])
+->parameters([
+        'dealrooms' => 'dealRoomId',
+    ])
+    ->whereNumber('dealRoomId');
+
 Route::post('/textbooks/{textbookId}/deal/payment_intent',
     [TextbookDealController::class, 'createPaymentIntent']
 )->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.store');
