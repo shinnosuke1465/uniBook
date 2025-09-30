@@ -110,11 +110,18 @@ readonly class DealRoomRepository implements DealRoomRepositoryInterface
     {
         return DealRoomDB::query()
             ->with([
+                'deal',
+                'deal.seller',
                 'deal.seller.image',
+                'deal.buyer',
                 'deal.buyer.image',
+                'deal.textbook',
                 'deal.textbook.imageIds',
                 'deal.dealEvents',
+                'users',
                 'users.image',
+                'dealMessages',
+                'dealMessages.user',
                 'dealMessages.user.image'
             ])
             ->where('id', $dealRoomId->value)

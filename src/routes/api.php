@@ -148,13 +148,18 @@ GetListedTextbooksController::class
     ])
     ->whereUuid('textbookIdString');
 
-//取引ルーム一覧
+//取引ルーム一覧・詳細
 Route::apiResource(
     '/me/dealrooms',
     DealRoomController::class
-)->only(['index'])->names([
+)->only(['index', 'show'])->names([
     'index' => 'dealrooms.index',
-]);
+    'show' => 'dealrooms.show',
+])
+    ->parameters([
+        'dealrooms' => 'dealRoomId',
+    ])
+    ->whereUuid('dealRoomId');
 
 //取引メッセージ
 Route::apiResource(
