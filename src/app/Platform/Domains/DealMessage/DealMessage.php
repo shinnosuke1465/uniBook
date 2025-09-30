@@ -6,26 +6,25 @@ namespace App\Platform\Domains\DealMessage;
 
 use App\Platform\Domains\DealRoom\DealRoomId;
 use App\Platform\Domains\Shared\Text\Text;
-use App\Platform\Domains\User\UserId;
 
 readonly class DealMessage
 {
     public function __construct(
         public DealMessageId $id,
-        public UserId $userId,
+        public Sender $sender,
         public DealRoomId $dealRoomId,
         public Text $message,
     ) {
     }
 
     public static function create(
-        UserId $userId,
+        Sender $sender,
         DealRoomId $dealRoomId,
         Text $message,
     ): self {
         return new self(
             new DealMessageId(),
-            $userId,
+            $sender,
             $dealRoomId,
             $message,
         );

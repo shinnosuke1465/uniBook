@@ -6,6 +6,7 @@ namespace Feature\Platform\Presentations\DealMessage;
 
 use App\Exceptions\DuplicateKeyException;
 use App\Exceptions\NotFoundException;
+use App\Models\DealMessage;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealStatus;
 use App\Platform\Domains\Deal\Seller;
@@ -61,6 +62,8 @@ class CreateDealMessageApiTest extends TestCase
      * @throws DuplicateKeyException
      * @throws NotFoundException
      * @throws AuthenticationException
+     * @throws \JsonException
+     * @throws \Throwable
      */
     public function test_認証済みユーザーが取引ルームにメッセージを送信できること(): void
     {
@@ -118,7 +121,7 @@ class CreateDealMessageApiTest extends TestCase
         $response->assertNoContent();
 
         // データベースから作成されたメッセージを確認
-        $messages = \App\Models\DealMessage::all();
+        $messages = DealMessage::all();
         $this->assertCount(1, $messages);
 
         $createdMessage = $messages->first();
@@ -131,6 +134,9 @@ class CreateDealMessageApiTest extends TestCase
      * @throws AuthenticationException
      * @throws DomainException
      * @throws DuplicateKeyException
+     * @throws NotFoundException
+     * @throws \JsonException
+     * @throws \Throwable
      */
     public function test_存在しない取引ルームにメッセージを送信しようとした場合404エラーが返ること(): void
     {
@@ -163,6 +169,8 @@ class CreateDealMessageApiTest extends TestCase
      * @throws DuplicateKeyException
      * @throws AuthenticationException
      * @throws NotFoundException
+     * @throws \JsonException
+     * @throws \Throwable
      */
     public function test_取引ルームに参加していないユーザーがメッセージを送信しようとした場合エラーが返ること(): void
     {
