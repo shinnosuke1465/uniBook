@@ -167,6 +167,10 @@ Route::post('/textbooks/{textbookId}/deal/cancel',
     [TextbookDealController::class, 'cancel']
 )->middleware('auth:sanctum')->name('textbooks.deals.cancel');
 
+Route::post('/textbooks/{textbookId}/deal/report_delivery',
+    [TextbookDealController::class, 'reportDelivery']
+)->middleware('auth:sanctum')->name('textbooks.deals.reportDelivery');
+
 
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト
