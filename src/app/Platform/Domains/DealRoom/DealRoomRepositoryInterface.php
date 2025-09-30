@@ -40,4 +40,12 @@ interface DealRoomRepositoryInterface
      * @return array
      */
     public function findByUserIdWithRelations(UserId $userId): array;
+
+    /**
+     * 取引ルームIDでリレーション付きで取得（メッセージ含む）
+     *
+     * @param DealRoomId $dealRoomId
+     * @return mixed|null
+     */
+    public function findByIdWithRelations(DealRoomId $dealRoomId);
 }

@@ -9,7 +9,7 @@ use App\Exceptions\NotFoundException;
 use App\Platform\Presentations\DealRoom\Requests\GetDealRoomsRequest;
 use App\Platform\Presentations\DealRoom\Requests\GetDealRoomRequest;
 use App\Platform\UseCases\DealRoom\GetDealRoomsAction;
-//use App\Platform\UseCases\DealRoom\GetDealRoomAction;
+use App\Platform\UseCases\DealRoom\GetDealRoomAction;
 
 readonly class DealRoomController
 {
@@ -24,18 +24,18 @@ readonly class DealRoomController
         return GetDealRoomsResponseBuilder::toArray($dtos);
     }
 
-//    /**
-//     * 指定された取引ルームの詳細を取得
-//     *
-//     * @throws DomainException
-//     * @throws NotFoundException
-//     */
-//    public function show(
-//        GetDealRoomRequest $request,
-//        GetDealRoomAction $action,
-//        string $dealRoomIdString
-//    ): array {
-//        $dto = $action($request, $dealRoomIdString);
-//        return GetDealRoomResponseBuilder::toArray($dto);
-//    }
+    /**
+     * 指定された取引ルームの詳細を取得
+     *
+     * @throws DomainException
+     * @throws NotFoundException
+     */
+    public function show(
+        GetDealRoomRequest $request,
+        GetDealRoomAction $action,
+        string $dealRoomIdString
+    ): array {
+        $dto = $action($request, $dealRoomIdString);
+        return GetDealRoomResponseBuilder::toArray($dto);
+    }
 }
