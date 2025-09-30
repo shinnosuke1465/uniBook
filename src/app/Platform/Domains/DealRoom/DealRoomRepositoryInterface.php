@@ -33,4 +33,11 @@ interface DealRoomRepositoryInterface
      */
     public function findByUserId(UserId $userId): array;
 
+    /**
+     * ユーザーが参加している取引ルームをリレーション付きで取得
+     *
+     * @param UserId $userId
+     * @return array
+     */
+    public function findByUserIdWithRelations(UserId $userId): array;
 }

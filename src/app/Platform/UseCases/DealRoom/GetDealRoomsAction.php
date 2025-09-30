@@ -24,7 +24,7 @@ readonly class GetDealRoomsAction
      */
     public function __invoke(
         GetDealRoomsActionValuesInterface $actionValues,
-    ): DealRoomWithRelationsDto[] {
+    ): array {
         AppLog::start(__METHOD__);
 
         try {
