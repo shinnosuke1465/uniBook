@@ -6,6 +6,7 @@ namespace Feature\Platform\Infrastructures\DealRoom;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Models\DealMessage;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealStatus;
 use App\Platform\Domains\Deal\Seller;
@@ -361,6 +362,95 @@ class DealRoomRepositoryTest extends TestCase
 
         // then
         $this->assertCount(0, $result);
+    }
+
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     */
+    public function test_findByIdWithRelationsで取引ルームをメッセージ付きで取得できること(): void
+    {
+        // given
+        $users = $this->createTestUsers();
+        $textbook = $this->createTestTextbook($users['seller']);
+        $deal = $this->createTestDeal($users['seller'], $users['buyer'], $textbook);
+
+        $userIds = new UserIdList([$users['seller']->id, $users['buyer']->id]);
+        $dealRoom = TestDealRoomFactory::create(
+            dealId: $deal->id,
+            userIds: $userIds
+        );
+        $this->dealRoomRepository->insert($dealRoom);
+
+        // メッセージを追加
+        DealMessage::create([
+            'id' => \Illuminate\Support\Str::orderedUuid(),
+            'user_id' => $users['seller']->id->value,
+            'deal_room_id' => $dealRoom->id->value,
+            'message' => '最初のメッセージ',
+        ]);
+        DealMessage::create([
+            'id' => \Illuminate\Support\Str::orderedUuid(),
+            'user_id' => $users['buyer']->id->value,
+            'deal_room_id' => $dealRoom->id->value,
+            'message' => '返信メッセージ',
+        ]);
+
+        // when
+        $result = $this->dealRoomRepository->findByIdWithRelations($dealRoom->id);
+
+        // then
+        $this->assertNotNull($result);
+        $this->assertEquals($dealRoom->id->value, $result->id);
+
+        // Deal情報のチェック
+        $this->assertNotNull($result->deal);
+        $this->assertEquals($deal->id->value, $result->deal->id);
+
+        // Seller情報のチェック
+        $this->assertNotNull($result->deal->seller);
+        $this->assertEquals($users['seller']->id->value, $result->deal->seller->id);
+
+        // Buyer情報のチェック
+        $this->assertNotNull($result->deal->buyer);
+        $this->assertEquals($users['buyer']->id->value, $result->deal->buyer->id);
+
+        // Textbook情報のチェック
+        $this->assertNotNull($result->deal->textbook);
+        $this->assertEquals($textbook->id->value, $result->deal->textbook->id);
+
+        // DealEvents情報のチェック
+        $this->assertNotNull($result->deal->dealEvents);
+
+        // Users情報のチェック
+        $this->assertCount(2, $result->users);
+
+        // Messages情報のチェック
+        $this->assertNotNull($result->dealMessages);
+        $this->assertCount(2, $result->dealMessages);
+        $this->assertEquals('最初のメッセージ', $result->dealMessages[0]->message);
+        $this->assertEquals('返信メッセージ', $result->dealMessages[1]->message);
+
+        // メッセージのUser情報のチェック
+        $this->assertNotNull($result->dealMessages[0]->user);
+        $this->assertEquals($users['seller']->id->value, $result->dealMessages[0]->user->id);
+        $this->assertNotNull($result->dealMessages[1]->user);
+        $this->assertEquals($users['buyer']->id->value, $result->dealMessages[1]->user->id);
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public function test_findByIdWithRelationsで存在しない取引ルームを取得した場合nullが返ること(): void
+    {
+        // given
+        $nonExistentDealRoomId = new \App\Platform\Domains\DealRoom\DealRoomId('11111111-1111-1111-1111-111111111111');
+
+        // when
+        $result = $this->dealRoomRepository->findByIdWithRelations($nonExistentDealRoomId);
+
+        // then
+        $this->assertNull($result);
     }
 
     /**

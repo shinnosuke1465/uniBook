@@ -101,6 +101,26 @@ readonly class DealRoomRepository implements DealRoomRepositoryInterface
             ->all();
     }
 
+    /**
+     * 取引ルームIDでリレーション付きで取得（メッセージ含む）
+     * @param DealRoomId $dealRoomId
+     * @return DealRoomDB|null
+     */
+    public function findByIdWithRelations(DealRoomId $dealRoomId)
+    {
+        return DealRoomDB::query()
+            ->with([
+                'deal.seller.image',
+                'deal.buyer.image',
+                'deal.textbook.imageIds',
+                'deal.dealEvents',
+                'users.image',
+                'dealMessages.user.image'
+            ])
+            ->where('id', $dealRoomId->value)
+            ->first();
+    }
+
     private function hasDuplicate(DealRoomId $dealRoomId): bool
     {
         return DealRoomDB::find($dealRoomId->value) !== null;
