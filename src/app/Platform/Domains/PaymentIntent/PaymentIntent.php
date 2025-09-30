@@ -17,21 +17,6 @@ readonly class PaymentIntent
     ) {
     }
 
-    public static function create(
-        ClientSecret $clientSecret,
-        PaymentAmount $amount,
-        PaymentCurrency $currency,
-        PaymentStatus $status,
-    ): self {
-        return new self(
-            new PaymentIntentId(),
-            $clientSecret,
-            $amount,
-            $currency,
-            $status,
-        );
-    }
-
     public function getClientSecret(): string
     {
         return $this->clientSecret->value;

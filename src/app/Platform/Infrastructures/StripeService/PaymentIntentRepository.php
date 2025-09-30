@@ -41,7 +41,7 @@ readonly class PaymentIntentRepository implements PaymentIntentRepositoryInterfa
     /**
      * @throws ApiErrorException
      */
-    public function verifyPaymentIntent(ClientSecret $paymentIntentId): bool
+    public function verifyPaymentIntent(PaymentIntentId $paymentIntentId): bool
     {
         Stripe::setApiKey(config('services.stripe.secret'));
         $paymentIntent = StripePaymentIntent::retrieve($paymentIntentId->value);

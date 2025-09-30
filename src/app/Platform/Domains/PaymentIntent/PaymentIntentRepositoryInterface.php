@@ -11,5 +11,5 @@ interface PaymentIntentRepositoryInterface
 {
     public function createPaymentIntent(Textbook $textbook, User $buyer): PaymentIntent;
 
-    public function verifyPaymentIntent(ClientSecret $paymentIntentId): bool;
+    public function verifyPaymentIntent(PaymentIntentId $paymentIntentId): bool;
 }

@@ -102,7 +102,7 @@ class VerifyPaymentIntentApiTest extends TestCase
 
         // when: 支払い確認APIを呼び出す
         $response = $this->postJson($url, [
-            'payment_intent_id' => 'pi_123_secret_123'
+            'payment_intent_id' => 'pi_3SCh6gFdLyKymEy51hojU1cb'
         ], [
             'Authorization' => 'Bearer ' . $token->token,
         ]);
@@ -158,7 +158,7 @@ class VerifyPaymentIntentApiTest extends TestCase
 
         // when: 出品者が自分の教科書の支払い確認をしようとする
         $response = $this->postJson($url, [
-            'payment_intent_id' => 'pi_test_123456'
+            'payment_intent_id' => 'pi_3SCh6gFdLyKymEy51hojU1cb'
         ], [
             'Authorization' => 'Bearer ' . $token->token,
         ]);

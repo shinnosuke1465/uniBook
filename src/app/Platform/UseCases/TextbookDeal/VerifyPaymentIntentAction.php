@@ -47,7 +47,7 @@ readonly class VerifyPaymentIntentAction
     ): void {
         AppLog::start(__METHOD__);
         $textbookId = new TextbookId($textbookId);
-        $paymentIntentId = $values->getClientSecret();
+        $paymentIntentId = $values->getPaymentIntentId();
 
         $requestParams = [
             'textbook_id' => $textbookId->value,

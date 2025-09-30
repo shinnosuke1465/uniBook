@@ -6,7 +6,6 @@ namespace App\Platform\Presentations\TextbookDeal\Requests;
 
 use App\Exceptions\DomainException;
 use App\Models\Textbook;
-use App\Platform\Domains\PaymentIntent\ClientSecret;
 use App\Platform\Domains\PaymentIntent\PaymentIntentId;
 use App\Platform\Presentations\Shared\BaseRequest;
 use App\Platform\UseCases\TextbookDeal\VerifyPaymentIntentActionValuesInterface;
@@ -58,8 +57,8 @@ class VerifyPaymentIntentRequest extends BaseRequest implements VerifyPaymentInt
     /**
      * @throws DomainException
      */
-    public function getClientSecret(): ClientSecret
+    public function getPaymentIntentId(): PaymentIntentId
     {
-        return new ClientSecret($this->input('payment_intent_id'));
+        return new PaymentIntentId($this->input('payment_intent_id'));
     }
 }

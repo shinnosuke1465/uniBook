@@ -31,7 +31,7 @@ readonly class PaymentIntentMockRepository implements PaymentIntentRepositoryInt
         return PaymentIntentFactory::create($servicePaymentIntent);
     }
 
-    public function verifyPaymentIntent(ClientSecret $paymentIntentId): bool
+    public function verifyPaymentIntent(PaymentIntentId $paymentIntentId): bool
     {
         // モックでは常にtrueを返す
         return true;
