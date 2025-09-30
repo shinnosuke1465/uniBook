@@ -91,4 +91,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Image::class);
     }
+
+    /**
+     * ユーザーが送信した取引メッセージとの関係
+     */
+    public function dealMessages(): HasMany
+    {
+        return $this->hasMany(DealMessage::class);
+    }
 }

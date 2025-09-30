@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -73,5 +74,13 @@ class DealRoom extends Model
     public function getUserIds(): array
     {
         return $this->users()->pluck('users.id')->toArray();
+    }
+
+    /**
+     * 取引ルームのメッセージとの関係
+     */
+    public function dealMessages(): HasMany
+    {
+        return $this->hasMany(DealMessage::class);
     }
 }
