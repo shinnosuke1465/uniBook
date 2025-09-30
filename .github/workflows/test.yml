@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DB_DATABASE: ${{ secrets.DB_DATABASE || 'laravel' }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME || 'laraveluser' }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'laravel' }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v3
