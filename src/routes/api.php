@@ -159,6 +159,10 @@ Route::post('/textbooks/{textbookId}/deal/payment_intent',
     [TextbookDealController::class, 'createPaymentIntent']
 )->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.store');
 
+Route::post('/textbooks/{textbookId}/deal/payment_intent/verify',
+    [TextbookDealController::class, 'verifyPaymentIntent']
+)->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.verify.store');
+
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト
     Route::post('/logout', [AuthenticateController::class, 'logout'])->name('logout');

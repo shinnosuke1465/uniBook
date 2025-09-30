@@ -7,6 +7,7 @@ namespace App\Platform\Infrastructures\StripeService;
 use App\Exceptions\DomainException;
 use App\Exceptions\RepositoryException;
 use App\Platform\Domains\PaymentIntent\PaymentIntent;
+use App\Platform\Domains\PaymentIntent\PaymentIntentId;
 use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
 use App\Platform\Domains\Textbook\Textbook;
 use App\Platform\Domains\User\User;
@@ -34,5 +35,16 @@ readonly class PaymentIntentRepository implements PaymentIntentRepositoryInterfa
 
         // ファクトリを使用してStripeレスポンスをドメインモデルに変換
         return PaymentIntentFactory::create($stripePaymentIntent);
+    }
+
+    /**
+     * @throws ApiErrorException
+     */
+    public function verifyPaymentIntent(PaymentIntentId $paymentIntentId): bool
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+        $paymentIntent = StripePaymentIntent::retrieve($paymentIntentId->value);
+
+        return $paymentIntent->status === 'succeeded';
     }
 }

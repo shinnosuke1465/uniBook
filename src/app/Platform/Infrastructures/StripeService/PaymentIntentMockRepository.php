@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\Infrastructures\StripeService;
 
+use App\Platform\Domains\PaymentIntent\PaymentIntentId;
 use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
 use App\Platform\Domains\Textbook\Textbook;
 use App\Platform\Domains\User\User;
@@ -27,5 +28,11 @@ readonly class PaymentIntentMockRepository implements PaymentIntentRepositoryInt
         ]);
 
         return PaymentIntentFactory::create($servicePaymentIntent);
+    }
+
+    public function verifyPaymentIntent(PaymentIntentId $paymentIntentId): bool
+    {
+        // モックでは常にtrueを返す
+        return true;
     }
 }
