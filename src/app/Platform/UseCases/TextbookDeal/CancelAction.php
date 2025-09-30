@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace App\Platform\UseCases\TextbookDeal;
 
-use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Deal\DealStatus;
+use App\Platform\Domains\DealEvent\ActorType;
+use App\Platform\Domains\DealEvent\DealEvent;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
+use App\Platform\Domains\DealEvent\EventType;
+use App\Platform\Domains\Textbook\TextbookId;
 use App\Platform\Domains\User\UserRepositoryInterface;
+use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
 use App\Exceptions\DomainException;
 use App\Exceptions\NotFoundException;
-use App\Exceptions\InvalidStatusTransitionException;
+use AppLog;
+use Illuminate\Auth\Access\AuthorizationException;
 
 readonly class CancelAction
 {
@@ -52,15 +57,6 @@ readonly class CancelAction
                 throw new DomainException('認証済みユーザー情報が取得できませんでした。');
             }
 
-            //購入者情報を取得
-            $buyerId = new Buyer($authenticatedUser->getUserId());
-
-            $buyer = $this->userRepository->findById($buyerId->userId);
-
-            if ($buyer === null) {
-                throw new NotFoundException('購入者が見つかりません。');
-            }
-
             //取引情報を取得
             $deal = $this->dealRepository->findByTextbookId($textbookId);
             if ($deal === null) {
@@ -70,12 +66,12 @@ readonly class CancelAction
 
             //取引ステータスが出品中以外の場合は認可エラー
             if (!in_array($deal->dealStatus, [DealStatus::Listing])) {
-                throw new InvalidStatusTransitionException();
+                throw new AuthorizationException('取引ステータスが出品中ではありません。');
             }
 
 
             $updateDeal = $deal->update(
-                new Buyer($buyer->id),
+                null,
                 DealStatus::create('Cancelled'),
             );
 

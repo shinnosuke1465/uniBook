@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Platform\Presentations\TextbookDeal\Requests;
 
 use App\Platform\UseCases\TextbookDeal\CancelActionValuesInterface;
+use App\Platform\Presentations\Shared\BaseRequest;
+use App\Models\Textbook;
 
-readonly class CancelRequest extends BaseRequest implements CancelActionValuesInterface
+class CancelRequest extends BaseRequest implements CancelActionValuesInterface
 {
     public function authorize(): bool
     {
