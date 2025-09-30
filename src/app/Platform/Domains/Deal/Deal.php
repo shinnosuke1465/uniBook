@@ -32,10 +32,8 @@ readonly class Deal
         );
     }
 
-    public function update(
-        Buyer $buyer,
-        DealStatus $dealStatus
-    ): self {
+    public function update(Buyer $buyer, DealStatus $dealStatus): self
+    {
         return new self(
             $this->id,
             $this->seller,

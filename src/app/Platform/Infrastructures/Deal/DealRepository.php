@@ -6,6 +6,7 @@ namespace App\Platform\Infrastructures\Deal;
 
 use App\Exceptions\DomainException;
 use App\Exceptions\DuplicateKeyException;
+use App\Exceptions\NotFoundException;
 use App\Models\Deal as DealDB;
 use App\Platform\Domains\Deal\Deal;
 use App\Platform\Domains\Deal\DealId;
@@ -41,6 +42,22 @@ readonly class DealRepository implements DealRepositoryInterface
             return null;
         }
         return DealFactory::create($dealModel);
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function update(Deal $deal): void
+    {
+        $dealModel = DealDB::find($deal->id->value);
+        if ($dealModel === null) {
+            throw new NotFoundException('取引が存在しません。');
+        }
+
+        $dealModel->update([
+            'buyer_id' => $deal->buyer?->userId->value,
+            'deal_status' => $deal->dealStatus->value,
+        ]);
     }
 
     private function hasDuplicate(DealId $dealId): bool
