@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Platform\Presentations\Comment\Controllers\CommentController;
 use App\Platform\Presentations\Like\Controllers\LikeController;
+use App\Platform\Presentations\DealMessage\Controllers\DealMessageController;
 
 Route::get('/test', function (Request $request) {
     return response()->json([
@@ -158,14 +159,14 @@ Route::apiResource(
 //取引メッセージ
 Route::apiResource(
     '/me/dealrooms/{dealRoomId}/messages',
-    DealRoomController::class
+    DealMessageController::class
 )->only(['store'])->names([
     'store' => 'dealmessages.store',
 ])
 ->parameters([
         'dealrooms' => 'dealRoomId',
     ])
-    ->whereNumber('dealRoomId');
+    ->whereUuid('dealRoomId');
 
 Route::post('/textbooks/{textbookId}/deal/payment_intent',
     [TextbookDealController::class, 'createPaymentIntent']
