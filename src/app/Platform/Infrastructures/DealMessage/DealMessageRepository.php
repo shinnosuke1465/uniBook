@@ -23,7 +23,7 @@ readonly class DealMessageRepository implements DealMessageRepositoryInterface
 
         DealMessageDB::create([
             'id' => $dealMessage->id->value,
-            'user_id' => $dealMessage->userId->value,
+            'user_id' => $dealMessage->sender->userId->value,
             'deal_room_id' => $dealMessage->dealRoomId->value,
             'message' => $dealMessage->message->value,
         ]);

@@ -9,6 +9,7 @@ use App\Exceptions\DuplicateKeyException;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealStatus;
 use App\Platform\Domains\Deal\Seller;
+use App\Platform\Domains\DealMessage\Sender;
 use App\Platform\Domains\Shared\MailAddress\MailAddress;
 use App\Platform\Domains\Shared\String\String255;
 use App\Platform\Domains\Shared\Text\Text;
@@ -68,7 +69,7 @@ class DealMessageRepositoryTest extends TestCase
         $dealRoom = $this->createTestDealRoom($deal->id, $users['seller']->id, $users['buyer']->id);
 
         $dealMessage = TestDealMessageFactory::create(
-            userId: $users['seller']->id,
+            sender: new Sender($users['seller']->id),
             dealRoomId: $dealRoom->id,
             message: new Text('こんにちは、商品について質問があります。')
         );
@@ -98,13 +99,13 @@ class DealMessageRepositoryTest extends TestCase
         $dealRoom = $this->createTestDealRoom($deal->id, $users['seller']->id, $users['buyer']->id);
 
         $dealMessage1 = TestDealMessageFactory::create(
-            userId: $users['seller']->id,
+            sender: new Sender($users['seller']->id),
             dealRoomId: $dealRoom->id,
             message: new Text('最初のメッセージ')
         );
         $dealMessage2 = TestDealMessageFactory::create(
             id: $dealMessage1->id, // 同じID
-            userId: $users['buyer']->id,
+            sender: new Sender($users['buyer']->id),
             dealRoomId: $dealRoom->id,
             message: new Text('2番目のメッセージ')
         );

@@ -13,6 +13,7 @@ use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
+use App\Platform\Domains\DealMessage\Sender;
 use AppLog;
 use Exception;
 
@@ -69,7 +70,7 @@ readonly class CreateDealMessageAction
             }
 
             $dealMessage = DealMessage::create(
-                $authenticatedUser->getUserId(),
+                new Sender($authenticatedUser->getUserId()),
                 $dealRoomId,
                 $message,
             );
