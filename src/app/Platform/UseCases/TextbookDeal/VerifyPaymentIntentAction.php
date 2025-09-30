@@ -47,7 +47,7 @@ readonly class VerifyPaymentIntentAction
     ): void {
         AppLog::start(__METHOD__);
         $textbookId = new TextbookId($textbookId);
-        $paymentIntentId = $values->getPaymentIntentId();
+        $paymentIntentId = $values->getClientSecret();
 
         $requestParams = [
             'textbook_id' => $textbookId->value,
@@ -97,7 +97,7 @@ readonly class VerifyPaymentIntentAction
                 $authenticatedUser->getUserId(),
                 $deal->id,
                 ActorType::create('buyer'),
-                EventType::create('Purchased')
+                EventType::create('Purchase')
             );
 
             // 参加ユーザーIDリスト
@@ -109,7 +109,6 @@ readonly class VerifyPaymentIntentAction
             $dealRoom = DealRoom::create(
                 $deal->id,
                 $userIds,
-                $deal->dealStatus
             );
 
 

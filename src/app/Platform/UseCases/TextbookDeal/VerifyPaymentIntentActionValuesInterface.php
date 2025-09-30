@@ -2,9 +2,9 @@
 
 namespace App\Platform\UseCases\TextbookDeal;
 
-use App\Platform\Domains\PaymentIntent\PaymentIntentId;
+use App\Platform\Domains\PaymentIntent\ClientSecret;
 
 interface VerifyPaymentIntentActionValuesInterface
 {
-    public function getPaymentIntentId(): PaymentIntentId;
+    public function getClientSecret(): ClientSecret;
 }

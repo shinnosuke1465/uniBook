@@ -31,6 +31,9 @@ use Tests\Unit\Platform\Domains\Textbook\TestTextbookFactory;
 use Tests\Unit\Platform\Domains\University\TestUniversityFactory;
 use Tests\Unit\Platform\Domains\User\TestUserFactory;
 use Tests\Feature\Api\ApiPreLoginTrait;
+use App\Exceptions\DomainException;
+use App\Exceptions\DuplicateKeyException;
+use App\Exceptions\IllegalUserException;
 
 class GetDealRoomsApiTest extends TestCase
 {
@@ -54,6 +57,11 @@ class GetDealRoomsApiTest extends TestCase
         $this->facultyRepository = new FacultyRepository();
     }
 
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     * @throws IllegalUserException
+     */
     public function test_認証済みユーザーが参加している取引ルーム一覧を取得できること(): void
     {
         // given - 認証ユーザー（seller）を準備
@@ -140,6 +148,11 @@ class GetDealRoomsApiTest extends TestCase
         $this->assertEquals('テスト教科書', $responseData['deal_rooms'][0]['deal']['textbook']['name']);
     }
 
+    /**
+     * @throws DomainException
+     * @throws DuplicateKeyException
+     * @throws IllegalUserException
+     */
     public function test_認証済みユーザーが複数の取引ルームを作成日時の降順で取得できること(): void
     {
         // given - 認証ユーザー（seller）を準備
