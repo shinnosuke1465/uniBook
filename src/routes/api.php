@@ -163,6 +163,11 @@ Route::post('/textbooks/{textbookId}/deal/payment_intent/verify',
     [TextbookDealController::class, 'verifyPaymentIntent']
 )->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.verify.store');
 
+Route::post('/textbooks/{textbookId}/deal/cancel',
+    [TextbookDealController::class, 'cancel']
+)->middleware('auth:sanctum')->name('textbooks.deals.cancel');
+
+
 Route::middleware('auth:sanctum')->group(function () {
     //ログアウト
     Route::post('/logout', [AuthenticateController::class, 'logout'])->name('logout');
