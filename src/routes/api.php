@@ -2,6 +2,7 @@
 
 use App\Platform\Presentations\Authenticate\Controllers\AuthenticateController;
 use App\Platform\Presentations\AuthenticateToken\Controllers\AuthenticateTokenController;
+use App\Platform\Presentations\DealRoom\Controllers\DealRoomController;
 use App\Platform\Presentations\Image\Controllers\ImageController;
 use App\Platform\Presentations\Textbook\Controllers\TextbookController;
 use App\Platform\Presentations\TextbookDeal\Controllers\TextbookDealController;
@@ -145,6 +146,14 @@ GetListedTextbooksController::class
         'listed_textbooks' => 'textbookIdString',
     ])
     ->whereUuid('textbookIdString');
+
+//取引ルーム一覧
+Route::apiResource(
+    '/me/dealrooms',
+    DealRoomController::class
+)->only(['index'])->names([
+    'index' => 'dealrooms.index',
+]);
 
 Route::post('/textbooks/{textbookId}/deal/payment_intent',
     [TextbookDealController::class, 'createPaymentIntent']

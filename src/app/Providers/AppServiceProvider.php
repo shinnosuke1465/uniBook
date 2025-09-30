@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Faculty;
 use App\Platform\Domains\Comment\CommentRepositoryInterface;
+use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
 use App\Platform\Domains\Like\LikeRepositoryInterface;
 use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
 use App\Platform\Infrastructures\Comment\CommentRepository;
@@ -16,6 +17,7 @@ use App\Platform\Domains\Image\ImageRepositoryInterface;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
 use App\Platform\Domains\University\UniversityRepositoryInterface;
 use App\Platform\Domains\User\UserRepositoryInterface;
+use App\Platform\Infrastructures\DealRoom\DealRoomRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\Image\ImageRepository;
 use App\Platform\Infrastructures\Like\LikeRepository;
@@ -106,6 +108,11 @@ class AppServiceProvider extends ServiceProvider
                 PaymentIntentRepository::class
             );
         }
+
+        $this->app->bind(
+            DealRoomRepositoryInterface::class,
+            DealRoomRepository::class
+        );
     }
 
     /**
