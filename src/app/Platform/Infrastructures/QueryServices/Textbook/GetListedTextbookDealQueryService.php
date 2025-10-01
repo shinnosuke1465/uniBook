@@ -23,7 +23,8 @@ readonly class GetListedTextbookDealQueryService
                 'textbook.university',
                 'textbook.faculty',
                 'textbook.imageIds',
-                'seller',
+                'seller.university',
+                'seller.faculty',
                 'buyer',
                 'dealEvents'
             ])

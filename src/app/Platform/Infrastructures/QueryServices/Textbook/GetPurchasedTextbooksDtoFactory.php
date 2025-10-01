@@ -34,6 +34,8 @@ readonly class GetPurchasedTextbooksDtoFactory
                     'id' => $deal->seller->id,
                     'nickname' => $deal->seller->name,
                     'profile_image_url' => $deal->seller->image_id,
+                    'university_name' => $deal->seller->university->name ?? '',
+                    'faculty_name' => $deal->seller->faculty->name ?? '',
                 ],
                 'buyer_shipping_info' => [
                     'id' => $deal->buyer->id,
@@ -49,6 +51,7 @@ readonly class GetPurchasedTextbooksDtoFactory
                         'id' => $event->id,
                         'actor_type' => strtolower($event->actor_type),
                         'event_type' => strtolower($event->event_type),
+                        'created_at' => $event->created_at
                     ];
                 })->toArray(),
             ];

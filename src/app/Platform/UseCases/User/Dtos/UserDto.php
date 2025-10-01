@@ -15,16 +15,19 @@ readonly class UserDto
         public string $address,
         public string $mailAddress,
         public ?int $imageId,
-        public string $facultyId,
-        public string $universityId,
+        public string $universityName,
+        public string $facultyName,
     ) {
     }
 
     /**
      * Userドメインを配列化（パスワードは入れない）
      */
-    public static function create(User $user): self
-    {
+    public static function create(
+        User $user,
+        string $universityName,
+        string $facultyName,
+    ): self {
         return new self(
             $user->id->value,
             $user->name->name,
@@ -32,8 +35,8 @@ readonly class UserDto
             $user->address->address->value,
             $user->mailAddress->mailAddress->value,
             $user->imageId?->value,
-            $user->facultyId->value,
-            $user->universityId->value,
+            $universityName,
+            $facultyName,
         );
     }
 }

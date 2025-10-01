@@ -116,6 +116,8 @@ class GetListedTextbookDealApiTest extends TestCase
                         'id',
                         'nickname',
                         'profile_image_url',
+                        'university_name',
+                        'faculty_name',
                     ],
                     'buyer_shipping_info',
                     'status',
@@ -124,6 +126,7 @@ class GetListedTextbookDealApiTest extends TestCase
                             'id',
                             'actor_type',
                             'event_type',
+                            'created_at',
                         ]
                     ]
                 ]
@@ -210,6 +213,8 @@ class GetListedTextbookDealApiTest extends TestCase
                         'id',
                         'nickname',
                         'profile_image_url',
+                        'university_name',
+                        'faculty_name',
                     ],
                     'buyer_shipping_info' => [
                         'id',
@@ -225,6 +230,7 @@ class GetListedTextbookDealApiTest extends TestCase
                             'id',
                             'actor_type',
                             'event_type',
+                            'created_at',
                         ]
                     ]
                 ]

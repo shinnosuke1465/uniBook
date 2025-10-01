@@ -151,7 +151,14 @@ class GetDealRoomApiTest extends TestCase
                             'address',
                             'profile_image_url',
                         ],
-                        'deal_events',
+                        'deal_events' => [
+                            '*' => [
+                                'id',
+                                'actor_type',
+                                'event_type',
+                                'created_at',
+                            ]
+                        ],
                     ],
                     'messages' => [
                         '*' => [
