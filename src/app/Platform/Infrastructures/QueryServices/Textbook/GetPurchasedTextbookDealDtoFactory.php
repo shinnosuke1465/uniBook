@@ -49,6 +49,7 @@ readonly class GetPurchasedTextbookDealDtoFactory
                     'id' => $event->id,
                     'actor_type' => strtolower($event->actor_type),
                     'event_type' => strtolower($event->event_type),
+                    'created_at' => $event->created_at
                 ];
             })->toArray(),
         ];

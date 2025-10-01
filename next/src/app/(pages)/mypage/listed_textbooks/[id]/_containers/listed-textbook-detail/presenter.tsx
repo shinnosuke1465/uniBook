@@ -1,4 +1,5 @@
 import type { ListedTextbook } from "@/types/response/responseType";
+import { DealEventList } from "@/app/(pages)/mypage/_components/DealEventList";
 import Link from "next/link";
 
 type ListedTextbookDetailPresenterProps = {
@@ -125,23 +126,7 @@ export function ListedTextbookDetailPresenter({
 			)}
 
 			{/* 取引履歴 */}
-			<div className="bg-white rounded-lg shadow p-6">
-				<h2 className="text-lg font-semibold text-gray-900 mb-4">取引履歴</h2>
-				<div className="space-y-2">
-					{textbook.deal.deal_events.map((event) => (
-						<div
-							key={event.id}
-							className="flex items-center gap-2 text-sm text-gray-600"
-						>
-							<span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-							<span>
-								{event.actor_type === "seller" ? "出品者" : "購入者"} -{" "}
-								{event.event_type}
-							</span>
-						</div>
-					))}
-				</div>
-			</div>
+			<DealEventList events={textbook.deal.deal_events} />
 		</div>
 	);
 }

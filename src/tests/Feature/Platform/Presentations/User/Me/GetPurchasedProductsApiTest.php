@@ -163,6 +163,7 @@ class GetPurchasedProductsApiTest extends TestCase
                                     'id',
                                     'actor_type',
                                     'event_type',
+                                    'created_at',
                                 ]
                             ]
                         ]

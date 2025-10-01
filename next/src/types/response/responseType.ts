@@ -39,6 +39,7 @@ export type ListedTextbook = {
             id: string;
             actor_type: string;
             event_type: string;
+            created_at: string | null;
         }[];
         buyer_shipping_info: {
             id: string;

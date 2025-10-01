@@ -126,6 +126,7 @@ class GetListedTextbookDealApiTest extends TestCase
                             'id',
                             'actor_type',
                             'event_type',
+                            'created_at',
                         ]
                     ]
                 ]
@@ -229,6 +230,7 @@ class GetListedTextbookDealApiTest extends TestCase
                             'id',
                             'actor_type',
                             'event_type',
+                            'created_at',
                         ]
                     ]
                 ]
