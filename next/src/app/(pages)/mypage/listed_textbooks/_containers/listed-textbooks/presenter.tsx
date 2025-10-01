@@ -1,5 +1,5 @@
 import type { ListedTextbook } from "@/types/response/responseType";
-import Link from "next/link";
+import { ListedTextbookCard } from "@/app/(pages)/mypage/_components/ListedTextbookCard";
 
 type ListedTextbooksPresenterProps = {
 	textbooks: ListedTextbook[];
@@ -19,47 +19,7 @@ export function ListedTextbooksPresenter({
 	return (
 		<div className="space-y-4">
 			{textbooks.map((textbook) => (
-				<Link
-					key={textbook.id}
-					href={`/mypage/listed_textbooks/${textbook.id}`}
-					className="block bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4"
-				>
-					<div className="flex gap-4">
-						{textbook.image_url ? (
-							<img
-								src={textbook.image_url}
-								alt={textbook.name}
-								className="w-24 h-24 object-cover rounded"
-							/>
-						) : (
-							<div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center">
-								<span className="text-gray-400 text-sm">No Image</span>
-							</div>
-						)}
-						<div className="flex-1">
-							<h3 className="text-lg font-semibold text-gray-900">
-								{textbook.name}
-							</h3>
-							<p className="text-sm text-gray-600 mt-1 line-clamp-2">
-								{textbook.description}
-							</p>
-							<div className="mt-2 flex items-center gap-4">
-								<span className="text-lg font-bold text-gray-900">
-									¥{textbook.price.toLocaleString()}
-								</span>
-								<span
-									className={`px-2 py-1 text-xs font-medium rounded ${
-										textbook.deal.status === "listing"
-											? "bg-green-100 text-green-800"
-											: "bg-gray-100 text-gray-800"
-									}`}
-								>
-									{textbook.deal.status === "listing" ? "出品中" : "売却済み"}
-								</span>
-							</div>
-						</div>
-					</div>
-				</Link>
+				<ListedTextbookCard key={textbook.id} textbook={textbook} />
 			))}
 		</div>
 	);

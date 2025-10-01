@@ -87,3 +87,36 @@ export type PurchasedTextbook = {
         } | null;
     };
 };
+
+//いいねした教科書
+export type LikedTextbook = {
+    id: string;
+    name: string;
+    price: number;
+    description: string;
+    image_url: string | null;
+    image_urls: string[];
+    university_name: string;
+    faculty_name: string;
+    condition_type: string;
+    deal: {
+        id: string;
+        is_purchasable: boolean;
+        seller_info: {
+            id: string;
+            nickname: string;
+            profile_image_url: number | null;
+        };
+    };
+    comments: {
+        id: string;
+        text: string;
+        created_at: string;
+        user: {
+            id: string;
+            name: string;
+            profile_image_url: number | null;
+        };
+    }[];
+    is_liked: boolean;
+};
