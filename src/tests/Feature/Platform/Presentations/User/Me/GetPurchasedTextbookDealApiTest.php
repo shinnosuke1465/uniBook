@@ -114,6 +114,8 @@ class GetPurchasedTextbookDealApiTest extends TestCase
                         'id',
                         'nickname',
                         'profile_image_url',
+                        'university_name',
+                        'faculty_name',
                     ],
                     'buyer_shipping_info' => [
                         'id',

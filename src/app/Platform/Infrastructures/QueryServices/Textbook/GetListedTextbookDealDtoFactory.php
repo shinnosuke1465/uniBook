@@ -45,6 +45,8 @@ readonly class GetListedTextbookDealDtoFactory
                 'id' => $deal->seller->id,
                 'nickname' => $deal->seller->name,
                 'profile_image_url' => $deal->seller->image_id,
+                'university_name' => $deal->seller->university->name ?? '',
+                'faculty_name' => $deal->seller->faculty->name ?? '',
             ],
             'buyer_shipping_info' => $buyerShippingInfo,
             'status' => strtolower($deal->deal_status),
