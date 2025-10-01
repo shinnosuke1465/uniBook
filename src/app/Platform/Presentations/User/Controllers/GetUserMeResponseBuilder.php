@@ -20,8 +20,8 @@ readonly class GetUserMeResponseBuilder
             'post_code' => $dto->postCode,
             'address' => $dto->address,
             'image_id' => $dto->imageId,
-            'university_id' => $dto->universityId,
-            'faculty_id' => $dto->facultyId,
+            'university_name' => $dto->universityName,
+            'faculty_name' => $dto->facultyName,
         ];
     }
 }

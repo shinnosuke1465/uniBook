@@ -65,8 +65,8 @@ class GetUserMeApiTest extends TestCase
                 'post_code',
                 'address',
                 'image_id',
-                'university_id',
-                'faculty_id',
+                'university_name',
+                'faculty_name',
             ]);
     }
 
