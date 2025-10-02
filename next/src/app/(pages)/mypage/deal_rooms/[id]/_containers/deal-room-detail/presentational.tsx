@@ -1,11 +1,14 @@
 import type { DealRoomDetail } from "../../../../_lib/fetchDealRoomDetail";
 import { DealEventList } from "@/app/(pages)/mypage/_components/DealEventList";
+import { DealActionSection } from "./action-section";
 
 interface DealRoomDetailPresentationProps {
   dealRoom: DealRoomDetail;
+  currentUserId: string;
 }
 
 export function DealRoomDetailPresentation({
+  currentUserId,
   dealRoom,
 }: DealRoomDetailPresentationProps) {
   const statusLabels: Record<string, string> = {
@@ -121,44 +124,64 @@ export function DealRoomDetailPresentation({
         </div>
 
         {/* 右カラム - メッセージ */}
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-xl font-semibold">メッセージ</h2>
-          <div className="space-y-4">
-            {dealRoom.messages.length === 0 ? (
-              <p className="text-center text-gray-500">
-                メッセージはまだありません
-              </p>
-            ) : (
-              dealRoom.messages.map((message) => (
-                <div
-                  key={message.id}
-                  className="rounded-lg border border-gray-100 bg-gray-50 p-4"
-                >
-                  <div className="mb-2 flex items-center space-x-2">
-                    {message.user.profile_image_url ? (
-                      <img
-                        src={message.user.profile_image_url}
-                        alt={message.user.name}
-                        className="h-8 w-8 rounded-full"
-                      />
-                    ) : (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
-                        <span className="text-xs">👤</span>
+        <div className="space-y-6">
+          {/* アクションセクション */}
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <DealActionSection
+              dealRoomId={dealRoom.id}
+              status={dealRoom.deal.status}
+              currentUserId={currentUserId}
+              sellerId={dealRoom.deal.seller_info.id}
+              buyerId={dealRoom.deal.buyer_info.id}
+              textbookId={dealRoom.deal.textbook.id}
+              buyerShippingInfo={{
+                postal_code: dealRoom.deal.buyer_info.postal_code,
+                address: dealRoom.deal.buyer_info.address,
+                name: dealRoom.deal.buyer_info.name,
+              }}
+            />
+          </div>
+
+          {/* メッセージ */}
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <h2 className="mb-4 text-xl font-semibold">メッセージ</h2>
+            <div className="space-y-4">
+              {dealRoom.messages.length === 0 ? (
+                <p className="text-center text-gray-500">
+                  メッセージはまだありません
+                </p>
+              ) : (
+                dealRoom.messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className="rounded-lg border border-gray-100 bg-gray-50 p-4"
+                  >
+                    <div className="mb-2 flex items-center space-x-2">
+                      {message.user.profile_image_url ? (
+                        <img
+                          src={message.user.profile_image_url}
+                          alt={message.user.name}
+                          className="h-8 w-8 rounded-full"
+                        />
+                      ) : (
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
+                          <span className="text-xs">👤</span>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <p className="font-semibold">{message.user.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(message.created_at).toLocaleString("ja-JP")}
+                        </p>
                       </div>
-                    )}
-                    <div className="flex-1">
-                      <p className="font-semibold">{message.user.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(message.created_at).toLocaleString("ja-JP")}
-                      </p>
                     </div>
+                    <p className="whitespace-pre-wrap text-gray-700">
+                      {message.message}
+                    </p>
                   </div>
-                  <p className="whitespace-pre-wrap text-gray-700">
-                    {message.message}
-                  </p>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

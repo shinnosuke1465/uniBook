@@ -1,4 +1,5 @@
 import { fetchDealRoomDetail } from "../../../../_lib/fetchDealRoomDetail";
+import { getUserData } from "@/services/auth/getUserData";
 import { DealRoomDetailPresentation } from "./presentational";
 
 interface DealRoomDetailContainerProps {
@@ -9,6 +10,15 @@ export async function DealRoomDetailContainer({
   dealRoomId,
 }: DealRoomDetailContainerProps) {
   const dealRoom = await fetchDealRoomDetail(dealRoomId);
+  const userData = await getUserData();
 
-  return <DealRoomDetailPresentation dealRoom={dealRoom} />;
+  // デバッグ用
+  console.log("getUserData response:", userData);
+
+  return (
+    <DealRoomDetailPresentation
+      dealRoom={dealRoom}
+      currentUserId={userData.id}
+    />
+  );
 }
