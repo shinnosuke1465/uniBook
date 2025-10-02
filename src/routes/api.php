@@ -173,28 +173,28 @@ Route::apiResource(
     ])
     ->whereUuid('dealRoomId');
 
-Route::post('/textbooks/{textbookId}/deal/payment_intent',
-    [TextbookDealController::class, 'createPaymentIntent']
-)->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.store');
-
-Route::post('/textbooks/{textbookId}/deal/payment_intent/verify',
-    [TextbookDealController::class, 'verifyPaymentIntent']
-)->middleware('auth:sanctum')->name('textbooks.deals.payment-intent.verify.store');
-
-Route::post('/textbooks/{textbookId}/deal/cancel',
-    [TextbookDealController::class, 'cancel']
-)->middleware('auth:sanctum')->name('textbooks.deals.cancel');
-
-Route::post('/textbooks/{textbookId}/deal/report_delivery',
-    [TextbookDealController::class, 'reportDelivery']
-)->middleware('auth:sanctum')->name('textbooks.deals.reportDelivery');
-
-Route::post('/textbooks/{textbookId}/deal/report_receipt',
-    [TextbookDealController::class, 'reportReceipt']
-)->middleware('auth:sanctum')->name('textbooks.deals.reportReceipt');
-
-
 Route::middleware('auth:sanctum')->group(function () {
+    //取引関連
+    Route::post('/textbooks/{textbookId}/deal/payment_intent',
+        [TextbookDealController::class, 'createPaymentIntent']
+    )->name('textbooks.deals.payment-intent.store');
+
+    Route::post('/textbooks/{textbookId}/deal/payment_intent/verify',
+        [TextbookDealController::class, 'verifyPaymentIntent']
+    )->name('textbooks.deals.payment-intent.verify.store');
+
+    Route::post('/textbooks/{textbookId}/deal/cancel',
+        [TextbookDealController::class, 'cancel']
+    )->name('textbooks.deals.cancel');
+
+    Route::post('/textbooks/{textbookId}/deal/report_delivery',
+        [TextbookDealController::class, 'reportDelivery']
+    )->name('textbooks.deals.reportDelivery');
+
+    Route::post('/textbooks/{textbookId}/deal/report_receipt',
+        [TextbookDealController::class, 'reportReceipt']
+    )->name('textbooks.deals.reportReceipt');
+
     //ログアウト
     Route::post('/logout', [AuthenticateController::class, 'logout'])->name('logout');
     //ユーザー情報取得
