@@ -30,7 +30,7 @@ readonly class GetPurchasedTextbookDealQueryService
             ])
             ->where('textbook_id', $textbookId)
             ->where('buyer_id', $userId->value)
-            ->where('deal_status', 'Completed')
+            ->whereIn('deal_status', ['Purchased', 'Shipping', 'Completed'])
             ->first();
     }
 }

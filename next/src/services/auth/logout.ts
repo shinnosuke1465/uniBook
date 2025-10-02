@@ -22,13 +22,19 @@ export const logout = async () => {
         });
 
         if (!res.ok) {
-            throw new Error("ログアウトに失敗しました");
+            const errorData = await res.json().catch(() => ({}));
+            console.error("ログアウトAPIエラー:", {
+                status: res.status,
+                statusText: res.statusText,
+                errorData,
+            });
+            throw new Error(`ログアウトに失敗しました: ${res.status}`);
         }
 
         // Cookie削除
         cookieStore.delete("token");
     } catch (e) {
-        console.error(e);
+        console.error("ログアウト処理エラー:", e);
         throw new Error("ログアウトに失敗しました");
     }
 };

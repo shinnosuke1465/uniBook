@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Textbook } from "@/app/types/textbook";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
@@ -13,6 +14,8 @@ export function TextbookDetailPresentation({
   children,
 }: TextbookDetailPresentationProps) {
   const [showPayment, setShowPayment] = useState(false);
+  const { authUser } = useAuthContext();
+
   const conditionLabels = {
     new: "新品",
     like_new: "ほぼ新品",
@@ -20,6 +23,11 @@ export function TextbookDetailPresentation({
     fair: "可",
     poor: "難あり",
   };
+
+  // 自分が出品した商品かどうか
+  const isOwnProduct = authUser?.id === textbook.deal?.seller_info.id;
+  // 購入可能かどうか
+  const canPurchase = textbook.deal?.is_purchasable && !isOwnProduct;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -127,7 +135,7 @@ export function TextbookDetailPresentation({
 
           {/* アクションボタン */}
           <div className="space-y-3">
-            {textbook.deal?.is_purchasable ? (
+            {canPurchase ? (
               <>
                 <button
                   onClick={() => setShowPayment(true)}
@@ -144,7 +152,7 @@ export function TextbookDetailPresentation({
                 disabled
                 className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
               >
-                現在取引中です
+                {isOwnProduct ? "自分の商品です" : "現在取引中です"}
               </button>
             ) : (
               <div className="text-center text-gray-500">

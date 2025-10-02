@@ -1,4 +1,4 @@
-import { createPaymentIntent } from "@/services/textbook/createPaymentIntent";
+import { createPaymentIntent } from "@/services/deal/createPaymentIntent";
 import { PaymentPresentation } from "./presentational";
 
 interface PaymentContainerProps {
@@ -22,6 +22,7 @@ export async function PaymentContainer({ textbookId, price }: PaymentContainerPr
       clientSecret={clientSecret}
       error={error}
       price={price}
+      textbookId={textbookId}
     />
   );
 }

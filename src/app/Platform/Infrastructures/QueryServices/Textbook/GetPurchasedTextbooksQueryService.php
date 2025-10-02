@@ -29,7 +29,7 @@ readonly class GetPurchasedTextbooksQueryService
                 'dealEvents'
             ])
             ->where('buyer_id', $userId->value)
-            ->where('deal_status', 'Completed')
+            ->whereIn('deal_status', ['Purchased', 'Shipping', 'Completed'])
             ->orderBy('updated_at', 'desc')
             ->get();
     }

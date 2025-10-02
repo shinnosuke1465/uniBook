@@ -38,13 +38,15 @@ function TextbookCard({ textbook }: TextbookCardProps) {
     poor: "難あり",
   };
 
+  const isSoldOut = textbook.deal && !textbook.deal.is_purchasable;
+
   return (
     <Link
       href={`/textbook/${textbook.id}`}
       className="block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
     >
       {/* 画像エリア */}
-      <div className="aspect-[4/3] bg-gray-100">
+      <div className="relative aspect-[4/3] bg-gray-100">
         {textbook.image_ids.length > 0 ? (
           <div className="flex h-full items-center justify-center text-gray-400">
             {/* 画像表示は後で実装 */}
@@ -55,10 +57,19 @@ function TextbookCard({ textbook }: TextbookCardProps) {
             <span>No Image</span>
           </div>
         )}
+
+        {/* SOLD OUTオーバーレイ */}
+        {isSoldOut && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-90">
+            <div className="rounded-md bg-red-600 px-6 py-2">
+              <span className="text-xl font-bold text-white">SOLD OUT</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* コンテンツエリア */}
-      <div className="p-4">
+      <div className={`p-4 ${isSoldOut ? "opacity-60" : ""}`}>
         <h3 className="mb-2 line-clamp-2 text-lg font-semibold">
           {textbook.name}
         </h3>
@@ -69,7 +80,9 @@ function TextbookCard({ textbook }: TextbookCardProps) {
         </div>
 
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-2xl font-bold text-blue-600">
+          <span
+            className={`text-2xl font-bold ${isSoldOut ? "text-gray-400 line-through" : "text-blue-600"}`}
+          >
             ¥{textbook.price.toLocaleString()}
           </span>
           <span
@@ -90,9 +103,15 @@ function TextbookCard({ textbook }: TextbookCardProps) {
         {/* 取引状態 */}
         {textbook.deal && (
           <div className="mb-2">
-            <span className="inline-block rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
-              取引中
-            </span>
+            {isSoldOut ? (
+              <span className="inline-block rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
+                売り切れ
+              </span>
+            ) : (
+              <span className="inline-block rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
+                販売中
+              </span>
+            )}
           </div>
         )}
 
