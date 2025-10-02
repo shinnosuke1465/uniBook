@@ -30,7 +30,7 @@ readonly class GetListedTextbookDealQueryService
             ])
             ->where('textbook_id', $textbookId)
             ->where('seller_id', $userId->value)
-            ->whereIn('deal_status', ['Listing', 'Completed'])
+            ->whereIn('deal_status', ['Listing','Purchased', 'Shipping', 'Completed'])
             ->first();
     }
 }

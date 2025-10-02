@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -17,12 +17,14 @@ interface PaymentPresentationProps {
   clientSecret: string | null;
   error: string | null;
   price: number;
+  textbookId: string;
 }
 
 export function PaymentPresentation({
   clientSecret,
   error,
   price,
+  textbookId,
 }: PaymentPresentationProps) {
   if (error) {
     return (
@@ -54,17 +56,47 @@ export function PaymentPresentation({
         },
       }}
     >
-      <CheckoutForm price={price} />
+      <CheckoutForm price={price} textbookId={textbookId} />
     </Elements>
   );
 }
 
-function CheckoutForm({ price }: { price: number }) {
+function CheckoutForm({ price, textbookId }: { price: number; textbookId: string }) {
   const stripe = useStripe();
   const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsProcessing(true);
+    setErrorMessage(null);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/textbook/${textbookId}/purchase/confirm`,
+        },
+      });
+
+      if (error) {
+        setErrorMessage(error.message || "決済処理に失敗しました");
+        setIsProcessing(false);
+      }
+    } catch (err) {
+      setErrorMessage("予期しないエラーが発生しました");
+      setIsProcessing(false);
+    }
+  };
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="rounded-lg border border-gray-200 p-6">
         <h3 className="mb-4 text-lg font-semibold">支払い情報</h3>
 
@@ -85,9 +117,23 @@ function CheckoutForm({ price }: { price: number }) {
         />
       </div>
 
+      {errorMessage && (
+        <div className="rounded-lg bg-red-50 p-4">
+          <p className="text-sm text-red-600">{errorMessage}</p>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={!stripe || isProcessing}
+        className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        {isProcessing ? "処理中..." : "購入する"}
+      </button>
+
       <p className="text-center text-xs text-gray-500">
         支払い情報は安全に暗号化されて送信されます
       </p>
-    </div>
+    </form>
   );
 }

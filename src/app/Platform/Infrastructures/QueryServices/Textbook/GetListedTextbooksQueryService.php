@@ -29,7 +29,7 @@ readonly class GetListedTextbooksQueryService
                 'dealEvents'
             ])
             ->where('seller_id', $userId->value)
-            ->whereIn('deal_status', ['Listing', 'Completed']) // 出品中・完了済み両方
+            ->whereIn('deal_status', ['Listing','Purchased', 'Shipping', 'Completed']) // 出品中・完了済み両方
             ->orderBy('updated_at', 'desc')
             ->get();
     }

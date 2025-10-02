@@ -22,6 +22,7 @@ export async function PaymentContainer({ textbookId, price }: PaymentContainerPr
       clientSecret={clientSecret}
       error={error}
       price={price}
+      textbookId={textbookId}
     />
   );
 }

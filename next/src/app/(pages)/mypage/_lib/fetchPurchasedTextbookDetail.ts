@@ -26,12 +26,18 @@ export async function fetchPurchasedTextbookDetail(
 		);
 
 		if (!res.ok) {
-			throw new Error("購入した教科書の詳細取得に失敗しました");
+			const errorData = await res.json().catch(() => ({}));
+			console.error("購入した教科書詳細取得APIエラー:", {
+				status: res.status,
+				statusText: res.statusText,
+				errorData,
+			});
+			throw new Error(`購入した教科書の詳細取得に失敗しました: ${res.status}`);
 		}
 
 		return await res.json();
 	} catch (e) {
-		console.error(e);
-		throw new Error("購入した教科書の詳細取得に失敗しました");
+		console.error("購入した教科書詳細取得エラー:", e);
+		throw e;
 	}
 }
