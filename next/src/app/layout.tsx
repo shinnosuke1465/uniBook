@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthContextProvider } from "@/contexts/AuthContext";
-import { Header } from "@/components/header/header";
+import { ConditionalHeader } from "@/components/header/conditional-header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthContextProvider>
-          <Header />
+          <ConditionalHeader />
           <main>{children}</main>
         </AuthContextProvider>
       </body>

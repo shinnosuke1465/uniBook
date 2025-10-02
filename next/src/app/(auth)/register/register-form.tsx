@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { register } from "@/services/auth/register";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 interface University {
   id: string;
@@ -23,6 +24,7 @@ interface RegisterFormProps {
 export default function RegisterForm({ initialUniversities, onUniversityChange }: RegisterFormProps) {
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
+    const { refreshUser } = useAuthContext();
 
     // 入力状態管理
     const [userName, setUserName] = useState('');
@@ -69,7 +71,8 @@ export default function RegisterForm({ initialUniversities, onUniversityChange }
                 const token = await register(data);
                 console.log(token);
 
-                // 会員登録成功後、教科書一覧ページへリダイレクト
+                // 会員登録成功後、認証状態を更新してから教科書一覧ページへリダイレクト
+                await refreshUser();
                 router.push('/textbook');
             } catch (e) {
                 setError((e as Error).message);

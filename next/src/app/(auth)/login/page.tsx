@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/services/auth/login";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function Page(){
     const router = useRouter();
     const [error,setError] = useState<string|null>(null);
+    const { refreshUser } = useAuthContext();
 
     const tryLogin = async (data:FormData) =>{
         try{
@@ -15,6 +17,7 @@ export default function Page(){
             console.log("ブラウザで確認: token =", result.token);
             console.log("ブラウザで確認: endpoint =", result.endpoint);
 
+            await refreshUser();
             router.push('/textbook');
         }catch(e){
             setError((e as Error).message);
