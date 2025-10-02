@@ -1,7 +1,6 @@
 "use server";
 
 import { getToken } from "@/services/auth/getToken";
-import type { DealRoomDetail } from "@/app/(pages)/mypage/_lib/fetchDealRoomDetail";
 
 export interface ReportReceiptParams {
   textbookId: string;
@@ -9,7 +8,7 @@ export interface ReportReceiptParams {
 
 export const reportReceipt = async (
   params: ReportReceiptParams
-): Promise<DealRoomDetail> => {
+): Promise<void> => {
   const token = await getToken();
 
   if (!token) {
@@ -28,17 +27,15 @@ export const reportReceipt = async (
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
+    const errorText = await res.text();
     console.error("受取報告APIエラー:", {
       status: res.status,
       statusText: res.statusText,
-      errorData,
+      errorBody: errorText,
     });
-    throw new Error(
-      errorData.message || `受取報告に失敗しました: ${res.status}`
-    );
+    throw new Error(`受取報告に失敗しました: ${res.status}`);
   }
 
-  const data = await res.json();
-  return data.deal_room;
+  // 204 No Content は正常なレスポンス
+  console.log("受取報告成功");
 };

@@ -1,7 +1,6 @@
 "use server";
 
 import { getToken } from "@/services/auth/getToken";
-import type { DealRoomDetail } from "@/app/(pages)/mypage/_lib/fetchDealRoomDetail";
 
 export interface ReportDeliveryParams {
   textbookId: string;
@@ -9,7 +8,7 @@ export interface ReportDeliveryParams {
 
 export const reportDelivery = async (
   params: ReportDeliveryParams
-): Promise<DealRoomDetail> => {
+): Promise<void> => {
   const token = await getToken();
 
   if (!token) {
@@ -28,17 +27,15 @@ export const reportDelivery = async (
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
+    const errorText = await res.text();
     console.error("配送報告APIエラー:", {
       status: res.status,
       statusText: res.statusText,
-      errorData,
+      errorBody: errorText,
     });
-    throw new Error(
-      errorData.message || `配送報告に失敗しました: ${res.status}`
-    );
+    throw new Error(`配送報告に失敗しました: ${res.status}`);
   }
 
-  const data = await res.json();
-  return data.deal_room;
+  // 204 No Content は正常なレスポンス
+  console.log("配送報告成功");
 };

@@ -11,24 +11,11 @@ export function DealRoomDetailPresentation({
   currentUserId,
   dealRoom,
 }: DealRoomDetailPresentationProps) {
-  const statusLabels: Record<string, string> = {
-    Listing: "出品中",
-    Purchased: "購入済み",
-    Shipping: "配送中",
-    Completed: "完了",
-  };
-
   return (
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className="border-b pb-4">
         <h1 className="text-3xl font-bold">取引詳細</h1>
-        <p className="mt-2 text-gray-600">
-          ステータス:{" "}
-          <span className="font-semibold">
-            {statusLabels[dealRoom.deal.status] || dealRoom.deal.status}
-          </span>
-        </p>
       </div>
 
       {/* 2カラムレイアウト */}
