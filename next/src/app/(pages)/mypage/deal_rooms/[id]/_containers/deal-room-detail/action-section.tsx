@@ -4,6 +4,7 @@ import { reportDelivery } from "@/services/deal/reportDelivery";
 import { reportReceipt } from "@/services/deal/reportReceipt";
 import { useState, type FormEvent } from "react";
 import { toast } from "react-hot-toast";
+import type { DealEvent } from "../../../../_lib/fetchDealRoomDetail";
 
 interface DealActionSectionProps {
   dealRoomId: string;
@@ -17,6 +18,7 @@ interface DealActionSectionProps {
     address: string;
     name: string;
   };
+  onEventAdded: (event: DealEvent) => void;
 }
 
 export function DealActionSection({
@@ -24,6 +26,7 @@ export function DealActionSection({
   buyerId,
   currentUserId,
   dealRoomId,
+  onEventAdded,
   sellerId,
   status: initialStatus,
   textbookId,
@@ -48,6 +51,16 @@ export function DealActionSection({
     try {
       await reportDelivery({ textbookId });
       setCurrentStatus("Shipping");
+
+      // 新しいイベントを追加
+      const newEvent: DealEvent = {
+        id: crypto.randomUUID(),
+        actor_type: "seller",
+        event_type: "ReportDelivery",
+        created_at: new Date().toISOString(),
+      };
+      onEventAdded(newEvent);
+
       toast.success("商品の発送報告をしました。");
     } catch (error) {
       toast.error("商品の発送報告に失敗しました。");
@@ -64,6 +77,16 @@ export function DealActionSection({
     try {
       await reportReceipt({ textbookId });
       setCurrentStatus("Completed");
+
+      // 新しいイベントを追加
+      const newEvent: DealEvent = {
+        id: crypto.randomUUID(),
+        actor_type: "buyer",
+        event_type: "ReportReceipt",
+        created_at: new Date().toISOString(),
+      };
+      onEventAdded(newEvent);
+
       toast.success("商品の受取報告をしました。");
     } catch (error) {
       toast.error("商品の受取報告に失敗しました。");

@@ -1,6 +1,9 @@
-import type { DealRoomDetail } from "../../../../_lib/fetchDealRoomDetail";
+"use client";
+
+import type { DealRoomDetail, DealEvent } from "../../../../_lib/fetchDealRoomDetail";
 import { DealEventList } from "@/app/(pages)/mypage/_components/DealEventList";
 import { DealActionSection } from "./action-section";
+import { useState } from "react";
 
 interface DealRoomDetailPresentationProps {
   dealRoom: DealRoomDetail;
@@ -11,6 +14,12 @@ export function DealRoomDetailPresentation({
   currentUserId,
   dealRoom,
 }: DealRoomDetailPresentationProps) {
+  const [dealEvents, setDealEvents] = useState<DealEvent[]>(dealRoom.deal.deal_events);
+
+  const handleEventAdded = (newEvent: DealEvent) => {
+    setDealEvents([...dealEvents, newEvent]);
+  };
+
   return (
     <div className="space-y-6">
       {/* ヘッダー */}
@@ -107,7 +116,7 @@ export function DealRoomDetailPresentation({
           </div>
 
           {/* 取引履歴 */}
-          <DealEventList events={dealRoom.deal.deal_events} />
+          <DealEventList events={dealEvents} />
         </div>
 
         {/* 右カラム - メッセージ */}
@@ -126,6 +135,7 @@ export function DealRoomDetailPresentation({
                 address: dealRoom.deal.buyer_info.address,
                 name: dealRoom.deal.buyer_info.name,
               }}
+              onEventAdded={handleEventAdded}
             />
           </div>
 
