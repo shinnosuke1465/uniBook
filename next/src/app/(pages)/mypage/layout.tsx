@@ -31,7 +31,7 @@ const pages: {
 	},
 	{
 		name: "取引一覧",
-		link: "/mypage/dealrooms",
+		link: "/mypage/deal_rooms",
 	},
 ];
 
