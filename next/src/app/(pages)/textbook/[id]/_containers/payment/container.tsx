@@ -1,4 +1,4 @@
-import { createPaymentIntent } from "@/services/textbook/createPaymentIntent";
+import { createPaymentIntent } from "@/services/deal/createPaymentIntent";
 import { PaymentPresentation } from "./presentational";
 
 interface PaymentContainerProps {
