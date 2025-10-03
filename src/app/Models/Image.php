@@ -53,4 +53,30 @@ class Image extends Model
     {
         return $this->hasMany(TextbookImage::class, 'image_id', 'id');
     }
+
+    /**
+     * 画像のフルパスを取得
+     *
+     * 開発環境: storage/app/publicに保存された画像のURLを返す
+     * 本番環境: S3の絶対URLをそのまま返す
+     *
+     * @return string|null
+     */
+    public function getImagePath(): ?string
+    {
+        if (empty($this->path)) {
+            return null;
+        }
+
+        // 本番環境（S3）の場合、pathにはすでにフルURLが保存されている
+        // 例: https://bucket.s3.amazonaws.com/images/xxxxx.jpg
+        if (app()->environment('production') || str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+
+        // 開発環境（Local）の場合、相対パスのみを返す
+        // フロントエンド側で適切なホストを付加する
+        // 例: path が "images/xxxxx.jpg" の場合、そのまま "images/xxxxx.jpg" を返す
+        return $this->path;
+    }
 }

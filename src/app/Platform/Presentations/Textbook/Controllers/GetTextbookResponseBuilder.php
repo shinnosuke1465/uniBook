@@ -18,7 +18,7 @@ readonly class GetTextbookResponseBuilder
             'condition_type' => $dto->conditionType,
             'university_name' => $dto->universityName,
             'faculty_name' => $dto->facultyName,
-            'image_ids' => $dto->imageIds,
+            'image_urls' => $dto->imageUrls,
             'deal' => $dto->deal,
             'comments' => $dto->comments,
             'is_liked' => $dto->isLiked,

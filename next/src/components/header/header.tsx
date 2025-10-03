@@ -27,7 +27,7 @@ export function Header() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
 					{/* ロゴ */}
-					<Link href="/" className="text-xl font-bold text-gray-900">
+					<Link href="/textbook" className="text-xl font-bold text-gray-900">
 						uniBook
 					</Link>
 
@@ -37,6 +37,14 @@ export function Header() {
 							<div className="w-24 h-8 bg-gray-200 animate-pulse rounded" />
 						) : authUser ? (
 							<>
+								{/* 出品ボタン */}
+								<Link
+									href="/textbook/create"
+									className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+								>
+									出品する
+								</Link>
+
 								{/* いいねアイコン */}
 								<Link
 									href="/mypage/liked_textbooks"

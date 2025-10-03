@@ -11,10 +11,17 @@ export default async function RegisterPage() {
     return await fetchFaculties(universityId);
   }
 
+  // Server Actionとして大学一覧再取得関数を定義
+  async function handleRefreshUniversities() {
+    "use server";
+    return await fetchUniversities();
+  }
+
   return (
     <RegisterContainer
       universities={universities}
       onFetchFaculties={handleFetchFaculties}
+      onRefreshUniversities={handleRefreshUniversities}
     />
   );
 }

@@ -1,4 +1,5 @@
 import type { LikedTextbook } from "@/types/response/responseType";
+import Link from "next/link";
 
 type LikedTextbookCardProps = {
 	textbook: LikedTextbook;
@@ -6,7 +7,10 @@ type LikedTextbookCardProps = {
 
 export function LikedTextbookCard({ textbook }: LikedTextbookCardProps) {
 	return (
-		<div className="block bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4">
+		<Link
+			href={`/textbook/${textbook.id}`}
+			className="block bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4"
+		>
 			<div className="flex gap-4">
 				{textbook.image_url ? (
 					<img
@@ -50,6 +54,6 @@ export function LikedTextbookCard({ textbook }: LikedTextbookCardProps) {
 					</div>
 				</div>
 			</div>
-		</div>
+		</Link>
 	);
 }

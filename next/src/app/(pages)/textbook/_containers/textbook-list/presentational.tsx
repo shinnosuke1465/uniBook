@@ -1,5 +1,10 @@
 import Link from "next/link";
 import type { Textbook } from "@/app/types/textbook";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+  LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+  S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 interface TextbookListPresentationProps {
   textbooks: Textbook[];
@@ -32,10 +37,11 @@ interface TextbookCardProps {
 function TextbookCard({ textbook }: TextbookCardProps) {
   const conditionLabels = {
     new: "新品",
-    like_new: "ほぼ新品",
-    good: "良い",
-    fair: "可",
-    poor: "難あり",
+    near_new: "ほぼ新品",
+    no_damage: "傷や汚れなし",
+    slight_damage: "やや傷や汚れあり",
+    damage: "傷や汚れあり",
+    poor_condition: "全体的に状態が悪い",
   };
 
   const isSoldOut = textbook.deal && !textbook.deal.is_purchasable;
@@ -47,15 +53,30 @@ function TextbookCard({ textbook }: TextbookCardProps) {
     >
       {/* 画像エリア */}
       <div className="relative aspect-[4/3] bg-gray-100">
-        {textbook.image_ids.length > 0 ? (
-          <div className="flex h-full items-center justify-center text-gray-400">
-            {/* 画像表示は後で実装 */}
-            <span>画像</span>
-          </div>
+        {textbook.image_urls.length > 0 ? (
+          <ImageFrame
+            path={textbook.image_urls[0]}
+            alt={textbook.name}
+            width={400}
+            height={300}
+            className="h-full w-full object-cover"
+          />
+        ) : process.env.NODE_ENV === "production" ? (
+          <ImageFrame
+            path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+            alt="デフォルト画像"
+            width={400}
+            height={300}
+            className="h-full w-full object-cover"
+          />
         ) : (
-          <div className="flex h-full items-center justify-center text-gray-400">
-            <span>No Image</span>
-          </div>
+          <ImageFrame
+            path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+            alt="デフォルト画像"
+            width={400}
+            height={300}
+            className="h-full w-full object-cover"
+          />
         )}
 
         {/* SOLD OUTオーバーレイ */}
@@ -89,9 +110,9 @@ function TextbookCard({ textbook }: TextbookCardProps) {
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               textbook.condition_type === "new"
                 ? "bg-green-100 text-green-800"
-                : textbook.condition_type === "like_new"
+                : textbook.condition_type === "near_new"
                   ? "bg-blue-100 text-blue-800"
-                  : textbook.condition_type === "good"
+                  : textbook.condition_type === "no_damage"
                     ? "bg-yellow-100 text-yellow-800"
                     : "bg-gray-100 text-gray-800"
             }`}

@@ -41,7 +41,7 @@ class CreateTextbookRequest extends BaseRequest implements CreateTextbookActionV
             'condition_type' => [
                 'required',
                 'string',
-                'in:new,good,fair,poor',
+                'in:new,near_new,no_damage,slight_damage,damage,poor_condition',
             ],
             'university_id' => [
                 'required',

@@ -44,7 +44,7 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     {
         return TextbookDB::query()
             ->with([
-                'imageIds',
+                'imageIds.image',
                 'deal.seller',
                 'comments.user',
                 'likes',
@@ -61,7 +61,7 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     {
         return TextbookDB::query()
             ->with([
-                'imageIds',
+                'imageIds.image',
                 'deal.seller',
                 'comments.user',
                 'likes',

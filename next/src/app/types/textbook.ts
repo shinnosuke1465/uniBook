@@ -29,10 +29,10 @@ export interface Textbook {
   name: string;
   price: number;
   description: string;
-  condition_type: "new" | "like_new" | "good" | "fair" | "poor";
+  condition_type: "new" | "near_new" | "no_damage" | "slight_damage" | "damage" | "poor_condition";
   university_name: string;
   faculty_name: string;
-  image_ids: string[];
+  image_urls: string[];
   deal: Deal | null;
   comments: Comment[];
   is_liked: boolean;

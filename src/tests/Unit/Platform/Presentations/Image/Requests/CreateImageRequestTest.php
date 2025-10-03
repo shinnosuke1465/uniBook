@@ -20,31 +20,16 @@ class CreateImageRequestTest extends TestCase
         app()->setLocale('ja');
     }
 
-    public function test_必須項目が正しく入力されている場合バリデーションが成功する(): void
-    {
-        //given
-        $inputData = self::createDefaultInput();
-        $request = CreateImageRequest::create('', 'POST', $inputData);
-
-        //when
-        $actualPath = $request->getPath();
-        $actualType = $request->getType();
-
-        //then
-        $this->assertEquals($inputData['path'], $actualPath->value);
-        $this->assertEquals($inputData['type'], $actualType->value);
-    }
-
     /**
      * @dataProvider invalidInputProvider
      */
-    public function test_無効な入力でバリデーションエラーが発生すること(array $input, string $expectedError): void
+    public function test_無効な入力でバリデーションエラーが発生すること(array $files, string $expectedError): void
     {
         //given
-        $request = CreateImageRequest::create('', 'POST', $input);
+        $request = CreateImageRequest::create('', 'POST', [], [], $files);
 
         //when
-        $validator = Validator::make($input, $request->rules(), $request->messages());
+        $validator = Validator::make($files, $request->rules(), $request->messages());
 
         //then
         $this->assertFalse($validator->passes());
@@ -57,29 +42,11 @@ class CreateImageRequestTest extends TestCase
     public static function invalidInputProvider(): array
     {
         return [
-            'pathが空' => [
-                self::createDefaultInput(path: ''),
-                '画像パスは必ず指定してください。',
-            ],
-            'typeが空' => [
-                self::createDefaultInput(type: ''),
-                '画像タイプは必ず指定してください。',
+            'imageが空' => [
+                [],
+                'imageは必ず指定してください。',
             ],
         ];
-    }
-
-    /**
-     * @return array{
-     *     id: ?string,
-     *     path: ?string,
-     *     type: ?string,
-     * }
-     */
-    private static function createDefaultInput(
-        ?string $path = '/images/test.png',
-        ?string $type = 'png',
-    ): array {
-        return compact('path', 'type');
     }
 }
 

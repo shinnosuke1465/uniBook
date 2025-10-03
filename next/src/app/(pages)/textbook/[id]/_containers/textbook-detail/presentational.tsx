@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import type { Textbook } from "@/app/types/textbook";
+import type { Textbook, Comment } from "@/app/types/textbook";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { sendComment } from "@/services/textbook/comment";
+import { createLike, deleteLike } from "@/services/textbook/like";
+import Link from "next/link";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+  LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+  S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
@@ -14,14 +22,22 @@ export function TextbookDetailPresentation({
   children,
 }: TextbookDetailPresentationProps) {
   const [showPayment, setShowPayment] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [comments, setComments] = useState<Comment[]>(textbook.comments);
+  const [commentInput, setCommentInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [isLiked, setIsLiked] = useState(textbook.is_liked);
+  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { authUser } = useAuthContext();
 
   const conditionLabels = {
     new: "新品",
-    like_new: "ほぼ新品",
-    good: "良い",
-    fair: "可",
-    poor: "難あり",
+    near_new: "ほぼ新品",
+    no_damage: "傷や汚れなし",
+    slight_damage: "やや傷や汚れあり",
+    damage: "傷や汚れあり",
+    poor_condition: "全体的に状態が悪い",
   };
 
   // 自分が出品した商品かどうか
@@ -29,35 +45,116 @@ export function TextbookDetailPresentation({
   // 購入可能かどうか
   const canPurchase = textbook.deal?.is_purchasable && !isOwnProduct;
 
+  const handleSendComment = async () => {
+    if (!commentInput.trim() || isSending) return;
+
+    setIsSending(true);
+
+    // Optimistic UI update
+    const optimisticComment: Comment = {
+      id: `temp-${Date.now()}`,
+      text: commentInput,
+      created_at: new Date().toISOString(),
+      user: {
+        id: authUser?.id || "",
+        name: authUser?.name || "あなた",
+        profile_image_url: authUser?.profile_image_url || null,
+      },
+    };
+
+    setComments([...comments, optimisticComment]);
+    setCommentInput("");
+    setShowCommentForm(false);
+
+    try {
+      await sendComment({
+        textbookId: textbook.id,
+        text: commentInput,
+      });
+    } catch (error) {
+      console.error("コメント送信エラー:", error);
+      // エラー時は楽観的更新を元に戻す
+      setComments(comments);
+      setCommentInput(optimisticComment.text);
+      setShowCommentForm(true);
+      alert("コメントの送信に失敗しました");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleToggleLike = async () => {
+    if (isLikeProcessing) return;
+
+    setIsLikeProcessing(true);
+
+    // Optimistic UI update
+    const previousLikeState = isLiked;
+    setIsLiked(!isLiked);
+
+    try {
+      if (previousLikeState) {
+        // いいね済み → いいね削除
+        await deleteLike({ textbookId: textbook.id });
+      } else {
+        // 未いいね → いいね作成
+        await createLike({ textbookId: textbook.id });
+      }
+    } catch (error) {
+      console.error("いいね処理エラー:", error);
+      // エラー時は楽観的更新を元に戻す
+      setIsLiked(previousLikeState);
+      alert("いいね処理に失敗しました");
+    } finally {
+      setIsLikeProcessing(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {/* 画像セクション */}
         <div className="space-y-4">
           <div className="aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-            {textbook.image_ids.length > 0 ? (
-              <div className="flex h-full items-center justify-center text-gray-400">
-                {/* 画像表示は後で実装 */}
-                <span className="text-2xl">画像</span>
-              </div>
+            {textbook.image_urls.length > 0 ? (
+              <ImageFrame
+                path={textbook.image_urls[selectedImageIndex]}
+                alt={textbook.name}
+                className="h-full w-full object-cover"
+              />
+            ) : process.env.NODE_ENV === "production" ? (
+              <ImageFrame
+                path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+                alt="デフォルト画像"
+                className="h-full w-full object-cover"
+              />
             ) : (
-              <div className="flex h-full items-center justify-center text-gray-400">
-                <span className="text-2xl">No Image</span>
-              </div>
+              <ImageFrame
+                path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+                alt="デフォルト画像"
+                className="h-full w-full object-cover"
+              />
             )}
           </div>
           {/* サムネイル画像（複数画像がある場合） */}
-          {textbook.image_ids.length > 1 && (
+          {textbook.image_urls.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {textbook.image_ids.map((imageId) => (
-                <div
-                  key={imageId}
-                  className="aspect-square overflow-hidden rounded border border-gray-200 bg-gray-100"
+              {textbook.image_urls.map((imageUrl, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImageIndex(index)}
+                  className={`aspect-square overflow-hidden rounded border bg-gray-100 transition ${
+                    selectedImageIndex === index
+                      ? "border-blue-500 border-2"
+                      : "border-gray-200 hover:border-gray-400"
+                  }`}
                 >
-                  <div className="flex h-full items-center justify-center text-xs text-gray-400">
-                    画像
-                  </div>
-                </div>
+                  <ImageFrame
+                    path={imageUrl}
+                    alt={`${textbook.name} - ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
               ))}
             </div>
           )}
@@ -76,9 +173,9 @@ export function TextbookDetailPresentation({
                 className={`rounded-full px-4 py-2 text-sm font-medium ${
                   textbook.condition_type === "new"
                     ? "bg-green-100 text-green-800"
-                    : textbook.condition_type === "like_new"
+                    : textbook.condition_type === "near_new"
                       ? "bg-blue-100 text-blue-800"
-                      : textbook.condition_type === "good"
+                      : textbook.condition_type === "no_damage"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-gray-100 text-gray-800"
                 }`}
@@ -135,54 +232,97 @@ export function TextbookDetailPresentation({
 
           {/* アクションボタン */}
           <div className="space-y-3">
-            {canPurchase ? (
-              <>
-                <button
-                  onClick={() => setShowPayment(true)}
-                  className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700"
-                >
-                  購入する
-                </button>
-                <button className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50">
-                  コメントする
-                </button>
-              </>
-            ) : textbook.deal ? (
+            {canPurchase && (
+              <button
+                onClick={() => setShowPayment(true)}
+                className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700"
+              >
+                購入する
+              </button>
+            )}
+            {isOwnProduct && (
               <button
                 disabled
                 className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
               >
-                {isOwnProduct ? "自分の商品です" : "現在取引中です"}
+                自分の商品です
               </button>
-            ) : (
+            )}
+            {textbook.deal && !textbook.deal.is_purchasable && !isOwnProduct && (
+              <button
+                disabled
+                className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
+              >
+                現在取引中です
+              </button>
+            )}
+            {!textbook.deal && (
               <div className="text-center text-gray-500">
                 商品情報を読み込んでいます...
               </div>
+            )}
+            {textbook.deal && (
+              <button
+                onClick={() => setShowCommentForm(!showCommentForm)}
+                className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                {showCommentForm ? "キャンセル" : "コメントする"}
+              </button>
             )}
           </div>
 
           {/* いいね・コメント数 */}
           <div className="flex items-center space-x-6 border-t pt-4">
-            <button className="flex items-center space-x-2 text-gray-600 transition hover:text-red-600">
+            <button
+              onClick={handleToggleLike}
+              disabled={isLikeProcessing}
+              className="flex items-center space-x-2 text-gray-600 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <span className="text-2xl">
-                {textbook.is_liked ? "❤️" : "🤍"}
+                {isLiked ? "❤️" : "🤍"}
               </span>
               <span>いいね</span>
             </button>
             <div className="flex items-center space-x-2 text-gray-600">
               <span className="text-2xl">💬</span>
-              <span>{textbook.comments.length} コメント</span>
+              <span>{comments.length} コメント</span>
             </div>
           </div>
         </div>
       </div>
 
+      {/* コメント入力フォーム */}
+      {showCommentForm && (
+        <div className="mt-12">
+          <h2 className="mb-4 text-2xl font-bold">コメント入力</h2>
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <textarea
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+              placeholder="コメントを入力..."
+              className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
+              rows={4}
+              disabled={isSending}
+            />
+            <div className="mt-3 flex justify-end">
+              <button
+                onClick={handleSendComment}
+                disabled={!commentInput.trim() || isSending}
+                className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {isSending ? "送信中..." : "送信"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* コメントセクション */}
-      {textbook.comments.length > 0 && (
+      {comments.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-6 text-2xl font-bold">コメント</h2>
           <div className="space-y-4">
-            {textbook.comments.map((comment) => (
+            {comments.map((comment) => (
               <div
                 key={comment.id}
                 className="rounded-lg border border-gray-200 bg-white p-4"

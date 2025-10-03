@@ -6,6 +6,7 @@ use App\Models\Faculty;
 use App\Platform\Domains\Comment\CommentRepositoryInterface;
 use App\Platform\Domains\DealMessage\DealMessageRepositoryInterface;
 use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
+use App\Platform\Domains\Image\ImageStorageServiceInterface;
 use App\Platform\Domains\Like\LikeRepositoryInterface;
 use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
 use App\Platform\Infrastructures\Comment\CommentRepository;
@@ -22,6 +23,8 @@ use App\Platform\Infrastructures\DealMessage\DealMessageRepository;
 use App\Platform\Infrastructures\DealRoom\DealRoomRepository;
 use App\Platform\Infrastructures\Faculty\FacultyRepository;
 use App\Platform\Infrastructures\Image\ImageRepository;
+use App\Platform\Infrastructures\Image\LocalImageStorageService;
+use App\Platform\Infrastructures\Image\S3ImageStorageService;
 use App\Platform\Infrastructures\Like\LikeRepository;
 use App\Platform\Infrastructures\StripeService\PaymentIntentMockRepository;
 use App\Platform\Infrastructures\StripeService\PaymentIntentRepository;
@@ -120,6 +123,19 @@ class AppServiceProvider extends ServiceProvider
             DealMessageRepositoryInterface::class,
             DealMessageRepository::class
         );
+
+        // 環境別にImageStorageServiceを切り替え
+        if ($this->app->environment('production')) {
+            $this->app->bind(
+                ImageStorageServiceInterface::class,
+                S3ImageStorageService::class
+            );
+        } else {
+            $this->app->bind(
+                ImageStorageServiceInterface::class,
+                LocalImageStorageService::class
+            );
+        }
     }
 
     /**
