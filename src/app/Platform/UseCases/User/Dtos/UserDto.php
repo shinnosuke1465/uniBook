@@ -15,7 +15,9 @@ readonly class UserDto
         public string $address,
         public string $mailAddress,
         public ?int $imageId,
+        public string $universityId,
         public string $universityName,
+        public string $facultyId,
         public string $facultyName,
     ) {
     }
@@ -35,7 +37,9 @@ readonly class UserDto
             $user->address->address->value,
             $user->mailAddress->mailAddress->value,
             $user->imageId?->value,
+            $user->universityId->value,
             $universityName,
+            $user->facultyId->value,
             $facultyName,
         );
     }

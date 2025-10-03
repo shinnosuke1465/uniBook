@@ -13,7 +13,9 @@ export type User = {
     address: string;
     image_id: number | null;
     profile_image_url: string | null;
+    university_id: string;
     university_name: string;
+    faculty_id: string;
     faculty_name: string;
 };
 

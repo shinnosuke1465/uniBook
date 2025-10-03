@@ -42,15 +42,16 @@ readonly class ImageController
     }
 
     /**
+     * @return array<string, mixed>
      * @throws DomainException
      * @throws Throwable
      */
     public function store(
         CreateImageRequest $request,
         CreateImageAction $action
-    ): Response {
-            $action($request);
-            return response()->noContent();
+    ): array {
+            $dto = $action($request);
+            return CreateImageResponseBuilder::toArray($dto);
     }
 }
 

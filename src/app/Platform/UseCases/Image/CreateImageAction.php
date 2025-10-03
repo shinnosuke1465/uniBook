@@ -9,6 +9,7 @@ use App\Platform\Domains\Image\ImageRepositoryInterface;
 use App\Platform\Domains\Image\ImageStorageServiceInterface;
 use App\Platform\Domains\Image\Image;
 use App\Platform\Domains\Shared\String\String255;
+use App\Platform\UseCases\Image\Dtos\ImageDto;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use App\Platform\UseCases\Shared\Transaction\TransactionInterface;
 use AppLog;
@@ -28,7 +29,7 @@ readonly class CreateImageAction
      */
     public function __invoke(
         CreateImageActionValuesInterface $actionValues,
-    ): void {
+    ): ImageDto {
         AppLog::start(__METHOD__);
         $requestParams = [];
 
@@ -57,6 +58,8 @@ readonly class CreateImageAction
             $this->transaction->begin();
             $this->imageRepository->insert($image);
             $this->transaction->commit();
+
+            return ImageDto::create($image);
         } catch (Exception $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);
             $this->transaction->rollback();
