@@ -15,7 +15,6 @@ export function ImageFrame({
 }: ImageFrameProps) {
   // 開発環境の場合、相対パスをLaravelのURLに変換
   const getImageUrl = () => {
-    console.log("Original path:", path);
 
     // 本番環境またはCI環境の場合、DBにはフルURLが保存されているのでそのまま返す
     if (process.env.NODE_ENV === "production" || process.env.APP_ENV === "ci") {
@@ -25,7 +24,6 @@ export function ImageFrame({
     // 開発環境の場合、localhost:8080 のURLを返す
     // path が http://localhost:8080/storage/xxxxx の形式ならそのまま返す
     if (path.startsWith("http://localhost:8080")) {
-      console.log("Already localhost:8080, returning:", path);
       return path;
     }
 
@@ -35,16 +33,13 @@ export function ImageFrame({
       const match = path.match(/\/storage\/(.+)$/);
       if (match) {
         const newUrl = `http://localhost:8080/storage/${match[1]}`;
-        console.log("Replaced URL:", newUrl);
         return newUrl;
       }
-      console.log("Could not extract storage path, returning original:", path);
       return path;
     }
 
     // 相対パスの場合、localhost:8080 のURLに変換
     const newUrl = `http://localhost:8080/storage/${path}`;
-    console.log("Converted relative path to:", newUrl);
     return newUrl;
   };
 
