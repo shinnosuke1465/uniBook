@@ -53,4 +53,22 @@ class Image extends Model
     {
         return $this->hasMany(TextbookImage::class, 'image_id', 'id');
     }
+
+    /**
+     * 画像のフルパスを取得
+     * storage/app/publicに保存された画像のURLを返す
+     *
+     * @return string|null
+     */
+    public function getImagePath(): ?string
+    {
+        if (empty($this->path)) {
+            return null;
+        }
+
+        // storage/app/public 配下のパスからURLを生成
+        // 例: path が "textbooks/image.jpg" の場合
+        // http://localhost/storage/textbooks/image.jpg を返す
+        return asset('storage/' . $this->path);
+    }
 }

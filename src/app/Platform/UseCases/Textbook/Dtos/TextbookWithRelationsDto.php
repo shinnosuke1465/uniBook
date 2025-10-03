@@ -14,7 +14,7 @@ readonly class TextbookWithRelationsDto
         public string $name,
         public int $price,
         public string $description,
-        public array $imageIds,
+        public array $imageUrls,
         public string $universityName,
         public string $facultyName,
         public string $conditionType,
@@ -59,15 +59,20 @@ readonly class TextbookWithRelationsDto
         if ($currentUserId) {
             $isLiked = $textbookModel->likes->contains('user_id', $currentUserId);
         }
-        // imageIds の変換
-        $imageIds = $textbookModel->imageIds->pluck('image_id')->all();
+
+        // imageUrls の生成（getImagePath()メソッドを使用）
+        $imageUrls = $textbookModel->imageIds
+            ->map(fn($textbookImage) => $textbookImage->image?->getImagePath())
+            ->filter() // nullを除外
+            ->values()
+            ->all();
 
         return new self(
             $textbookModel->id,
             $textbookModel->name,
             $textbookModel->price,
             $textbookModel->description ?? '',
-            $imageIds,
+            $imageUrls,
             $textbookModel->university->name ?? '',
             $textbookModel->faculty->name ?? '',
             $textbookModel->condition_type,

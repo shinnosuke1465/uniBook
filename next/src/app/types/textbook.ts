@@ -32,7 +32,7 @@ export interface Textbook {
   condition_type: "new" | "like_new" | "good" | "fair" | "poor";
   university_name: string;
   faculty_name: string;
-  image_ids: string[];
+  image_urls: string[];
   deal: Deal | null;
   comments: Comment[];
   is_liked: boolean;

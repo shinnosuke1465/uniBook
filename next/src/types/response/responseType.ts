@@ -12,6 +12,7 @@ export type User = {
     post_code: string;
     address: string;
     image_id: number | null;
+    profile_image_url: string | null;
     university_name: string;
     faculty_name: string;
 };

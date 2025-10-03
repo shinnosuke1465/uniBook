@@ -47,11 +47,12 @@ function TextbookCard({ textbook }: TextbookCardProps) {
     >
       {/* 画像エリア */}
       <div className="relative aspect-[4/3] bg-gray-100">
-        {textbook.image_ids.length > 0 ? (
-          <div className="flex h-full items-center justify-center text-gray-400">
-            {/* 画像表示は後で実装 */}
-            <span>画像</span>
-          </div>
+        {textbook.image_urls.length > 0 ? (
+          <img
+            src={textbook.image_urls[0]}
+            alt={textbook.name}
+            className="h-full w-full object-cover"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-gray-400">
             <span>No Image</span>

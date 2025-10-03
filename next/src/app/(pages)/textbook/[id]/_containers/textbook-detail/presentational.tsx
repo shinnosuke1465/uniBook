@@ -109,11 +109,12 @@ export function TextbookDetailPresentation({
         {/* 画像セクション */}
         <div className="space-y-4">
           <div className="aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-            {textbook.image_ids.length > 0 ? (
-              <div className="flex h-full items-center justify-center text-gray-400">
-                {/* 画像表示は後で実装 */}
-                <span className="text-2xl">画像</span>
-              </div>
+            {textbook.image_urls.length > 0 ? (
+              <img
+                src={textbook.image_urls[0]}
+                alt={textbook.name}
+                className="h-full w-full object-cover"
+              />
             ) : (
               <div className="flex h-full items-center justify-center text-gray-400">
                 <span className="text-2xl">No Image</span>
@@ -121,16 +122,18 @@ export function TextbookDetailPresentation({
             )}
           </div>
           {/* サムネイル画像（複数画像がある場合） */}
-          {textbook.image_ids.length > 1 && (
+          {textbook.image_urls.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {textbook.image_ids.map((imageId) => (
+              {textbook.image_urls.map((imageUrl, index) => (
                 <div
-                  key={imageId}
+                  key={index}
                   className="aspect-square overflow-hidden rounded border border-gray-200 bg-gray-100"
                 >
-                  <div className="flex h-full items-center justify-center text-xs text-gray-400">
-                    画像
-                  </div>
+                  <img
+                    src={imageUrl}
+                    alt={`${textbook.name} - ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               ))}
             </div>

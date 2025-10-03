@@ -85,7 +85,7 @@ class GetTextbooksApiTest extends TestCase
                         'name',
                         'price',
                         'description',
-                        'image_ids',
+                        'image_urls',
                         'university_name',
                         'faculty_name',
                         'condition_type',
