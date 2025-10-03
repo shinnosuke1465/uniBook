@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { Textbook } from "@/app/types/textbook";
+import type { Textbook, Comment } from "@/app/types/textbook";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { sendComment } from "@/services/textbook/comment";
 
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
@@ -14,6 +15,10 @@ export function TextbookDetailPresentation({
   children,
 }: TextbookDetailPresentationProps) {
   const [showPayment, setShowPayment] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [comments, setComments] = useState<Comment[]>(textbook.comments);
+  const [commentInput, setCommentInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
   const { authUser } = useAuthContext();
 
   const conditionLabels = {
@@ -28,6 +33,44 @@ export function TextbookDetailPresentation({
   const isOwnProduct = authUser?.id === textbook.deal?.seller_info.id;
   // 購入可能かどうか
   const canPurchase = textbook.deal?.is_purchasable && !isOwnProduct;
+
+  const handleSendComment = async () => {
+    if (!commentInput.trim() || isSending) return;
+
+    setIsSending(true);
+
+    // Optimistic UI update
+    const optimisticComment: Comment = {
+      id: `temp-${Date.now()}`,
+      text: commentInput,
+      created_at: new Date().toISOString(),
+      user: {
+        id: authUser?.id || "",
+        name: authUser?.name || "あなた",
+        profile_image_url: authUser?.profile_image_url || null,
+      },
+    };
+
+    setComments([...comments, optimisticComment]);
+    setCommentInput("");
+    setShowCommentForm(false);
+
+    try {
+      await sendComment({
+        textbookId: textbook.id,
+        text: commentInput,
+      });
+    } catch (error) {
+      console.error("コメント送信エラー:", error);
+      // エラー時は楽観的更新を元に戻す
+      setComments(comments);
+      setCommentInput(optimisticComment.text);
+      setShowCommentForm(true);
+      alert("コメントの送信に失敗しました");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -143,8 +186,11 @@ export function TextbookDetailPresentation({
                 >
                   購入する
                 </button>
-                <button className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50">
-                  コメントする
+                <button
+                  onClick={() => setShowCommentForm(!showCommentForm)}
+                  className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50"
+                >
+                  {showCommentForm ? "キャンセル" : "コメントする"}
                 </button>
               </>
             ) : textbook.deal ? (
@@ -177,12 +223,38 @@ export function TextbookDetailPresentation({
         </div>
       </div>
 
+      {/* コメント入力フォーム */}
+      {showCommentForm && (
+        <div className="mt-12">
+          <h2 className="mb-4 text-2xl font-bold">コメント入力</h2>
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <textarea
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+              placeholder="コメントを入力..."
+              className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
+              rows={4}
+              disabled={isSending}
+            />
+            <div className="mt-3 flex justify-end">
+              <button
+                onClick={handleSendComment}
+                disabled={!commentInput.trim() || isSending}
+                className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {isSending ? "送信中..." : "送信"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* コメントセクション */}
-      {textbook.comments.length > 0 && (
+      {comments.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-6 text-2xl font-bold">コメント</h2>
           <div className="space-y-4">
-            {textbook.comments.map((comment) => (
+            {comments.map((comment) => (
               <div
                 key={comment.id}
                 className="rounded-lg border border-gray-200 bg-white p-4"

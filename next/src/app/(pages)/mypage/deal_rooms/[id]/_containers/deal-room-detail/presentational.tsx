@@ -1,9 +1,10 @@
 "use client";
 
-import type { DealRoomDetail, DealEvent } from "../../../../_lib/fetchDealRoomDetail";
+import type { DealRoomDetail, DealEvent, Message } from "../../../../_lib/fetchDealRoomDetail";
 import { DealEventList } from "@/app/(pages)/mypage/_components/DealEventList";
 import { DealActionSection } from "./action-section";
 import { useState } from "react";
+import { sendDealMessage } from "@/services/deal/dealmessage";
 
 interface DealRoomDetailPresentationProps {
   dealRoom: DealRoomDetail;
@@ -15,9 +16,52 @@ export function DealRoomDetailPresentation({
   dealRoom,
 }: DealRoomDetailPresentationProps) {
   const [dealEvents, setDealEvents] = useState<DealEvent[]>(dealRoom.deal.deal_events);
+  const [messages, setMessages] = useState<Message[]>(dealRoom.messages);
+  const [messageInput, setMessageInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   const handleEventAdded = (newEvent: DealEvent) => {
     setDealEvents([...dealEvents, newEvent]);
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageInput.trim() || isSending) return;
+
+    setIsSending(true);
+
+    // Optimistic UI update
+    const optimisticMessage: Message = {
+      id: Date.now(),
+      message: messageInput,
+      created_at: new Date().toISOString(),
+      user: {
+        id: currentUserId,
+        name: dealRoom.deal.seller_info.id === currentUserId
+          ? dealRoom.deal.seller_info.name
+          : dealRoom.deal.buyer_info.name,
+        profile_image_url: dealRoom.deal.seller_info.id === currentUserId
+          ? dealRoom.deal.seller_info.profile_image_url
+          : dealRoom.deal.buyer_info.profile_image_url,
+      },
+    };
+
+    setMessages([...messages, optimisticMessage]);
+    setMessageInput("");
+
+    try {
+      await sendDealMessage({
+        dealRoomId: dealRoom.id,
+        message: messageInput,
+      });
+    } catch (error) {
+      console.error("メッセージ送信エラー:", error);
+      // エラー時は楽観的更新を元に戻す
+      setMessages(messages);
+      setMessageInput(optimisticMessage.message);
+      alert("メッセージの送信に失敗しました");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -142,13 +186,36 @@ export function DealRoomDetailPresentation({
           {/* メッセージ */}
           <div className="rounded-lg border border-gray-200 bg-white p-6">
             <h2 className="mb-4 text-xl font-semibold">メッセージ</h2>
-            <div className="space-y-4">
-              {dealRoom.messages.length === 0 ? (
+
+            {/* メッセージ入力フォーム */}
+            <div className="mb-4">
+              <textarea
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                placeholder="メッセージを入力..."
+                className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
+                rows={3}
+                disabled={isSending}
+              />
+              <div className="mt-2 flex justify-end">
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!messageInput.trim() || isSending}
+                  className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                >
+                  {isSending ? "送信中..." : "送信"}
+                </button>
+              </div>
+            </div>
+
+            {/* メッセージ一覧 */}
+            <div className="space-y-4 border-t border-gray-200 pt-4">
+              {messages.length === 0 ? (
                 <p className="text-center text-gray-500">
                   メッセージはまだありません
                 </p>
               ) : (
-                dealRoom.messages.map((message) => (
+                messages.map((message) => (
                   <div
                     key={message.id}
                     className="rounded-lg border border-gray-100 bg-gray-50 p-4"
