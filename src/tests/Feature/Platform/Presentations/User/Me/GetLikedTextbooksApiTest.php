@@ -153,7 +153,6 @@ class GetLikedTextbooksApiTest extends TestCase
                         'name',
                         'price',
                         'description',
-                        'image_url',
                         'image_urls',
                         'university_name',
                         'faculty_name',

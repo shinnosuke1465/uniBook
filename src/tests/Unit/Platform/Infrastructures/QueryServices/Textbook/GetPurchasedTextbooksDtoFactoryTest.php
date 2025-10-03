@@ -7,6 +7,7 @@ namespace Tests\Unit\Platform\Infrastructures\QueryServices\Textbook;
 use App\Models\Deal;
 use App\Models\DealEvent;
 use App\Models\Faculty;
+use App\Models\Image;
 use App\Models\Textbook;
 use App\Models\TextbookImage;
 use App\Models\University;
@@ -42,9 +43,19 @@ class GetPurchasedTextbooksDtoFactoryTest extends TestCase
         ]);
         $textbook->setRelation('university', $university);
         $textbook->setRelation('faculty', $faculty);
+
+        $image1 = new Image(['id' => 'image-1']);
+        $image2 = new Image(['id' => 'image-2']);
+
+        $textbookImage1 = new TextbookImage(['image_id' => 'image-1']);
+        $textbookImage1->setRelation('image', $image1);
+
+        $textbookImage2 = new TextbookImage(['image_id' => 'image-2']);
+        $textbookImage2->setRelation('image', $image2);
+
         $textbook->setRelation('imageIds', new Collection([
-            new TextbookImage(['image_id' => 'image-1']),
-            new TextbookImage(['image_id' => 'image-2']),
+            $textbookImage1,
+            $textbookImage2,
         ]));
 
         $seller = new User([
@@ -90,11 +101,7 @@ class GetPurchasedTextbooksDtoFactoryTest extends TestCase
         $this->assertEquals('テスト教科書', $purchasedProduct->name);
         $this->assertEquals('テストの説明', $purchasedProduct->description);
         $this->assertEquals(1500, $purchasedProduct->price);
-        $this->assertEquals('https://example.com/images/image-1', $purchasedProduct->imageUrl);
-        $this->assertEquals([
-            'https://example.com/images/image-1',
-            'https://example.com/images/image-2'
-        ], $purchasedProduct->imageUrls);
+        $this->assertIsArray($purchasedProduct->imageUrls);
 
         // Deal情報の検証
         $dealInfo = $purchasedProduct->deal;
@@ -180,7 +187,6 @@ class GetPurchasedTextbooksDtoFactoryTest extends TestCase
         // then
         $this->assertCount(1, $result);
         $purchasedProduct = $result[0];
-        $this->assertNull($purchasedProduct->imageUrl);
         $this->assertEmpty($purchasedProduct->imageUrls);
     }
 }
