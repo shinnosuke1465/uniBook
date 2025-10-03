@@ -11,7 +11,6 @@ readonly class LikedTextbookDto
         public string $name,
         public int $price,
         public string $description,
-        public ?string $imageUrl,
         public array $imageUrls,
         public string $universityName,
         public string $facultyName,

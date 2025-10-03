@@ -136,7 +136,6 @@ class GetDealRoomApiTest extends TestCase
                             'name',
                             'description',
                             'price',
-                            'image_url',
                             'image_urls',
                         ],
                         'seller_info' => [

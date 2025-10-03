@@ -18,11 +18,13 @@ readonly class GetListedTextbookDealDtoFactory
     public static function createFromDeal(Deal $deal): ListedTextbookDto
     {
         $textbook = $deal->textbook;
-        $imageIds = $textbook->imageIds->pluck('image_id')->toArray();
 
-        // 画像URLの構築
-        $imageUrls = array_map(fn($imageId) => "https://example.com/images/{$imageId}", $imageIds);
-        $primaryImageUrl = !empty($imageUrls) ? $imageUrls[0] : null;
+        // 画像URLの構築（getImagePath()メソッドを使用）
+        $imageUrls = $textbook->imageIds
+            ->map(fn($textbookImage) => $textbookImage->image?->getImagePath())
+            ->filter() // nullを除外
+            ->values()
+            ->all();
 
         // buyer_shipping_infoの構築（出品中の場合はnull）
         $buyerShippingInfo = null;
@@ -64,7 +66,6 @@ readonly class GetListedTextbookDealDtoFactory
             id: $textbook->id,
             name: $textbook->name,
             description: $textbook->description ?? '',
-            imageUrl: $primaryImageUrl,
             imageUrls: $imageUrls,
             price: $textbook->price,
             deal: $dealInfo,

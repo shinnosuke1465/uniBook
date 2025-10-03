@@ -20,11 +20,13 @@ readonly class GetLikedTextbooksDtoFactory
     {
         return $likes->map(function (Like $like) {
             $textbook = $like->textbook;
-            $imageIds = $textbook->imageIds->pluck('image_id')->toArray();
 
-            // 画像URLの構築
-            $imageUrls = array_map(fn($imageId) => "https://example.com/images/{$imageId}", $imageIds);
-            $primaryImageUrl = !empty($imageUrls) ? $imageUrls[0] : null;
+            // 画像URLの構築（getImagePath()メソッドを使用）
+            $imageUrls = $textbook->imageIds
+                ->map(fn($textbookImage) => $textbookImage->image?->getImagePath())
+                ->filter() // nullを除外
+                ->values()
+                ->all();
 
             // Deal情報の構築（教科書に紐づく取引がある場合）
             $dealInfo = null;
@@ -63,7 +65,6 @@ readonly class GetLikedTextbooksDtoFactory
                 name: $textbook->name,
                 price: $textbook->price,
                 description: $textbook->description ?? '',
-                imageUrl: $primaryImageUrl,
                 imageUrls: $imageUrls,
                 universityName: $textbook->university->name ?? '',
                 facultyName: $textbook->faculty->name ?? '',

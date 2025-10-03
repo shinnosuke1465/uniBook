@@ -131,7 +131,7 @@ class GetDealRoomsApiTest extends TestCase
                             ],
                             'textbook' => [
                                 'name',
-                                'image_url',
+                                'image_urls',
                             ],
                         ],
                         'created_at',

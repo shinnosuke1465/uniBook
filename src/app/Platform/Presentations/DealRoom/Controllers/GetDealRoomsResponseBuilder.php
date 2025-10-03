@@ -27,7 +27,7 @@ readonly class GetDealRoomsResponseBuilder
                         ],
                         'textbook' => [
                             'name' => $dto->deal->textbook->name,
-                            'image_url' => $dto->deal->textbook->imageUrl,
+                            'image_urls' => $dto->deal->textbook->imageUrls,
                         ],
                     ],
                     'created_at' => $dto->createdAt,

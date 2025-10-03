@@ -1,5 +1,10 @@
 import Link from "next/link";
 import type { DealRoom } from "../../../_lib/fetchDealRooms";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+	LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+	S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 interface DealRoomsPresentationProps {
   dealRooms: DealRoom[];
@@ -45,16 +50,30 @@ function DealRoomCard({ room }: DealRoomCardProps) {
       <div className="flex items-center p-4">
         {/* 商品画像 */}
         <div className="mr-4 h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
-          {room.deal.textbook.image_url ? (
-            <img
-              src={room.deal.textbook.image_url}
+          {room.deal.textbook.image_urls.length > 0 ? (
+            <ImageFrame
+              path={room.deal.textbook.image_urls[0]}
               alt={room.deal.textbook.name}
+              width={80}
+              height={80}
+              className="h-full w-full object-cover"
+            />
+          ) : process.env.NODE_ENV === "production" ? (
+            <ImageFrame
+              path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+              alt="デフォルト画像"
+              width={80}
+              height={80}
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-xs text-gray-400">
-              No Image
-            </div>
+            <ImageFrame
+              path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+              alt="デフォルト画像"
+              width={80}
+              height={80}
+              className="h-full w-full object-cover"
+            />
           )}
         </div>
 

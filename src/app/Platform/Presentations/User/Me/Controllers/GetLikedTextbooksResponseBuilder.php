@@ -23,7 +23,6 @@ readonly class GetLikedTextbooksResponseBuilder
                     'name' => $dto->name,
                     'price' => $dto->price,
                     'description' => $dto->description,
-                    'image_url' => $dto->imageUrl,
                     'image_urls' => $dto->imageUrls,
                     'university_name' => $dto->universityName,
                     'faculty_name' => $dto->facultyName,

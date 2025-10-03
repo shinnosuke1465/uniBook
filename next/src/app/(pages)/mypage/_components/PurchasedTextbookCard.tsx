@@ -1,5 +1,10 @@
 import type { PurchasedTextbook } from "@/types/response/responseType";
 import Link from "next/link";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+	LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+	S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 type PurchasedTextbookCardProps = {
 	textbook: PurchasedTextbook;
@@ -14,16 +19,30 @@ export function PurchasedTextbookCard({
 			className="block bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4"
 		>
 			<div className="flex gap-4">
-				{textbook.image_url ? (
-					<img
-						src={textbook.image_url}
+				{textbook.image_urls.length > 0 ? (
+					<ImageFrame
+						path={textbook.image_urls[0]}
 						alt={textbook.name}
+						width={96}
+						height={96}
+						className="w-24 h-24 object-cover rounded"
+					/>
+				) : process.env.NODE_ENV === "production" ? (
+					<ImageFrame
+						path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+						alt="デフォルト画像"
+						width={96}
+						height={96}
 						className="w-24 h-24 object-cover rounded"
 					/>
 				) : (
-					<div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center">
-						<span className="text-gray-400 text-sm">No Image</span>
-					</div>
+					<ImageFrame
+						path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+						alt="デフォルト画像"
+						width={96}
+						height={96}
+						className="w-24 h-24 object-cover rounded"
+					/>
 				)}
 				<div className="flex-1">
 					<h3 className="text-lg font-semibold text-gray-900">

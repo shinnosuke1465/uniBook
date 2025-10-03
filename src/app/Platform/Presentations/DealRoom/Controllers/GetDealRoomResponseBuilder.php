@@ -25,7 +25,6 @@ readonly class GetDealRoomResponseBuilder
                         'name' => $dto->deal->textbook->name,
                         'description' => $dto->deal->textbook->description,
                         'price' => $dto->deal->textbook->price,
-                        'image_url' => $dto->deal->textbook->imageUrl,
                         'image_urls' => $dto->deal->textbook->imageUrls,
                     ],
                     'seller_info' => [

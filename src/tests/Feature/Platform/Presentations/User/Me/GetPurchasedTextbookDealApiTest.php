@@ -104,7 +104,6 @@ class GetPurchasedTextbookDealApiTest extends TestCase
                 'id',
                 'name',
                 'description',
-                'image_url',
                 'image_urls',
                 'price',
                 'deal' => [

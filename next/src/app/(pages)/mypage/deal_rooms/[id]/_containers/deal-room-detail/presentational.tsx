@@ -5,6 +5,11 @@ import { DealEventList } from "@/app/(pages)/mypage/_components/DealEventList";
 import { DealActionSection } from "./action-section";
 import { useState } from "react";
 import { sendDealMessage } from "@/services/deal/dealmessage";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+	LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+	S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 interface DealRoomDetailPresentationProps {
   dealRoom: DealRoomDetail;
@@ -81,16 +86,30 @@ export function DealRoomDetailPresentation({
             <div className="flex items-start space-x-4">
               {/* 商品画像 */}
               <div className="h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
-                {dealRoom.deal.textbook.image_url ? (
-                  <img
-                    src={dealRoom.deal.textbook.image_url}
+                {dealRoom.deal.textbook.image_urls.length > 0 ? (
+                  <ImageFrame
+                    path={dealRoom.deal.textbook.image_urls[0]}
                     alt={dealRoom.deal.textbook.name}
+                    width={128}
+                    height={128}
+                    className="h-full w-full object-cover"
+                  />
+                ) : process.env.NODE_ENV === "production" ? (
+                  <ImageFrame
+                    path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+                    alt="デフォルト画像"
+                    width={128}
+                    height={128}
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-gray-400">
-                    No Image
-                  </div>
+                  <ImageFrame
+                    path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+                    alt="デフォルト画像"
+                    width={128}
+                    height={128}
+                    className="h-full w-full object-cover"
+                  />
                 )}
               </div>
 

@@ -24,7 +24,6 @@ export type ListedTextbook = {
     id: string;
     name: string;
     description: string;
-    image_url: string | null;
     image_urls: string[];
     price: number;
     deal: {
@@ -60,7 +59,6 @@ export type PurchasedTextbook = {
     id: string;
     name: string;
     description: string;
-    image_url: string | null;
     image_urls: string[];
     price: number;
     deal: {
@@ -97,7 +95,6 @@ export type LikedTextbook = {
     name: string;
     price: number;
     description: string;
-    image_url: string | null;
     image_urls: string[];
     university_name: string;
     faculty_name: string;
