@@ -8,6 +8,7 @@ import {
   LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
   S3_DEFAULT_TEXTBOOK_IMAGE_URL,
 } from "@/constants";
+import { AdvancedSearchModal } from "./advanced-search-modal";
 
 interface TextbookListPresentationProps {
   textbooks: Textbook[];
@@ -17,22 +18,63 @@ export function TextbookListPresentation({
   textbooks,
 }: TextbookListPresentationProps) {
   const [keyword, setKeyword] = useState("");
+  const [selectedUniversityId, setSelectedUniversityId] = useState<string | null>(null);
+  const [selectedFacultyId, setSelectedFacultyId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredTextbooks = useMemo(() => {
-    if (!keyword.trim()) {
-      return textbooks;
+    let result = textbooks;
+
+    // キーワード検索
+    if (keyword.trim()) {
+      const searchTerm = keyword.toLowerCase();
+      result = result.filter((textbook) => {
+        return (
+          textbook.name.toLowerCase().includes(searchTerm) ||
+          textbook.description.toLowerCase().includes(searchTerm) ||
+          textbook.university_name.toLowerCase().includes(searchTerm) ||
+          textbook.faculty_name.toLowerCase().includes(searchTerm)
+        );
+      });
     }
 
-    const searchTerm = keyword.toLowerCase();
-    return textbooks.filter((textbook) => {
-      return (
-        textbook.name.toLowerCase().includes(searchTerm) ||
-        textbook.description.toLowerCase().includes(searchTerm) ||
-        textbook.university_name.toLowerCase().includes(searchTerm) ||
-        textbook.faculty_name.toLowerCase().includes(searchTerm)
+    // 大学フィルター
+    if (selectedUniversityId) {
+      result = result.filter(
+        (textbook) => textbook.university_id === selectedUniversityId
       );
-    });
-  }, [textbooks, keyword]);
+    }
+
+    // 学部フィルター
+    if (selectedFacultyId) {
+      result = result.filter(
+        (textbook) => textbook.faculty_id === selectedFacultyId
+      );
+    }
+
+    return result;
+  }, [textbooks, keyword, selectedUniversityId, selectedFacultyId]);
+
+  const handleApplyAdvancedSearch = (
+    universityId: string | null,
+    facultyId: string | null
+  ) => {
+    setSelectedUniversityId(universityId);
+    setSelectedFacultyId(facultyId);
+  };
+
+  const handleClearFilters = () => {
+    setKeyword("");
+    setSelectedUniversityId(null);
+    setSelectedFacultyId(null);
+  };
+
+  const selectedUniversity = textbooks.find(
+    (t) => t.university_id === selectedUniversityId
+  )?.university_name;
+  const selectedFaculty = textbooks.find(
+    (t) => t.faculty_id === selectedFacultyId
+  )?.faculty_name;
 
   return (
     <div className="space-y-6">
@@ -60,12 +102,48 @@ export function TextbookListPresentation({
             />
           </svg>
         </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="rounded-lg border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          詳細検索
+        </button>
       </div>
+
+      {/* 適用中のフィルター */}
+      {(selectedUniversityId || selectedFacultyId) && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">絞り込み条件:</span>
+          {selectedUniversity && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
+              {selectedUniversity}
+            </span>
+          )}
+          {selectedFaculty && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
+              {selectedFaculty}
+            </span>
+          )}
+          <button
+            onClick={handleClearFilters}
+            className="text-sm text-gray-600 hover:text-gray-900 underline"
+          >
+            クリア
+          </button>
+        </div>
+      )}
 
       {/* 検索結果件数 */}
       <div className="text-sm text-gray-600">
         {filteredTextbooks.length}件の教科書が見つかりました
       </div>
+
+      {/* 詳細検索モーダル */}
+      <AdvancedSearchModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onApply={handleApplyAdvancedSearch}
+      />
 
       {/* 教科書一覧 */}
       {filteredTextbooks.length === 0 ? (
