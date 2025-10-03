@@ -19,6 +19,8 @@ export function AdvancedSearchModal({
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState<string>("");
   const [selectedFacultyId, setSelectedFacultyId] = useState<string>("");
+  const [universityKeyword, setUniversityKeyword] = useState<string>("");
+  const [facultyKeyword, setFacultyKeyword] = useState<string>("");
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(false);
   const [isLoadingFaculties, setIsLoadingFaculties] = useState(false);
 
@@ -76,8 +78,24 @@ export function AdvancedSearchModal({
   const handleReset = () => {
     setSelectedUniversityId("");
     setSelectedFacultyId("");
+    setUniversityKeyword("");
+    setFacultyKeyword("");
     setFaculties([]);
   };
+
+  // 大学一覧をキーワードでフィルタリング
+  const filteredUniversities = universityKeyword.trim()
+    ? universities.filter((university) =>
+        university.name.toLowerCase().includes(universityKeyword.toLowerCase())
+      )
+    : universities;
+
+  // 学部一覧をキーワードでフィルタリング
+  const filteredFaculties = facultyKeyword.trim()
+    ? faculties.filter((faculty) =>
+        faculty.name.toLowerCase().includes(facultyKeyword.toLowerCase())
+      )
+    : faculties;
 
   if (!isOpen) return null;
 
@@ -103,18 +121,27 @@ export function AdvancedSearchModal({
               {isLoadingUniversities ? (
                 <div className="text-sm text-gray-500">読み込み中...</div>
               ) : (
-                <select
-                  value={selectedUniversityId}
-                  onChange={(e) => setSelectedUniversityId(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="">大学を選択してください</option>
-                  {universities.map((university) => (
-                    <option key={university.id} value={university.id}>
-                      {university.name}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <input
+                    type="text"
+                    value={universityKeyword}
+                    onChange={(e) => setUniversityKeyword(e.target.value)}
+                    placeholder="大学名で絞り込み..."
+                    className="mb-2 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                  <select
+                    value={selectedUniversityId}
+                    onChange={(e) => setSelectedUniversityId(e.target.value)}
+                    className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
+                  >
+                    <option value="">大学を選択してください</option>
+                    {filteredUniversities.map((university) => (
+                      <option key={university.id} value={university.id}>
+                        {university.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
               )}
             </div>
 
@@ -127,18 +154,27 @@ export function AdvancedSearchModal({
                 {isLoadingFaculties ? (
                   <div className="text-sm text-gray-500">読み込み中...</div>
                 ) : (
-                  <select
-                    value={selectedFacultyId}
-                    onChange={(e) => setSelectedFacultyId(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
-                  >
-                    <option value="">学部を選択してください</option>
-                    {faculties.map((faculty) => (
-                      <option key={faculty.id} value={faculty.id}>
-                        {faculty.name}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <input
+                      type="text"
+                      value={facultyKeyword}
+                      onChange={(e) => setFacultyKeyword(e.target.value)}
+                      placeholder="学部名で絞り込み..."
+                      className="mb-2 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+                    />
+                    <select
+                      value={selectedFacultyId}
+                      onChange={(e) => setSelectedFacultyId(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
+                    >
+                      <option value="">学部を選択してください</option>
+                      {filteredFaculties.map((faculty) => (
+                        <option key={faculty.id} value={faculty.id}>
+                          {faculty.name}
+                        </option>
+                      ))}
+                    </select>
+                  </>
                 )}
               </div>
             )}
