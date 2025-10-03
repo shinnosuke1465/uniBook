@@ -27,7 +27,6 @@ readonly class DealRoomDetailDto
                 name: $dealRoomModel->deal->textbook->name,
                 description: $dealRoomModel->deal->textbook->description,
                 price: $dealRoomModel->deal->textbook->price,
-                imageUrl: self::getTextbookImageUrl($dealRoomModel),
                 imageUrls: self::getTextbookImageUrls($dealRoomModel),
             ),
             sellerInfo: new UserInfoDto(
@@ -81,16 +80,6 @@ readonly class DealRoomDetailDto
         );
     }
 
-    private static function getTextbookImageUrl(DealRoomDB $dealRoomModel): ?string
-    {
-        if (!$dealRoomModel->deal->textbook) {
-            return null;
-        }
-
-        $firstImageId = $dealRoomModel->deal->textbook->imageIds->first();
-        return $firstImageId ? "/api/images/{$firstImageId->image_id}" : null;
-    }
-
     /**
      * @return string[]
      */
@@ -101,7 +90,9 @@ readonly class DealRoomDetailDto
         }
 
         return $dealRoomModel->deal->textbook->imageIds
-            ->map(fn($imageId) => "/api/images/{$imageId->image_id}")
+            ->map(fn($textbookImage) => $textbookImage->image?->getImagePath())
+            ->filter() // nullを除外
+            ->values()
             ->toArray();
     }
 }
@@ -127,7 +118,6 @@ readonly class TextbookDetailDto
         public string $name,
         public string $description,
         public int $price,
-        public ?string $imageUrl,
         /** @var string[] */
         public array $imageUrls,
     ) {

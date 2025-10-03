@@ -9,6 +9,10 @@ import {
   S3_DEFAULT_TEXTBOOK_IMAGE_URL,
 } from "@/constants";
 import { AdvancedSearchModal } from "./advanced-search-modal";
+import {
+  CategoryFilterModal,
+  type CategoryFilters,
+} from "./category-filter-modal";
 
 interface TextbookListPresentationProps {
   textbooks: Textbook[];
@@ -21,6 +25,13 @@ export function TextbookListPresentation({
   const [selectedUniversityId, setSelectedUniversityId] = useState<string | null>(null);
   const [selectedFacultyId, setSelectedFacultyId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
+    minPrice: null,
+    maxPrice: null,
+    conditionTypes: [],
+    saleStatus: "all",
+  });
 
   const filteredTextbooks = useMemo(() => {
     let result = textbooks;
@@ -52,8 +63,38 @@ export function TextbookListPresentation({
       );
     }
 
+    // 価格フィルター
+    if (categoryFilters.minPrice !== null) {
+      result = result.filter(
+        (textbook) => textbook.price >= categoryFilters.minPrice!
+      );
+    }
+    if (categoryFilters.maxPrice !== null) {
+      result = result.filter(
+        (textbook) => textbook.price <= categoryFilters.maxPrice!
+      );
+    }
+
+    // 商品状態フィルター
+    if (categoryFilters.conditionTypes.length > 0) {
+      result = result.filter((textbook) =>
+        categoryFilters.conditionTypes.includes(textbook.condition_type)
+      );
+    }
+
+    // 販売状態フィルター
+    if (categoryFilters.saleStatus === "selling") {
+      result = result.filter(
+        (textbook) => textbook.deal && textbook.deal.is_purchasable
+      );
+    } else if (categoryFilters.saleStatus === "sold") {
+      result = result.filter(
+        (textbook) => textbook.deal && !textbook.deal.is_purchasable
+      );
+    }
+
     return result;
-  }, [textbooks, keyword, selectedUniversityId, selectedFacultyId]);
+  }, [textbooks, keyword, selectedUniversityId, selectedFacultyId, categoryFilters]);
 
   const handleApplyAdvancedSearch = (
     universityId: string | null,
@@ -69,12 +110,42 @@ export function TextbookListPresentation({
     setSelectedFacultyId(null);
   };
 
+  const handleClearCategoryFilters = () => {
+    setCategoryFilters({
+      minPrice: null,
+      maxPrice: null,
+      conditionTypes: [],
+      saleStatus: "all",
+    });
+  };
+
   const selectedUniversity = textbooks.find(
     (t) => t.university_id === selectedUniversityId
   )?.university_name;
   const selectedFaculty = textbooks.find(
     (t) => t.faculty_id === selectedFacultyId
   )?.faculty_name;
+
+  const conditionLabels = {
+    new: "新品",
+    near_new: "ほぼ新品",
+    no_damage: "傷や汚れなし",
+    slight_damage: "やや傷や汚れあり",
+    damage: "傷や汚れあり",
+    poor_condition: "全体的に状態が悪い",
+  };
+
+  const saleStatusLabels = {
+    all: "すべて",
+    selling: "販売中",
+    sold: "売却済み",
+  };
+
+  const hasCategoryFilters =
+    categoryFilters.minPrice !== null ||
+    categoryFilters.maxPrice !== null ||
+    categoryFilters.conditionTypes.length > 0 ||
+    categoryFilters.saleStatus !== "all";
 
   return (
     <div className="space-y-6">
@@ -108,12 +179,18 @@ export function TextbookListPresentation({
         >
           詳細検索
         </button>
+        <button
+          onClick={() => setIsCategoryModalOpen(true)}
+          className="rounded-lg border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          カテゴリー選択
+        </button>
       </div>
 
-      {/* 適用中のフィルター */}
+      {/* 適用中のフィルター - 詳細検索 */}
       {(selectedUniversityId || selectedFacultyId) && (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">絞り込み条件:</span>
+          <span className="text-sm text-gray-600">詳細検索:</span>
           {selectedUniversity && (
             <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
               {selectedUniversity}
@@ -133,6 +210,42 @@ export function TextbookListPresentation({
         </div>
       )}
 
+      {/* 適用中のフィルター - カテゴリー */}
+      {hasCategoryFilters && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm text-gray-600">カテゴリー:</span>
+          {categoryFilters.minPrice !== null && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm text-green-800">
+              ¥{categoryFilters.minPrice.toLocaleString()}〜
+            </span>
+          )}
+          {categoryFilters.maxPrice !== null && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm text-green-800">
+              〜¥{categoryFilters.maxPrice.toLocaleString()}
+            </span>
+          )}
+          {categoryFilters.conditionTypes.map((type) => (
+            <span
+              key={type}
+              className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-800"
+            >
+              {conditionLabels[type as keyof typeof conditionLabels]}
+            </span>
+          ))}
+          {categoryFilters.saleStatus !== "all" && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-3 py-1 text-sm text-orange-800">
+              {saleStatusLabels[categoryFilters.saleStatus]}
+            </span>
+          )}
+          <button
+            onClick={handleClearCategoryFilters}
+            className="text-sm text-gray-600 hover:text-gray-900 underline"
+          >
+            クリア
+          </button>
+        </div>
+      )}
+
       {/* 検索結果件数 */}
       <div className="text-sm text-gray-600">
         {filteredTextbooks.length}件の教科書が見つかりました
@@ -143,6 +256,14 @@ export function TextbookListPresentation({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onApply={handleApplyAdvancedSearch}
+      />
+
+      {/* カテゴリー選択モーダル */}
+      <CategoryFilterModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onApply={setCategoryFilters}
+        currentFilters={categoryFilters}
       />
 
       {/* 教科書一覧 */}

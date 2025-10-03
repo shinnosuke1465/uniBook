@@ -22,7 +22,6 @@ readonly class GetListedTextbooksResponseBuilder
                     'id' => $dto->id,
                     'name' => $dto->name,
                     'description' => $dto->description,
-                    'image_url' => $dto->imageUrl,
                     'image_urls' => $dto->imageUrls,
                     'price' => $dto->price,
                     'deal' => $dto->deal,

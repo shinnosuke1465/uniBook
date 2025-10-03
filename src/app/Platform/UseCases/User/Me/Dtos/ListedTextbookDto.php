@@ -10,7 +10,6 @@ readonly class ListedTextbookDto
         public string $id,
         public string $name,
         public string $description,
-        public ?string $imageUrl,
         public array $imageUrls,
         public int $price,
         public array $deal,

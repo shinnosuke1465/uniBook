@@ -1,6 +1,11 @@
 import type { ListedTextbook } from "@/types/response/responseType";
 import { DealEventList } from "@/app/(pages)/mypage/_components/DealEventList";
 import Link from "next/link";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+	LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+	S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 type ListedTextbookDetailPresenterProps = {
 	textbook: ListedTextbook;
@@ -25,24 +30,40 @@ export function ListedTextbookDetailPresenter({
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					{/* 画像 */}
 					<div>
-						{textbook.image_url ? (
-							<img
-								src={textbook.image_url}
+						{textbook.image_urls.length > 0 ? (
+							<ImageFrame
+								path={textbook.image_urls[0]}
 								alt={textbook.name}
+								width={600}
+								height={600}
+								className="w-full rounded-lg"
+							/>
+						) : process.env.NODE_ENV === "production" ? (
+							<ImageFrame
+								path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+								alt="デフォルト画像"
+								width={600}
+								height={600}
 								className="w-full rounded-lg"
 							/>
 						) : (
-							<div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
-								<span className="text-gray-400">No Image</span>
-							</div>
+							<ImageFrame
+								path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+								alt="デフォルト画像"
+								width={600}
+								height={600}
+								className="w-full rounded-lg"
+							/>
 						)}
 						{textbook.image_urls.length > 1 && (
 							<div className="grid grid-cols-4 gap-2 mt-2">
 								{textbook.image_urls.slice(1).map((url, index) => (
-									<img
+									<ImageFrame
 										key={index}
-										src={url}
+										path={url}
 										alt={`${textbook.name} ${index + 2}`}
+										width={150}
+										height={150}
 										className="w-full aspect-square object-cover rounded"
 									/>
 								))}
