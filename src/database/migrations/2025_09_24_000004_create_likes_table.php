@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->string('user_id', 36)->comment('ユーザーID');
             $table->string('textbook_id', 36)->comment('教科書ID');
             $table->timestamps();
-            $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('textbook_id')->references('id')->on('textbooks')->onDelete('cascade');

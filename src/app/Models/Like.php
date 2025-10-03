@@ -34,7 +34,7 @@ use App\Models\Textbook;
  */
 class Like extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $primaryKey = 'id';
     public $incrementing = false;

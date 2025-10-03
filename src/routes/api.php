@@ -105,13 +105,17 @@ Route::apiResource(
 Route::apiResource(
     '/textbooks/{textbookId}/likes',
     LikeController::class
-)->only(['store', 'destroy'])->names([
-    'store' => 'likes.store',
-    'destroy' => 'likes.destroy',
+)->only(['store'])->names([
+    'store' => 'likes.store'
 ])
     ->parameters([
         'textbooks' => 'textbookIdString',
     ])
+    ->whereUuid('textbookIdString');
+
+// いいね削除
+Route::delete('/textbooks/{textbookId}/likes', [LikeController::class, 'destroy'])
+    ->name('likes.destroy')
     ->whereUuid('textbookIdString');
 
 //いいねした教科書一覧取得

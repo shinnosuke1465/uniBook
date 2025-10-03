@@ -4,6 +4,8 @@ import { useState } from "react";
 import type { Textbook, Comment } from "@/app/types/textbook";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { sendComment } from "@/services/textbook/comment";
+import { createLike, deleteLike } from "@/services/textbook/like";
+import Link from "next/link";
 
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
@@ -19,6 +21,8 @@ export function TextbookDetailPresentation({
   const [comments, setComments] = useState<Comment[]>(textbook.comments);
   const [commentInput, setCommentInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isLiked, setIsLiked] = useState(textbook.is_liked);
+  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
   const { authUser } = useAuthContext();
 
   const conditionLabels = {
@@ -69,6 +73,33 @@ export function TextbookDetailPresentation({
       alert("コメントの送信に失敗しました");
     } finally {
       setIsSending(false);
+    }
+  };
+
+  const handleToggleLike = async () => {
+    if (isLikeProcessing) return;
+
+    setIsLikeProcessing(true);
+
+    // Optimistic UI update
+    const previousLikeState = isLiked;
+    setIsLiked(!isLiked);
+
+    try {
+      if (previousLikeState) {
+        // いいね済み → いいね削除
+        await deleteLike({ textbookId: textbook.id });
+      } else {
+        // 未いいね → いいね作成
+        await createLike({ textbookId: textbook.id });
+      }
+    } catch (error) {
+      console.error("いいね処理エラー:", error);
+      // エラー時は楽観的更新を元に戻す
+      setIsLiked(previousLikeState);
+      alert("いいね処理に失敗しました");
+    } finally {
+      setIsLikeProcessing(false);
     }
   };
 
@@ -178,46 +209,60 @@ export function TextbookDetailPresentation({
 
           {/* アクションボタン */}
           <div className="space-y-3">
-            {canPurchase ? (
-              <>
-                <button
-                  onClick={() => setShowPayment(true)}
-                  className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700"
-                >
-                  購入する
-                </button>
-                <button
-                  onClick={() => setShowCommentForm(!showCommentForm)}
-                  className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50"
-                >
-                  {showCommentForm ? "キャンセル" : "コメントする"}
-                </button>
-              </>
-            ) : textbook.deal ? (
+            {canPurchase && (
+              <button
+                onClick={() => setShowPayment(true)}
+                className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700"
+              >
+                購入する
+              </button>
+            )}
+            {isOwnProduct && (
               <button
                 disabled
                 className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
               >
-                {isOwnProduct ? "自分の商品です" : "現在取引中です"}
+                自分の商品です
               </button>
-            ) : (
+            )}
+            {textbook.deal && !textbook.deal.is_purchasable && !isOwnProduct && (
+              <button
+                disabled
+                className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
+              >
+                現在取引中です
+              </button>
+            )}
+            {!textbook.deal && (
               <div className="text-center text-gray-500">
                 商品情報を読み込んでいます...
               </div>
+            )}
+            {textbook.deal && (
+              <button
+                onClick={() => setShowCommentForm(!showCommentForm)}
+                className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                {showCommentForm ? "キャンセル" : "コメントする"}
+              </button>
             )}
           </div>
 
           {/* いいね・コメント数 */}
           <div className="flex items-center space-x-6 border-t pt-4">
-            <button className="flex items-center space-x-2 text-gray-600 transition hover:text-red-600">
+            <button
+              onClick={handleToggleLike}
+              disabled={isLikeProcessing}
+              className="flex items-center space-x-2 text-gray-600 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <span className="text-2xl">
-                {textbook.is_liked ? "❤️" : "🤍"}
+                {isLiked ? "❤️" : "🤍"}
               </span>
               <span>いいね</span>
             </button>
             <div className="flex items-center space-x-2 text-gray-600">
               <span className="text-2xl">💬</span>
-              <span>{textbook.comments.length} コメント</span>
+              <span>{comments.length} コメント</span>
             </div>
           </div>
         </div>
