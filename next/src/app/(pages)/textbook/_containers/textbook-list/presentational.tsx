@@ -1,5 +1,10 @@
 import Link from "next/link";
 import type { Textbook } from "@/app/types/textbook";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+  LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+  S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 interface TextbookListPresentationProps {
   textbooks: Textbook[];
@@ -48,15 +53,29 @@ function TextbookCard({ textbook }: TextbookCardProps) {
       {/* 画像エリア */}
       <div className="relative aspect-[4/3] bg-gray-100">
         {textbook.image_urls.length > 0 ? (
-          <img
-            src={textbook.image_urls[0]}
+          <ImageFrame
+            path={textbook.image_urls[0]}
             alt={textbook.name}
+            width={400}
+            height={300}
+            className="h-full w-full object-cover"
+          />
+        ) : process.env.NODE_ENV === "production" ? (
+          <ImageFrame
+            path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+            alt="デフォルト画像"
+            width={400}
+            height={300}
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-gray-400">
-            <span>No Image</span>
-          </div>
+          <ImageFrame
+            path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+            alt="デフォルト画像"
+            width={400}
+            height={300}
+            className="h-full w-full object-cover"
+          />
         )}
 
         {/* SOLD OUTオーバーレイ */}

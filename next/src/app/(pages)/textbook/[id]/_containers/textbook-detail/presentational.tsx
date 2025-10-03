@@ -6,6 +6,11 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { sendComment } from "@/services/textbook/comment";
 import { createLike, deleteLike } from "@/services/textbook/like";
 import Link from "next/link";
+import { ImageFrame } from "@/components/image/image-frame";
+import {
+  LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL,
+  S3_DEFAULT_TEXTBOOK_IMAGE_URL,
+} from "@/constants";
 
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
@@ -23,6 +28,7 @@ export function TextbookDetailPresentation({
   const [isSending, setIsSending] = useState(false);
   const [isLiked, setIsLiked] = useState(textbook.is_liked);
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { authUser } = useAuthContext();
 
   const conditionLabels = {
@@ -110,31 +116,44 @@ export function TextbookDetailPresentation({
         <div className="space-y-4">
           <div className="aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
             {textbook.image_urls.length > 0 ? (
-              <img
-                src={textbook.image_urls[0]}
+              <ImageFrame
+                path={textbook.image_urls[selectedImageIndex]}
                 alt={textbook.name}
                 className="h-full w-full object-cover"
               />
+            ) : process.env.NODE_ENV === "production" ? (
+              <ImageFrame
+                path={S3_DEFAULT_TEXTBOOK_IMAGE_URL}
+                alt="デフォルト画像"
+                className="h-full w-full object-cover"
+              />
             ) : (
-              <div className="flex h-full items-center justify-center text-gray-400">
-                <span className="text-2xl">No Image</span>
-              </div>
+              <ImageFrame
+                path={LOCAL_DEFAULT_TEXTBOOK_IMAGE_URL}
+                alt="デフォルト画像"
+                className="h-full w-full object-cover"
+              />
             )}
           </div>
           {/* サムネイル画像（複数画像がある場合） */}
           {textbook.image_urls.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {textbook.image_urls.map((imageUrl, index) => (
-                <div
+                <button
                   key={index}
-                  className="aspect-square overflow-hidden rounded border border-gray-200 bg-gray-100"
+                  onClick={() => setSelectedImageIndex(index)}
+                  className={`aspect-square overflow-hidden rounded border bg-gray-100 transition ${
+                    selectedImageIndex === index
+                      ? "border-blue-500 border-2"
+                      : "border-gray-200 hover:border-gray-400"
+                  }`}
                 >
-                  <img
-                    src={imageUrl}
+                  <ImageFrame
+                    path={imageUrl}
                     alt={`${textbook.name} - ${index + 1}`}
                     className="h-full w-full object-cover"
                   />
-                </div>
+                </button>
               ))}
             </div>
           )}

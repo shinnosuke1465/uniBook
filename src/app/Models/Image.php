@@ -74,9 +74,9 @@ class Image extends Model
             return $this->path;
         }
 
-        // 開発環境（Local）の場合、相対パスからURLを生成
-        // 例: path が "images/xxxxx.jpg" の場合
-        // http://localhost/storage/images/xxxxx.jpg を返す
-        return asset('storage/' . $this->path);
+        // 開発環境（Local）の場合、相対パスのみを返す
+        // フロントエンド側で適切なホストを付加する
+        // 例: path が "images/xxxxx.jpg" の場合、そのまま "images/xxxxx.jpg" を返す
+        return $this->path;
     }
 }
