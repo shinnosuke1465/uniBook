@@ -49,8 +49,8 @@ readonly class ImageController
         CreateImageRequest $request,
         CreateImageAction $action
     ): Response {
-        $action($request);
-        return response()->noContent();
+            $action($request);
+            return response()->noContent();
     }
 }
 

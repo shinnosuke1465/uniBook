@@ -56,7 +56,9 @@ class Image extends Model
 
     /**
      * 画像のフルパスを取得
-     * storage/app/publicに保存された画像のURLを返す
+     *
+     * 開発環境: storage/app/publicに保存された画像のURLを返す
+     * 本番環境: S3の絶対URLをそのまま返す
      *
      * @return string|null
      */
@@ -66,9 +68,15 @@ class Image extends Model
             return null;
         }
 
-        // storage/app/public 配下のパスからURLを生成
-        // 例: path が "textbooks/image.jpg" の場合
-        // http://localhost/storage/textbooks/image.jpg を返す
+        // 本番環境（S3）の場合、pathにはすでにフルURLが保存されている
+        // 例: https://bucket.s3.amazonaws.com/images/xxxxx.jpg
+        if (app()->environment('production') || str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+
+        // 開発環境（Local）の場合、相対パスからURLを生成
+        // 例: path が "images/xxxxx.jpg" の場合
+        // http://localhost/storage/images/xxxxx.jpg を返す
         return asset('storage/' . $this->path);
     }
 }
