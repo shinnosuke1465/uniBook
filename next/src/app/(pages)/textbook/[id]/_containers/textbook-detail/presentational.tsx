@@ -15,11 +15,13 @@ import {
 interface TextbookDetailPresentationProps {
   textbook: Textbook;
   children?: React.ReactNode;
+  relatedTextbooks?: React.ReactNode;
 }
 
 export function TextbookDetailPresentation({
   textbook,
   children,
+  relatedTextbooks,
 }: TextbookDetailPresentationProps) {
   const [showPayment, setShowPayment] = useState(false);
   const [showCommentForm, setShowCommentForm] = useState(false);
@@ -360,6 +362,9 @@ export function TextbookDetailPresentation({
           {children}
         </div>
       )}
+
+      {/* 関連教科書セクション */}
+      {relatedTextbooks}
     </div>
   );
 }
