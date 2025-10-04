@@ -2,6 +2,8 @@ import { RegisterContainer } from "./_containers/register";
 import { fetchUniversities } from "./_lib/fetchUniversities";
 import { fetchFaculties } from "./_lib/fetchFaculties";
 
+export const dynamic = "force-dynamic";
+
 export default async function RegisterPage() {
   const universities = await fetchUniversities();
 
