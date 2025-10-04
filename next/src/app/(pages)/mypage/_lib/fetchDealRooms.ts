@@ -13,7 +13,7 @@ export interface DealRoom {
     };
     textbook: {
       name: string;
-      image_url: string | null;
+      image_urls: string[];
     };
   };
   created_at: string;

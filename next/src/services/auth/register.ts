@@ -57,7 +57,7 @@ export const register = async (data: FormData) => {
 
         // サーバー側で Cookie に保存
         const cookieStore = await cookies();
-        cookieStore.set({ name: "token", value: token, httpOnly: true, });
+        cookieStore.set("token", token, { httpOnly: true });
 
         return { token };
     } catch (e) {

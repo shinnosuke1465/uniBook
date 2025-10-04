@@ -8,7 +8,7 @@ export interface Deal {
   id: string;
   is_purchasable: boolean;
   seller_info: SellerInfo;
-  user: any;
+  user: SellerInfo;
 }
 
 export interface CommentUser {

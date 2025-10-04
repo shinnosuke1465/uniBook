@@ -165,12 +165,14 @@ export function RegisterPresentation({
     }
   };
 
-  const tryRegister = async (data: FormData) => {
-    const pas1 = data.get("password");
-    const pas2 = data.get("confirm_password");
+  const tryRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const pas1 = formData.get("password");
+    const pas2 = formData.get("confirm_password");
     if (pas1 === pas2) {
       try {
-        const token = await register(data);
+        const token = await register(formData);
         console.log(token);
 
         // 会員登録成功後、認証状態を更新してから教科書一覧ページへリダイレクト
@@ -194,7 +196,7 @@ export function RegisterPresentation({
           </p>
         </div>
 
-        <form action={tryRegister} className="mt-8 space-y-6">
+        <form onSubmit={tryRegister} className="mt-8 space-y-6">
           <div className="space-y-4">
             {/* ユーザー名 */}
             <div>

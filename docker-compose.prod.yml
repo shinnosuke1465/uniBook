@@ -1,0 +1,63 @@
+services:
+  next:
+    hostname: next.local
+    build:
+      dockerfile: ./infra/next/prod/Dockerfile
+      context: .
+    volumes:
+      - ./next:/next
+    networks:
+      - uniBook
+
+  php:
+    hostname: php.local
+    build:
+      dockerfile: ./infra/php/prod/Dockerfile
+      context: .
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - uniBook
+
+  web:
+    hostname: web.local
+    build:
+      dockerfile: ./infra/web/prod/Dockerfile
+      context: .
+    ports:
+      - 80:3030
+      - 8080:9090
+    volumes:
+      - ./src/public:/var/www/html/public
+      - ./src/storage/app/public:/var/www/html/public/storage
+      - ./infra/web/prod/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - uniBook
+    depends_on:
+      - php
+      - next
+
+  db:
+    image: 'mysql/mysql-server:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laraveluser
+      MYSQL_PASSWORD: laravel
+    volumes:
+      - data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"] # MySQL に ping して応答があるか確認
+      interval: 10s # 10秒ごとにチェック
+      timeout: 5s # 応答を5秒待つ
+      retries: 5 # 5回失敗したら「unhealthy」とみなす
+    networks:
+      - uniBook
+
+volumes:
+  data:
+networks:
+  uniBook:
+    driver: bridge

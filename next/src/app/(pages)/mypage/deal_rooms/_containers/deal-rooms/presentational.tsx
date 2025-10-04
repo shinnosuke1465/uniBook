@@ -14,8 +14,7 @@ export function DealRoomsPresentation({
   dealRooms,
 }: DealRoomsPresentationProps) {
   if (dealRooms.length === 0) {
-    // @ts-ignore
-      return (
+    return (
       <div className="flex min-h-[400px] items-center justify-center">
         <p className="text-gray-500">取引はまだありません</p>
       </div>
