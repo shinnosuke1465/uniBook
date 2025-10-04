@@ -125,7 +125,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         // 環境別にImageStorageServiceを切り替え
-        if ($this->app->environment('production')) {
+        if($this->app->environment(['production','ci'])){
             $this->app->bind(
                 ImageStorageServiceInterface::class,
                 S3ImageStorageService::class
