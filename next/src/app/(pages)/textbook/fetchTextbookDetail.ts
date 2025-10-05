@@ -5,7 +5,6 @@ import type { Textbook } from "@/app/types/textbook";
 
 export const fetchTextbookDetail = async (id: string): Promise<Textbook> => {
   const url = `${process.env.API_BASE_URL}/api/textbooks/${id}`;
-  console.log("Fetching textbook detail from:", url);
 
   const token = await getToken();
 
@@ -24,8 +23,6 @@ export const fetchTextbookDetail = async (id: string): Promise<Textbook> => {
       cache: "no-cache",
     });
 
-    console.log("Response status:", response.status);
-
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error("Textbook not found");
@@ -36,7 +33,6 @@ export const fetchTextbookDetail = async (id: string): Promise<Textbook> => {
     }
 
     const data: Textbook = await response.json();
-    console.log(`Retrieved textbook: ${data.name}`);
 
     return data;
   } catch (error) {

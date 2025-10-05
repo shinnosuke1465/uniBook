@@ -12,11 +12,11 @@ type DealEventListProps = {
 // イベントタイプを日本語に変換
 function getEventTypeLabel(eventType: string): string {
 	const labels: Record<string, string> = {
-		listing: "出品中",
-		purchase: "購入",
-		reportDelivery: "発送",
-		reportReceipt: "受取報告",
-		cancel: "キャンセル",
+		Listing: "出品",
+		Purchase: "購入",
+		ReportDelivery: "発送",
+		ReportReceipt: "受取報告",
+		Cancel: "キャンセル",
 	};
 	return labels[eventType] || eventType;
 }
@@ -38,25 +38,31 @@ export function DealEventList({ events }: DealEventListProps) {
 		<div className="bg-white rounded-lg shadow p-6">
 			<h2 className="text-lg font-semibold text-gray-900 mb-4">取引履歴</h2>
 			<div className="space-y-3">
-				{events.map((event) => (
-					<div key={event.id} className="flex items-start gap-3 text-sm">
-						<span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5" />
-						<div className="flex-1">
-							<div className="flex items-center gap-2 text-gray-900 font-medium">
-								<span>
-									{event.actor_type === "seller" ? "出品者" : "購入者"}
-								</span>
-								<span>-</span>
-								<span>{getEventTypeLabel(event.event_type)}</span>
-							</div>
-							{event.created_at && (
-								<div className="text-xs text-gray-500 mt-1">
-									{formatDateTime(event.created_at)}
+				{events.map((event) => {
+					const actor = event.actor_type === "seller" ? "出品者" : "購入者";
+					const action = getEventTypeLabel(event.event_type);
+
+					// デバッグ用（開発環境のみ）
+					if (process.env.NODE_ENV === "development") {
+						console.log("Event type:", event.event_type, "→ Label:", action);
+					}
+
+					return (
+						<div key={event.id} className="flex items-start gap-3 text-sm">
+							<span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5" />
+							<div className="flex-1">
+								<div className="text-gray-900 font-medium">
+									{actor}が{action}しました
 								</div>
-							)}
+								{event.created_at && (
+									<div className="text-xs text-gray-500 mt-1">
+										{formatDateTime(event.created_at)}
+									</div>
+								)}
+							</div>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</div>
 		</div>
 	);

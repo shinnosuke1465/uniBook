@@ -5,7 +5,6 @@ import type { Textbook, TextbooksResponse } from "@/app/types/textbook";
 
 export const fetchTextbooks = async (): Promise<Textbook[]> => {
   const url = `${process.env.API_BASE_URL}/api/textbooks`;
-  console.log("Fetching textbook from:", url);
 
   const token = await getToken();
 
@@ -24,10 +23,7 @@ export const fetchTextbooks = async (): Promise<Textbook[]> => {
       cache: "no-cache",
     });
 
-    console.log("Response status:", response.status);
-
     const data: TextbooksResponse = await response.json();
-    console.log(`Retrieved ${data.textbooks.length} textbooks`);
 
     return data.textbooks;
   } catch (error) {

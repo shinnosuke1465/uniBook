@@ -234,7 +234,7 @@ export function TextbookDetailPresentation({
 
           {/* アクションボタン */}
           <div className="space-y-3">
-            {canPurchase && (
+            {authUser && canPurchase && (
               <button
                 onClick={() => setShowPayment(true)}
                 className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-blue-700"
@@ -242,7 +242,7 @@ export function TextbookDetailPresentation({
                 購入する
               </button>
             )}
-            {isOwnProduct && (
+            {authUser && isOwnProduct && (
               <button
                 disabled
                 className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
@@ -250,7 +250,7 @@ export function TextbookDetailPresentation({
                 自分の商品です
               </button>
             )}
-            {textbook.deal && !textbook.deal.is_purchasable && !isOwnProduct && (
+            {authUser && textbook.deal && !textbook.deal.is_purchasable && !isOwnProduct && (
               <button
                 disabled
                 className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500"
@@ -263,7 +263,7 @@ export function TextbookDetailPresentation({
                 商品情報を読み込んでいます...
               </div>
             )}
-            {textbook.deal && (
+            {authUser && textbook.deal && (
               <button
                 onClick={() => setShowCommentForm(!showCommentForm)}
                 className="w-full rounded-lg border-2 border-gray-300 px-6 py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50"

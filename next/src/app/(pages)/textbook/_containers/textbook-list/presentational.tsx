@@ -148,9 +148,9 @@ export function TextbookListPresentation({
     categoryFilters.saleStatus !== "all";
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* 検索バー */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" style={{ marginBottom: "1.5rem" }}>
         <div className="relative flex-1">
           <input
             type="text"
@@ -212,7 +212,7 @@ export function TextbookListPresentation({
 
       {/* 適用中のフィルター - カテゴリー */}
       {hasCategoryFilters && (
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: "0.5rem" }}>
           <span className="text-sm text-gray-600">カテゴリー:</span>
           {categoryFilters.minPrice !== null && (
             <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm text-green-800">
@@ -247,7 +247,7 @@ export function TextbookListPresentation({
       )}
 
       {/* 検索結果件数 */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600" style={{ marginBottom: "1.5rem" }}>
         {filteredTextbooks.length}件の教科書が見つかりました
       </div>
 
@@ -332,8 +332,7 @@ function TextbookCard({ textbook }: TextbookCardProps) {
         )}
 
         {/* SOLD OUTオーバーレイ */}
-        {isSoldOut && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-90">
+        {isSoldOut && (<div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
             <div className="rounded-md bg-red-600 px-6 py-2">
               <span className="text-xl font-bold text-white">SOLD OUT</span>
             </div>

@@ -103,7 +103,8 @@ export function AdvancedSearchModal({
     <>
       {/* オーバーレイ */}
       <div
-        className="fixed inset-0 z-40 bg-black bg-opacity-50"
+        className="fixed inset-0 z-40"
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
         onClick={onClose}
       />
 
