@@ -67,7 +67,7 @@ jobs:
       - name: Download env ci file
         run: |
           aws s3 cp s3://unibook-prod-unibook-env-file/php/.env.ci ./src/.env
-          aws s3 cp s3://unibook-prod-unibook-env-file/next/.env.ci ./next/.env.local
+          aws s3 cp s3://unibook-prod-unibook-env-file/next/.env ./next/.env.local
 
       - name: Build and Run Container
         run: docker compose -f docker-compose.prod.yml up -d --build --wait
