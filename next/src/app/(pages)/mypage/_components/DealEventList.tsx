@@ -7,6 +7,8 @@ type DealEvent = {
 
 type DealEventListProps = {
 	events: DealEvent[];
+	sellerName: string;
+	buyerName: string;
 };
 
 // イベントタイプを日本語に変換
@@ -33,26 +35,21 @@ function formatDateTime(isoString: string): string {
 	}).format(date);
 }
 
-export function DealEventList({ events }: DealEventListProps) {
+export function DealEventList({ events, sellerName, buyerName }: DealEventListProps) {
 	return (
 		<div className="bg-white rounded-lg shadow p-6">
 			<h2 className="text-lg font-semibold text-gray-900 mb-4">取引履歴</h2>
 			<div className="space-y-3">
 				{events.map((event) => {
-					const actor = event.actor_type === "seller" ? "出品者" : "購入者";
+					const actorName = event.actor_type === "seller" ? sellerName : buyerName;
 					const action = getEventTypeLabel(event.event_type);
-
-					// デバッグ用（開発環境のみ）
-					if (process.env.NODE_ENV === "development") {
-						console.log("Event type:", event.event_type, "→ Label:", action);
-					}
 
 					return (
 						<div key={event.id} className="flex items-start gap-3 text-sm">
 							<span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5" />
 							<div className="flex-1">
 								<div className="text-gray-900 font-medium">
-									{actor}が{action}しました
+									{actorName}が{action}しました
 								</div>
 								{event.created_at && (
 									<div className="text-xs text-gray-500 mt-1">

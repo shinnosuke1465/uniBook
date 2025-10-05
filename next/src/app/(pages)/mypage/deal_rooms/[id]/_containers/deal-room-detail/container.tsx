@@ -12,9 +12,6 @@ export async function DealRoomDetailContainer({
   const dealRoom = await fetchDealRoomDetail(dealRoomId);
   const userData = await getUserData();
 
-  // デバッグ用
-  console.log("getUserData response:", userData);
-
   return (
     <DealRoomDetailPresentation
       dealRoom={dealRoom}
