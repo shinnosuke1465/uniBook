@@ -172,8 +172,7 @@ export function RegisterPresentation({
     const pas2 = formData.get("confirm_password");
     if (pas1 === pas2) {
       try {
-        const token = await register(formData);
-        console.log(token);
+        await register(formData);
 
         // 会員登録成功後、認証状態を更新してから教科書一覧ページへリダイレクト
         await refreshUser();
@@ -214,6 +213,7 @@ export function RegisterPresentation({
                 onChange={(e) => setUserName(e.target.value)}
                 value={userName}
                 required
+                autoComplete="off"
               />
             </div>
 
@@ -233,6 +233,7 @@ export function RegisterPresentation({
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 required
+                autoComplete="off"
               />
             </div>
 
@@ -292,6 +293,7 @@ export function RegisterPresentation({
                 onChange={(e) => setPostCode(e.target.value)}
                 value={postCode}
                 required
+                autoComplete="off"
               />
             </div>
 
@@ -311,6 +313,7 @@ export function RegisterPresentation({
                 onChange={(e) => setAddress(e.target.value)}
                 value={address}
                 required
+                autoComplete="off"
               />
             </div>
 
@@ -401,7 +404,7 @@ export function RegisterPresentation({
 
       {/* 大学作成モーダル */}
       {showUniversityModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
             <h3 className="mb-4 text-xl font-bold">大学を登録</h3>
             <div className="space-y-4">
@@ -443,7 +446,7 @@ export function RegisterPresentation({
 
       {/* 学部のみ作成モーダル */}
       {showFacultyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
             <h3 className="mb-4 text-xl font-bold">学部を登録</h3>
             <div className="space-y-4">

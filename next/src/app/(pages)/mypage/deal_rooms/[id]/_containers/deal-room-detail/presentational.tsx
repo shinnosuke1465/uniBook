@@ -179,7 +179,11 @@ export function DealRoomDetailPresentation({
           </div>
 
           {/* 取引履歴 */}
-          <DealEventList events={dealEvents} />
+          <DealEventList
+            events={dealEvents}
+            sellerName={dealRoom.deal.seller_info.name}
+            buyerName={dealRoom.deal.buyer_info.name}
+          />
         </div>
 
         {/* 右カラム - メッセージ */}
