@@ -1,0 +1,310 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - test
+
+env:
+  AWS_REGION: ap-northeast-1
+  APP_NAME: unibook
+
+jobs:
+  deploy:
+    name: Deploy app to AWS Fargate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure aws credentials for prod
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.PROD_AWS_ASSUME_ROLE_ARN }}
+          role-duration-seconds: 1800
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Cache npm
+        id: cache-npm-ci
+        uses: actions/cache@v4
+        with:
+          path: next/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('next/package-lock.json')}}
+
+      - name: npm ci
+        if: ${{ !steps.cache-npm-ci.outputs.cache-hit }}
+        working-directory: next
+        run: npm ci
+
+      - name: Transpile
+        working-directory: next
+        run: npm run build
+
+      - name: Use PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Cache composer
+        id: cache-composer
+        uses: actions/cache@v4
+        with:
+          path: src/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('src/composer.lock')}}
+
+      - name: composer install
+        if: ${{ !steps.cache-composer.outputs.cache-hit }}
+        working-directory: src
+        run: composer install -n --prefer-dist --optimize-autoloader
+
+      - name: Download env ci file
+        run: |
+          aws s3 cp s3://unibook-prod-unibook-env-file/php/.env.ci ./src/.env
+          aws s3 cp s3://unibook-prod-unibook-env-file/next/.env.ci ./next/.env.local
+
+      - name: Build and Run Container
+        run: docker compose -f docker-compose.prod.yml up -d --build --wait
+
+      - name: Create testing database
+        run: |
+          chmod 755 src/test.sql
+          docker compose exec -T db mysql -uroot -proot < src/test.sql
+
+      - name: backend test
+        working-directory: src
+        run: |
+          chmod -R 777 storage bootstrap/cache
+          chmod 777 .env
+          docker compose exec -T php php artisan key:generate
+          docker compose exec -T php php artisan migrate --force
+          docker compose exec -T php php artisan test
+
+      - name: Remove .env file
+        run: |
+          rm src/.env
+          rm next/.env.local
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        id: amazon-ecr-login
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create metadata of web container image
+        id: meta-web
+        env:
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.APP_NAME }}-web
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+          tags: type=sha,format=long
+
+      - name: Create metadata of php container image
+        id: meta-php
+        env:
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.APP_NAME }}-php
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+          tags: type=sha,format=long
+
+      - name: Create metadata of next container image
+        id: meta-next
+        env:
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.APP_NAME }}-next
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+          tags: type=sha,format=long
+
+      - name: Build and push web container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/web/prod/Dockerfile
+          push: true
+          provenance: false
+          platforms: linux/amd64
+          tags: ${{ steps.meta-web.outputs.tags }}
+          labels: ${{ steps.meta-web.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push php container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/php/prod/Dockerfile
+          push: true
+          provenance: false
+          platforms: linux/amd64
+          tags: ${{ steps.meta-php.outputs.tags }}
+          labels: ${{ steps.meta-php.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push next container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/next/prod/Dockerfile
+          push: true
+          provenance: false
+          platforms: linux/amd64
+          tags: ${{ steps.meta-next.outputs.tags }}
+          labels: ${{ steps.meta-next.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Download TaskDefinition for migration
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          aws s3 cp s3://unibook-prod-unibook-task-definition-file/task_definition_migration.json .
+          sed -i "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" task_definition_migration.json
+
+      - name: Fill in the new image ID for migration
+        id: migration-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task_definition_migration.json
+          container-name: migration
+          image: ${{ steps.meta-php.outputs.tags }}
+
+      - name: Create Task Definition
+        id: create-task-def
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.migration-task-def.outputs.task-definition }}
+          wait-for-service-stability: true
+
+      - name: Run migration
+        env:
+          ECS_SUBNET_ID: ${{ secrets.PROD_ECS_SUBNET_ID }}
+          ECS_SECURITY_GROUP: ${{ secrets.PROD_ECS_SECURITY_GROUP }}
+        run: |
+          run_task_response=$(aws ecs run-task \
+           --cluster ${{ env.APP_NAME }}-app-cluster \
+           --task-definition ${{ steps.create-task-def.outputs.task-definition-arn }} \
+           --launch-type FARGATE \
+           --override "containerOverrides=[{name="migration",command=[php,artisan,migrate,--force]}]" \
+           --network-configuration "awsvpcConfiguration={subnets=[$ECS_SUBNET_ID],securityGroups=[$ECS_SECURITY_GROUP],assignPublicIp=DISABLED}"
+          )
+          TASK_ARN=$(echo $run_task_response | jq -r '.tasks[0].taskArn')
+          aws ecs wait tasks-stopped --cluster ${{ env.APP_NAME }}-app-cluster --tasks $TASK_ARN
+
+      - name: Download TaskDefinition for migration
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          aws s3 cp s3://unibook-prod-unibook-task-definition-file/task_definition_migration.json .
+          sed -i "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" task_definition_migration.json
+
+      - name: Fill in the new image ID for migration
+        id: migration-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task_definition_migration.json
+          container-name: migration
+          image: ${{ steps.meta-php.outputs.tags }}
+
+      - name: Create Task Definition
+        id: create-task-def
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.migration-task-def.outputs.task-definition }}
+          wait-for-service-stability: true
+
+      - name: Run migration
+        env:
+          ECS_SUBNET_ID: ${{ secrets.PROD_ECS_SUBNET_ID }}
+          ECS_SECURITY_GROUP: ${{ secrets.PROD_ECS_SECURITY_GROUP }}
+        run: |
+          run_task_response=$(aws ecs run-task \
+              --cluster ${{ env.APP_NAME }}-app-cluster \
+              --task-definition ${{ steps.create-task-def.outputs.task-definition-arn }} \
+              --launch-type FARGATE \
+              --override "containerOverrides=[{name="migration",command=[php,artisan,migrate,--force]}]" \
+              --network-configuration "awsvpcConfiguration={subnets=[$ECS_SUBNET_ID],securityGroups=[$ECS_SECURITY_GROUP],assignPublicIp=DISABLED}"
+          )
+          TASK_ARN=$(echo $run_task_response | jq -r '.tasks[0].taskArn')
+          aws ecs wait tasks-stopped --cluster ${{ env.APP_NAME }}-app-cluster --tasks $TASK_ARN
+
+      - name: Download TaskDefinition
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          aws s3 cp s3://unibook-prod-unibook-task-definition-file/task_definition_web.json .
+          aws s3 cp s3://unibook-prod-unibook-task-definition-file/task_definition_php.json .
+          aws s3 cp s3://unibook-prod-unibook-task-definition-file/task_definition_next.json .
+          sed -i "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" task_definition_web.json
+          sed -i "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" task_definition_php.json
+          sed -i "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" task_definition_next.json
+
+      - name: Fill in the new web container image ID
+        id: web-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        env:
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.APP_NAME }}-web
+        with:
+          task-definition: task_definition_web.json
+          container-name: web
+          image: ${{ steps.meta-web.outputs.tags }}
+
+      - name: Fill in the new php container image ID
+        id: php-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        env:
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.APP_NAME }}-php
+        with:
+          task-definition: task_definition_php.json
+          container-name: php
+          image: ${{ steps.meta-php.outputs.tags }}
+
+      - name: Fill in the new next container image ID
+        id: next-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        env:
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.APP_NAME }}-next
+        with:
+          task-definition: task_definition_next.json
+          container-name: next
+          image: ${{ steps.meta-next.outputs.tags }}
+
+      - name: Deploy php container to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.php-task-def.outputs.task-definition }}
+          service: ${{ env.APP_NAME }}-php
+          cluster: ${{ env.APP_NAME }}-app-cluster
+          wait-for-service-stability: true
+
+      - name: Deploy next container to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.next-task-def.outputs.task-definition }}
+          service: ${{ env.APP_NAME }}-next
+          cluster: ${{ env.APP_NAME }}-app-cluster
+          wait-for-service-stability: true
+
+      - name: Deploy web container to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.web-task-def.outputs.task-definition }}
+          service: ${{ env.APP_NAME }}-web
+          cluster: ${{ env.APP_NAME }}-app-cluster
+          wait-for-service-stability: true
