@@ -168,6 +168,8 @@ jobs:
           labels: ${{ steps.meta-next.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51SBviHFdLyKymEy5MtOQkmr58ATk2jAbybDUK8I5crbq7LA127HKAdDRiu1hLg9DqDsEiCEPDsU3mwWyliy57JzT00bNozpBDt
 
       - name: Download TaskDefinition for migration
         env:
