@@ -204,43 +204,6 @@ jobs:
           TASK_ARN=$(echo $run_task_response | jq -r '.tasks[0].taskArn')
           aws ecs wait tasks-stopped --cluster ${{ env.APP_NAME }}-app-cluster --tasks $TASK_ARN
 
-      - name: Download TaskDefinition for migration
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        run: |
-          aws s3 cp s3://unibook-prod-unibook-task-definition-file/task_definition_migration.json .
-          sed -i "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g" task_definition_migration.json
-
-      - name: Fill in the new image ID for migration
-        id: migration-task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task_definition_migration.json
-          container-name: migration
-          image: ${{ steps.meta-php.outputs.tags }}
-
-      - name: Create Task Definition
-        id: create-task-def
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.migration-task-def.outputs.task-definition }}
-          wait-for-service-stability: true
-
-      - name: Run migration
-        env:
-          ECS_SUBNET_ID: ${{ secrets.PROD_ECS_SUBNET_ID }}
-          ECS_SECURITY_GROUP: ${{ secrets.PROD_ECS_SECURITY_GROUP }}
-        run: |
-          run_task_response=$(aws ecs run-task \
-              --cluster ${{ env.APP_NAME }}-app-cluster \
-              --task-definition ${{ steps.create-task-def.outputs.task-definition-arn }} \
-              --launch-type FARGATE \
-              --override "containerOverrides=[{name="migration",command=[php,artisan,migrate,--force]}]" \
-              --network-configuration "awsvpcConfiguration={subnets=[$ECS_SUBNET_ID],securityGroups=[$ECS_SECURITY_GROUP],assignPublicIp=DISABLED}"
-          )
-          TASK_ARN=$(echo $run_task_response | jq -r '.tasks[0].taskArn')
-          aws ecs wait tasks-stopped --cluster ${{ env.APP_NAME }}-app-cluster --tasks $TASK_ARN
-
       - name: Download TaskDefinition
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
