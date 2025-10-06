@@ -150,32 +150,29 @@
 
 <img width="2048" height="1228" alt="システム関連図 (1)-1 (1)" src="https://github.com/user-attachments/assets/14300cf8-b4c7-4aa8-becc-288f22f75ecd" />
 
-<br>
+<br><br>
 
 **ユースケース図**
 
 <img width="427" height="600" alt="ユースケース図 (1) (2)" src="https://github.com/user-attachments/assets/4796c09f-1ece-4561-9216-94da0724f3aa" />
 
-<br>
-
 https://lucid.app/lucidchart/891bd186-289f-4ce7-89e8-565201fac3b1/edit?view_items=aGPKdstoPjD0&invitationId=inv_8bbfa3c7-9c50-4332-ad96-bba571b9b395
 
-<br>
+<br><br>
 
 **画面ごとのユーザーストーリ (sudoモデリングとは関係ないが実践。)**
 
 https://docs.google.com/spreadsheets/d/1bwGpMHaAQnwNA1lDeR2nOouwf93TGsFCP8hUzIkH5n8/edit?usp=sharing
 
-<br>
+<br><br>
 
 **ドメインモデル図** 
 
 <img width="2048" height="946" alt="ドメインモデル図 (1)" src="https://github.com/user-attachments/assets/35ee4910-76d3-41d7-a8a4-2d4f4babb555" />
 
-
 https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?viewport_loc=-2365%2C-622%2C4501%2C2197%2C0_0&invitationId=inv_abb1f54c-e4bf-4209-a8c6-05babb3c0c98
 
-<br>
+<br><br>
 
 **ER図**
 
