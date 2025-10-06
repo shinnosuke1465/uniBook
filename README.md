@@ -1,5 +1,3 @@
-
-https://github.com/user-attachments/assets/86c3ba61-25ec-40d0-8d56-0a5a0e252714
 <img width="1536" height="500" alt="uniBookImage (1)" src="https://github.com/user-attachments/assets/584bef3e-5fb6-48ed-a8fe-b350c39af2c0" />
 
 <br><br>
@@ -88,7 +86,7 @@ https://github.com/user-attachments/assets/86c3ba61-25ec-40d0-8d56-0a5a0e252714
 
 | 会員登録 | ログイン | マイページ |
 |------------|----------|------------------|
-| ![会員登録](https://i.gyazo.com/register-example.png) | ![ログイン](https://i.gyazo.com/login-example.png) | ![Image](https://github.com/user-attachments/assets/8e618594-53f0-424b-aa82-9c6c1197cd51) |
+| ![Image](https://github.com/user-attachments/assets/71594cff-2a7a-47d6-8b52-f97d26547cce) | ![Image](https://github.com/user-attachments/assets/14c5b3b0-01a6-4221-b5e3-5b625d0d5f34) | ![Image](https://github.com/user-attachments/assets/8e618594-53f0-424b-aa82-9c6c1197cd51) |
 | ユーザー情報を入力してアカウントを新規作成できます。登録後は出品や購入などすべての機能が利用可能になります。 | 登録済みのメールアドレスとパスワードでログインし、各種機能にアクセスできます。 | プロフィール、出品した商品、購入した商品、いいねした商品、取引一覧など、自分に関する情報をまとめて確認・管理できます。 |
 
 <br>
