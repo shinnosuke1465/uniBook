@@ -147,7 +147,11 @@ export function ListedTextbookDetailPresenter({
 			)}
 
 			{/* 取引履歴 */}
-			<DealEventList events={textbook.deal.deal_events} />
+			<DealEventList
+				events={textbook.deal.deal_events}
+				sellerName={textbook.deal.seller_info.nickname}
+				buyerName={textbook.deal.buyer_shipping_info?.nickname || "購入者"}
+			/>
 		</div>
 	);
 }
