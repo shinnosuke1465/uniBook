@@ -14,7 +14,7 @@
 ## 以前作成した教科書販売アプリ
 アプリの大まかな概要はgithub参照 (半年ほど前に作成)
 
-[https://unibook.click/textbook/](https://github.com/shinnosuke1465/textbook-sales)
+[https://shinnosuke1465/textbook-sales/](https://github.com/shinnosuke1465/textbook-sales)
 
 <br>
 
