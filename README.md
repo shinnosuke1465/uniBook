@@ -112,7 +112,46 @@
 | ![Image](https://github.com/user-attachments/assets/71594cff-2a7a-47d6-8b52-f97d26547cce) | ![Image](https://github.com/user-attachments/assets/14c5b3b0-01a6-4221-b5e3-5b625d0d5f34) | ![Image](https://github.com/user-attachments/assets/8e618594-53f0-424b-aa82-9c6c1197cd51) |
 | ユーザー情報を入力してアカウントを新規作成できます。登録後は出品や購入などすべての機能が利用可能になります。 | 登録済みのメールアドレスとパスワードでログインし、各種機能にアクセスできます。 | プロフィール、出品した商品、購入した商品、いいねした商品、取引一覧など、自分に関する情報をまとめて確認・管理できます。 |
 
-<br>
+<br><br>
+
+## sudoモデリング
+**システム関連図**
+
+<img width="827" height="367" alt="スクリーンショット 2025-10-06 21 08 40" src="https://github.com/user-attachments/assets/01af516f-14a1-4b93-9dbc-a8ddd8b17c7e" />
+
+<br><br>
+
+**ユースケース図**
+
+https://lucid.app/lucidchart/891bd186-289f-4ce7-89e8-565201fac3b1/edit?view_items=aGPKdstoPjD0&invitationId=inv_8bbfa3c7-9c50-4332-ad96-bba571b9b395
+
+<img width="427" height="600" alt="ユースケース図 (1) (2)" src="https://github.com/user-attachments/assets/4796c09f-1ece-4561-9216-94da0724f3aa" />
+
+<br><br>
+
+**画面ごとのユーザーストーリ (sudoモデリングとは関係ないが実践。)**
+
+https://docs.google.com/spreadsheets/d/1bwGpMHaAQnwNA1lDeR2nOouwf93TGsFCP8hUzIkH5n8/edit?usp=sharing
+
+<img width="568" height="1199" alt="画面ごとのユーザーストーリ - シート1 (1)-1 (1)" src="https://github.com/user-attachments/assets/175d9f07-f671-448d-8b6b-99e8f4a8e533" />
+
+<br><br>
+
+**ドメインモデル図** 
+
+https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?viewport_loc=-2365%2C-622%2C4501%2C2197%2C0_0&invitationId=inv_abb1f54c-e4bf-4209-a8c6-05babb3c0c98
+
+<img width="2048" height="946" alt="ドメインモデル図 (1)" src="https://github.com/user-attachments/assets/35ee4910-76d3-41d7-a8a4-2d4f4babb555" />
+
+<br><br>
+
+**ER図**
+
+https://lucid.app/lucidchart/3ea1488c-bf0b-4b79-a36b-01122a27e9cf/edit?viewport_loc=-1268%2C-1082%2C4768%2C2680%2C0_0&invitationId=inv_bc505b65-f2be-479a-b06a-31d7e47197f7
+
+<img width="2048" height="1430" alt="Database ER diagram (crow's foot) (1)" src="https://github.com/user-attachments/assets/e03e922a-5a91-450c-ae90-c70188c0743e" />
+
+<br><br>
 
 ## 使用技術
 
@@ -168,41 +207,4 @@
 
 <br><br>
 
-## sudoモデリング
-**システム関連図**
-
-<img width="2048" height="1228" alt="システム関連図 (1)-1 (1)" src="https://github.com/user-attachments/assets/14300cf8-b4c7-4aa8-becc-288f22f75ecd" />
-
-<br><br>
-
-**ユースケース図**
-
-<img width="427" height="600" alt="ユースケース図 (1) (2)" src="https://github.com/user-attachments/assets/4796c09f-1ece-4561-9216-94da0724f3aa" />
-
-https://lucid.app/lucidchart/891bd186-289f-4ce7-89e8-565201fac3b1/edit?view_items=aGPKdstoPjD0&invitationId=inv_8bbfa3c7-9c50-4332-ad96-bba571b9b395
-
-<br><br>
-
-**画面ごとのユーザーストーリ (sudoモデリングとは関係ないが実践。)**
-
-<img width="568" height="1199" alt="画面ごとのユーザーストーリ - シート1 (1)-1 (1)" src="https://github.com/user-attachments/assets/175d9f07-f671-448d-8b6b-99e8f4a8e533" />
-
-
-https://docs.google.com/spreadsheets/d/1bwGpMHaAQnwNA1lDeR2nOouwf93TGsFCP8hUzIkH5n8/edit?usp=sharing
-
-<br><br>
-
-**ドメインモデル図** 
-
-<img width="2048" height="946" alt="ドメインモデル図 (1)" src="https://github.com/user-attachments/assets/35ee4910-76d3-41d7-a8a4-2d4f4babb555" />
-
-https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?viewport_loc=-2365%2C-622%2C4501%2C2197%2C0_0&invitationId=inv_abb1f54c-e4bf-4209-a8c6-05babb3c0c98
-
-<br><br>
-
-**ER図**
-
-<img width="2048" height="1430" alt="Database ER diagram (crow's foot) (1)" src="https://github.com/user-attachments/assets/e03e922a-5a91-450c-ae90-c70188c0743e" />
-
-https://lucid.app/lucidchart/3ea1488c-bf0b-4b79-a36b-01122a27e9cf/edit?viewport_loc=-1268%2C-1082%2C4768%2C2680%2C0_0&invitationId=inv_bc505b65-f2be-479a-b06a-31d7e47197f7
 
