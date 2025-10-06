@@ -1,5 +1,8 @@
 <img width="1536" height="500" alt="uniBookImage (1)" src="https://github.com/user-attachments/assets/584bef3e-5fb6-48ed-a8fe-b350c39af2c0" />
 
+<br><br>
+
+インターン・個人学習で得た知見をアウトプットとして形にしたいと思い、以前作成した教科書販売アプリをベースに機能を追加し、新たに作り直しました。
 
 <br>
 
@@ -21,8 +24,15 @@
 - **今回のアプリ**：約1ヶ月半 （設計：8月11日〜8月31日／実装・デプロイ：9月14日〜10月5日）
   - 当初から 10月5日を完成目標日としてスケジュールを逆算し、計画的に進行しました。
   - サマーインターンと時期が重なり、限られた時間の中でタイトなスケジュールと高い課題設定となりましたが、最終的には目標通りすべての実装をやり切ることができました。
+<p align="center">
+  <img width="94" height="107" alt="スクリーンショット 2025-10-06 21 04 20" src="https://github.com/user-attachments/assets/071aadd1-f0a1-4b0f-b36b-59ed4ee05d7d" />
+  <img width="174" height="48" alt="スクリーンショット 2025-10-07 1 15 30" src="https://github.com/user-attachments/assets/d104ddcb-b603-4adb-a89d-ac602ab43d1f" />
+  <img width="129" height="49" alt="スクリーンショット 2025-10-07 1 16 03" src="https://github.com/user-attachments/assets/bd68f843-0458-44cd-9c43-3c426aae63d1" />
+</p>
+
 
 <br>
+
 
 ## 新たに作り直した背景と目的
 - 現在のインターン先で扱っている以下の技術を、自分のアプリ開発に落とし込んでアウトプットとして形にしたかったため。
