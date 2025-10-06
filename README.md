@@ -133,7 +133,7 @@ https://lucid.app/lucidchart/891bd186-289f-4ce7-89e8-565201fac3b1/edit?view_item
 
 https://docs.google.com/spreadsheets/d/1bwGpMHaAQnwNA1lDeR2nOouwf93TGsFCP8hUzIkH5n8/edit?usp=sharing
 
-<img width="568" height="1199" alt="画面ごとのユーザーストーリ - シート1 (1)-1 (1)" src="https://github.com/user-attachments/assets/175d9f07-f671-448d-8b6b-99e8f4a8e533" />
+<img width="297" height="528" alt="スクリーンショット 2025-10-06 21 11 12" src="https://github.com/user-attachments/assets/54271eef-58e5-4033-97f9-f1dbbb27b224" />
 
 <br><br>
 
