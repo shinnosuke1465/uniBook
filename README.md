@@ -1,4 +1,4 @@
-<img width="1536" height="450" alt="uniBookImage (1)" src="https://github.com/user-attachments/assets/584bef3e-5fb6-48ed-a8fe-b350c39af2c0" />
+<img width="1536" height="500" alt="uniBookImage (1)" src="https://github.com/user-attachments/assets/584bef3e-5fb6-48ed-a8fe-b350c39af2c0" />
 
 <br><br>
 ドメイン駆動設計（DDD）を取り入れ、以前作成した教科書販売アプリをベースに機能を追加し、新たに作り直しました。
@@ -162,6 +162,9 @@ https://lucid.app/lucidchart/891bd186-289f-4ce7-89e8-565201fac3b1/edit?view_item
 <br><br>
 
 **画面ごとのユーザーストーリ (sudoモデリングとは関係ないが実践。)**
+
+<img width="568" height="1199" alt="画面ごとのユーザーストーリ - シート1 (1)-1 (1)" src="https://github.com/user-attachments/assets/175d9f07-f671-448d-8b6b-99e8f4a8e533" />
+
 
 https://docs.google.com/spreadsheets/d/1bwGpMHaAQnwNA1lDeR2nOouwf93TGsFCP8hUzIkH5n8/edit?usp=sharing
 
