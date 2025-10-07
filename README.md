@@ -26,12 +26,13 @@
   - サマーインターンと時期が重なり、限られた時間の中でタイトなスケジュールと高い課題設定となりましたが、最終的には目標通りすべての実装をやり切ることができました。
 <p align="center">
   <img width="94" height="107" alt="スクリーンショット 2025-10-06 21 04 20" src="https://github.com/user-attachments/assets/071aadd1-f0a1-4b0f-b36b-59ed4ee05d7d" />
-  <img width="174" height="48" alt="スクリーンショット 2025-10-07 1 15 30" src="https://github.com/user-attachments/assets/d104ddcb-b603-4adb-a89d-ac602ab43d1f" />
+  <img width="162" height="44" alt="スクリーンショット 2025-10-07 21 45 33" src="https://github.com/user-attachments/assets/6f0d8f7f-5dcf-4994-848f-1fb7dc472401" />
   <img width="129" height="49" alt="スクリーンショット 2025-10-07 1 16 03" src="https://github.com/user-attachments/assets/bd68f843-0458-44cd-9c43-3c426aae63d1" />
 </p>
 
 
 <br>
+
 
 
 ## 新たに作り直した背景と目的
