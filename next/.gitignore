@@ -42,3 +42,6 @@ next-env.d.ts
 
 **/CLAUDE.md/
 **/docs/
+
+docs/akfm-knowledge/articles/
+docs/akfm-knowledge/nextjs-basic-principle/

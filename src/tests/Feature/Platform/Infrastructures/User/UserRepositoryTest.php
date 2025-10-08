@@ -78,16 +78,16 @@ class UserRepositoryTest extends TestCase
         );
     }
 
-    public function test_getAuthenticatedUserでトークンが存在しない場合エラーが発生すること(): void
+    public function test_getAuthenticatedUserでトークンが存在しない場合nullが返ること(): void
     {
         //given
         // トークンを設定せずにテスト
 
         //when
+        $result = $this->userRepository->getAuthenticatedUser();
+
         //then
-        $this->expectException(IllegalUserException::class);
-        $this->expectExceptionMessage('認証トークンが見つかりません。');
-        $this->userRepository->getAuthenticatedUser();
+        $this->assertNull($result);
     }
 
     public function test_getAuthenticatedUserで無効なトークンを指定した場合エラーが発生すること(): void

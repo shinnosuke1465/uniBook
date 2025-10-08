@@ -8,7 +8,7 @@ use App\Platform\Domains\User\AuthenticateToken\AuthenticateToken;
 
 interface UserRepositoryInterface
 {
-    public function getAuthenticatedUser(): User;
+    public function getAuthenticatedUser(): ?User;
 
     public function createToken(MailAddress $mailAddress, String255 $password): AuthenticateToken;
 

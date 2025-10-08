@@ -37,8 +37,7 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     }
 
     /**
-     * 関連データと共にTextbookDBモデルを取得（プレゼンテーション層向け）
-     * @return Collection
+     * 関連データと共にTextbookDBモデルを取得
      */
     public function findAllWithRelations(): Collection
     {
@@ -55,9 +54,9 @@ readonly class TextbookRepository implements TextbookRepositoryInterface
     }
 
     /**
-     * IDで関連データと共にTextbookDBモデルを取得（プレゼンテーション層向け）
+     * IDで関連データと共にTextbookDBモデルを取得
      */
-    public function findByIdWithRelations(TextbookId $textbookId): ?TextbookDB
+    public function findByIdWithRelations(TextbookId $textbookId): mixed
     {
         return TextbookDB::query()
             ->with([
