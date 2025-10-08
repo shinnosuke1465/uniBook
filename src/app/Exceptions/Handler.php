@@ -103,6 +103,11 @@ class Handler extends ExceptionHandler
                 'message' => $e->getMessage(),
             ], 400);
         }
+        if ($e instanceof AuthorizationException) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 404);
+        }
 
         return parent::render($request, $e);
     }

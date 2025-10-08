@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\Domains\Textbook;
 
 use App\Platform\Domains\Shared\String\String255;
+use Illuminate\Support\Collection;
 
 interface TextbookRepositoryInterface
 {
@@ -12,6 +13,9 @@ interface TextbookRepositoryInterface
 
     public function findById(TextbookId $textbookId): ?Textbook;
 
+    public function findAllWithRelations(): Collection;
+
+    public function findByIdWithRelations(TextbookId $textbookId): mixed;
 
     public function insert(Textbook $textbook): void;
 

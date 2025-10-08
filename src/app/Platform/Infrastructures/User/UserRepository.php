@@ -24,11 +24,11 @@ readonly class UserRepository implements UserRepositoryInterface
      * @throws DomainException
      * @throws IllegalUserException
      */
-    public function getAuthenticatedUser(): User
+    public function getAuthenticatedUser(): ?User
     {
         $token = request()->bearerToken();
         if ($token === null) {
-            throw new IllegalUserException('認証トークンが見つかりません。');
+            return null;
         }
 
         $accessToken = PersonalAccessToken::findToken($token);

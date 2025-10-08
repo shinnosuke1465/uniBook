@@ -44,44 +44,17 @@ readonly class GetTextbookAction
             ]);
 
             // ログインユーザー情報取得
-            $currentUserId = null;
-            try {
-                $authenticatedUser = $this->userRepository->getAuthenticatedUser();
-                $currentUserId = $authenticatedUser?->getUserId()?->value;
-            } catch (\Exception $e) {
-                // 認証エラーの場合はnullのまま（未認証ユーザー）
-            }
+            $authenticatedUser = $this->userRepository->getAuthenticatedUser();
+            $currentUserId = $authenticatedUser?->getUserId()?->value;
 
-            if ($this->textbookRepository instanceof TextbookRepository) {
-                $textbookModel = $this->textbookRepository->findByIdWithRelations($textbookId);
+            $textbookModel = $this->textbookRepository->findByIdWithRelations($textbookId);
 
-                if ($textbookModel === null) {
-                    throw new NotFoundException('教科書が見つかりません。');
-                }
-
-                return TextbookWithRelationsDto::fromEloquentModel($textbookModel, $currentUserId);
-            }
-
-            // フォールバック（通常のfindById）
-            $textbook = $this->textbookRepository->findById($textbookId);
-
-            if ($textbook === null) {
+            if ($textbookModel === null) {
                 throw new NotFoundException('教科書が見つかりません。');
             }
 
-            return new TextbookWithRelationsDto(
-                $textbook->id->value,
-                $textbook->name->value,
-                $textbook->price->value,
-                $textbook->description->value,
-                $textbook->imageIdList->toArray(),
-                '',
-                '',
-                $textbook->conditionType->value,
-                null,
-                [], // comments
-                false,
-            );
+            return TextbookWithRelationsDto::fromEloquentModel($textbookModel, $currentUserId);
+
         } catch (NotFoundException $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);
             throw $e;
