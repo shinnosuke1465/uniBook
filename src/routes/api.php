@@ -73,7 +73,7 @@ Route::apiResource(
     ])
     ->whereUuid('facultyIdString');
 
-//画像
+//教科書
 Route::apiResource(
     '/textbooks',
     TextbookController::class
@@ -89,95 +89,94 @@ Route::apiResource(
     ])
     ->whereUuid('textbookIdString');
 
-//コメント
-Route::apiResource(
-    '/textbooks/{textbookId}/comments',
-    CommentController::class
-)->only(['store'])->names([
-    'store' => 'comments.store',
-])
-    ->parameters([
-        'textbooks' => 'textbookIdString',
-    ])
-    ->whereUuid('textbookIdString');
-
-//いいね
-Route::apiResource(
-    '/textbooks/{textbookId}/likes',
-    LikeController::class
-)->only(['store'])->names([
-    'store' => 'likes.store'
-])
-    ->parameters([
-        'textbooks' => 'textbookIdString',
-    ])
-    ->whereUuid('textbookIdString');
-
-// いいね削除
-Route::delete('/textbooks/{textbookId}/likes', [LikeController::class, 'destroy'])
-    ->name('likes.destroy')
-    ->whereUuid('textbookIdString');
-
-//いいねした教科書一覧取得
-Route::apiResource(
-    '/me/likes',
-    GetLikedTextbooksController::class
-)->only(['index'])->names([
-    'index' => 'me.likes',
-]);
-
-//購入商品取得
-Route::apiResource(
-    '/me/purchased_textbooks',
-    GetPurchasedProductsController::class
-)->only(['index', 'show'])->names([
-    'index' => 'me.purchased_textbooks',
-    'show' => 'me.purchased_textbooks.show',
-])
-    ->parameters([
-        'purchased_textbooks' => 'textbookIdString',
-    ])
-    ->whereUuid('textbookIdString');
-
-//出品商品取得
-Route::apiResource(
-    '/me/listed_textbooks',
-GetListedTextbooksController::class
-)->only(['index', 'show'])->names([
-    'index' => 'me.listed_textbooks',
-    'show' => 'me.listed_textbooks.show',
-])
-    ->parameters([
-        'listed_textbooks' => 'textbookIdString',
-    ])
-    ->whereUuid('textbookIdString');
-
-//取引ルーム一覧・詳細
-Route::apiResource(
-    '/me/dealrooms',
-    DealRoomController::class
-)->only(['index', 'show'])->names([
-    'index' => 'dealrooms.index',
-    'show' => 'dealrooms.show',
-])
-    ->parameters([
-        'dealrooms' => 'dealRoomId',
-    ])
-    ->whereUuid('dealRoomId');
-
-//取引メッセージ
-Route::apiResource(
-    '/me/dealrooms/{dealRoomId}/messages',
-    DealMessageController::class
-)->only(['store'])->names([
-    'store' => 'dealmessages.store',
-])
-->parameters([
-        'dealrooms' => 'dealRoomId',
-    ])
-    ->whereUuid('dealRoomId');
-
 Route::middleware('auth:sanctum')->group(function () {
+    //コメント
+    Route::apiResource(
+        '/textbooks/{textbookId}/comments',
+        CommentController::class
+    )->only(['store'])->names([
+        'store' => 'comments.store',
+    ])
+        ->parameters([
+            'textbooks' => 'textbookIdString',
+        ])
+        ->whereUuid('textbookIdString');
+
+    //いいね
+    Route::apiResource(
+        '/textbooks/{textbookId}/likes',
+        LikeController::class
+    )->only(['store'])->names([
+        'store' => 'likes.store'
+    ])
+        ->parameters([
+            'textbooks' => 'textbookIdString',
+        ])
+        ->whereUuid('textbookIdString');
+
+    // いいね削除
+    Route::delete('/textbooks/{textbookId}/likes', [LikeController::class, 'destroy'])
+        ->name('likes.destroy')
+        ->whereUuid('textbookIdString');
+
+    //いいねした教科書一覧取得
+    Route::apiResource(
+        '/me/likes',
+        GetLikedTextbooksController::class
+    )->only(['index'])->names([
+        'index' => 'me.likes',
+    ]);
+
+    //購入商品取得
+    Route::apiResource(
+        '/me/purchased_textbooks',
+        GetPurchasedProductsController::class
+    )->only(['index', 'show'])->names([
+        'index' => 'me.purchased_textbooks',
+        'show' => 'me.purchased_textbooks.show',
+    ])
+        ->parameters([
+            'purchased_textbooks' => 'textbookIdString',
+        ])
+        ->whereUuid('textbookIdString');
+
+    //出品商品取得
+    Route::apiResource(
+        '/me/listed_textbooks',
+    GetListedTextbooksController::class
+    )->only(['index', 'show'])->names([
+        'index' => 'me.listed_textbooks',
+        'show' => 'me.listed_textbooks.show',
+    ])
+        ->parameters([
+            'listed_textbooks' => 'textbookIdString',
+        ])
+        ->whereUuid('textbookIdString');
+
+    //取引ルーム一覧・詳細
+    Route::apiResource(
+        '/me/dealrooms',
+        DealRoomController::class
+    )->only(['index', 'show'])->names([
+        'index' => 'dealrooms.index',
+        'show' => 'dealrooms.show',
+    ])
+        ->parameters([
+            'dealrooms' => 'dealRoomId',
+        ])
+        ->whereUuid('dealRoomId');
+
+    //取引メッセージ
+    Route::apiResource(
+        '/me/dealrooms/{dealRoomId}/messages',
+        DealMessageController::class
+    )->only(['store'])->names([
+        'store' => 'dealmessages.store',
+    ])
+    ->parameters([
+            'dealrooms' => 'dealRoomId',
+        ])
+        ->whereUuid('dealRoomId');
     //取引関連
     Route::post('/textbooks/{textbookId}/deal/payment_intent',
         [TextbookDealController::class, 'createPaymentIntent']
