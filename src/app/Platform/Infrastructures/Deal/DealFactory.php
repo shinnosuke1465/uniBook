@@ -25,7 +25,7 @@ class DealFactory
         return new Deal(
             new DealId($dealDB->id),
             new Seller(new UserId($dealDB->seller_id)),
-            new Buyer(new UserId($dealDB->buyer_id)),
+            $dealDB->buyer_id !== null ? new Buyer(new UserId($dealDB->buyer_id)) : null,
             new TextbookId($dealDB->textbook_id),
             DealStatus::create($dealDB->deal_status),
         );
