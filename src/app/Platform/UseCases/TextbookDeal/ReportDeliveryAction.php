@@ -64,15 +64,8 @@ readonly class ReportDeliveryAction
                 throw new NotFoundException('取引が見つかりません。');
             }
 
-            //取引ステータスが購入済み以外の場合は認可エラー
-            if (!in_array($deal->dealStatus, [DealStatus::Purchased])) {
-                throw new AuthorizationException('取引ステータスが購入済みではありません。');
-            }
-
-            $updateDeal = $deal->update(
-                new Buyer($deal->buyer->userId),
-                DealStatus::create('Shipping'),
-            );
+            //取引情報を更新（配送報告処理）
+            $updatedDeal = $deal->reportDelivery();
 
             $dealEvent = DealEvent::create(
                 $authenticatedUser->getUserId(),
@@ -83,7 +76,7 @@ readonly class ReportDeliveryAction
 
             $this->transaction->begin();
             //取引のstatusが購入済みから配送中に変更
-            $this->dealRepository->update($updateDeal);
+            $this->dealRepository->update($updatedDeal);
 
             //DealEventにsellerが配送報告した履歴を追加
             $this->dealEventRepository->insert($dealEvent);

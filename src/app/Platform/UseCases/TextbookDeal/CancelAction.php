@@ -64,16 +64,8 @@ readonly class CancelAction
             }
 
 
-            //取引ステータスが出品中以外の場合は認可エラー
-            if (!in_array($deal->dealStatus, [DealStatus::Listing])) {
-                throw new AuthorizationException('取引ステータスが出品中ではありません。');
-            }
-
-
-            $updateDeal = $deal->update(
-                null,
-                DealStatus::create('Cancelled'),
-            );
+            //取引情報を更新（キャンセル処理）
+            $updatedDeal = $deal->cancel();
 
             $dealEvent = DealEvent::create(
                 $authenticatedUser->getUserId(),
@@ -86,7 +78,7 @@ readonly class CancelAction
             $this->transaction->begin();
             //取引の購入者のuseridを挿入
             //取引のstatusが出品中からキャンセルに変更
-            $this->dealRepository->update($updateDeal);
+            $this->dealRepository->update($updatedDeal);
 
             //DealEventにsellerが出品キャンセルした履歴を追加
             $this->dealEventRepository->insert($dealEvent);

@@ -28,4 +28,108 @@ enum DealStatus: string
             default => throw new DomainException('Invalid deal status: ' . $status),
         };
     }
+
+    /**
+     * 購入可能かチェック
+     */
+    public function canPurchase(): bool
+    {
+        return $this === self::Listing;
+    }
+
+    /**
+     * キャンセル可能かチェック
+     */
+    public function canCancel(): bool
+    {
+        return $this === self::Listing;
+    }
+
+    /**
+     * 発送報告可能かチェック
+     */
+    public function canReportDelivery(): bool
+    {
+        return $this === self::Purchased;
+    }
+
+    /**
+     * 受取報告可能かチェック
+     */
+    public function canReportReceipt(): bool
+    {
+        return $this === self::Shipping;
+    }
+
+    /**
+     * 購入済みかチェック
+     */
+    public function isPurchased(): bool
+    {
+        return in_array($this, [
+            self::Purchased,
+            self::Shipping,
+            self::Completed,
+        ], true);
+    }
+
+    /**
+     * 状態遷移: 購入
+     * @throws DomainException
+     */
+    public function toPurchased(): self
+    {
+        if (!$this->canPurchase()) {
+            throw new DomainException(
+                "購入できるのは出品中の商品のみです。現在のステータス: {$this->value}"
+            );
+        }
+
+        return self::Purchased;
+    }
+
+    /**
+     * 状態遷移: キャンセル
+     * @throws DomainException
+     */
+    public function toCancelled(): self
+    {
+        if (!$this->canCancel()) {
+            throw new DomainException(
+                "キャンセルできるのは出品中の商品のみです。現在のステータス: {$this->value}"
+            );
+        }
+
+        return self::Cancelled;
+    }
+
+    /**
+     * 状態遷移: 発送済み
+     * @throws DomainException
+     */
+    public function toShipping(): self
+    {
+        if (!$this->canReportDelivery()) {
+            throw new DomainException(
+                "発送報告できるのは購入済みの商品のみです。現在のステータス: {$this->value}"
+            );
+        }
+
+        return self::Shipping;
+    }
+
+    /**
+     * 状態遷移: 完了
+     * @throws DomainException
+     */
+    public function toCompleted(): self
+    {
+        if (!$this->canReportReceipt()) {
+            throw new DomainException(
+                "受取報告できるのは発送済みの商品のみです。現在のステータス: {$this->value}"
+            );
+        }
+
+        return self::Completed;
+    }
 }

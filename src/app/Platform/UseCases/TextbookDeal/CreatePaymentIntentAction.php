@@ -103,7 +103,7 @@ readonly class CreatePaymentIntentAction
         }
 
         //取引ステータスが出品中以外の場合は認可エラー
-        if (!in_array($deal->dealStatus, [DealStatus::Listing])) {
+        if (!$deal->dealStatus->canPurchase()) {
             throw new AuthorizationException();
         }
     }

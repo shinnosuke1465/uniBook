@@ -63,15 +63,8 @@ readonly class ReportReceiptAction
                 throw new NotFoundException('取引が見つかりません。');
             }
 
-            //取引ステータスが配送中以外の場合は認可エラー
-            if (!in_array($deal->dealStatus, [DealStatus::Shipping])) {
-                throw new AuthorizationException('取引ステータスが配送中ではありません。');
-            }
-
-            $updateDeal = $deal->update(
-                new Buyer($deal->buyer->userId),
-                DealStatus::create('Completed'),
-            );
+            //取引情報を更新（受取報告処理）
+            $updatedDeal = $deal->reportReceipt();
 
             $dealEvent = DealEvent::create(
                 $authenticatedUser->getUserId(),
@@ -82,7 +75,7 @@ readonly class ReportReceiptAction
 
             $this->transaction->begin();
             //取引のstatusが配送中から完了に変更
-            $this->dealRepository->update($updateDeal);
+            $this->dealRepository->update($updatedDeal);
 
             //DealEventにbuyerが受取報告した履歴を追加
             $this->dealEventRepository->insert($dealEvent);

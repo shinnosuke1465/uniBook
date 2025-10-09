@@ -88,10 +88,8 @@ readonly class VerifyPaymentIntentAction
                 throw new AuthorizationException('PaymentIntentの検証に失敗しました。');
             }
 
-            $updateDeal = $deal->update(
-                new Buyer($buyer->id),
-                DealStatus::create('Purchased'),
-            );
+            //取引情報を更新（購入処理）
+            $updatedDeal = $deal->purchase(new Buyer($buyer->id));
 
             $dealEvent = DealEvent::create(
                 $authenticatedUser->getUserId(),
@@ -115,7 +113,7 @@ readonly class VerifyPaymentIntentAction
             $this->transaction->begin();
             //取引の購入者のuseridを挿入
             //取引のstatusが出品中から購入済みに変更
-            $this->dealRepository->update($updateDeal);
+            $this->dealRepository->update($updatedDeal);
 
             //DealEventにbuyerが購入した履歴を追加
             $this->dealEventRepository->insert($dealEvent);
@@ -146,7 +144,7 @@ readonly class VerifyPaymentIntentAction
         }
 
         //取引ステータスが出品中以外の場合は認可エラー
-        if (!in_array($deal->dealStatus, [DealStatus::Listing])) {
+        if (!$deal->dealStatus->canPurchase()) {
             throw new AuthorizationException();
         }
     }
