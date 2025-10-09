@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Platform\UseCases\DealRoom;
 
 use App\Exceptions\DomainException;
+use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use AppLog;
 use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
 use App\Platform\Domains\User\UserRepositoryInterface;
-use App\Platform\Infrastructures\DealRoom\DealRoomRepository;
 use App\Platform\UseCases\DealRoom\Dtos\DealRoomWithRelationsDto;
+use Exception;
 
 readonly class GetDealRoomsAction
 {
@@ -37,15 +38,16 @@ readonly class GetDealRoomsAction
             $userId = $authenticatedUser->getUserId();
 
             // Repositoryを通じて取引ルームを取得
-            if ($this->dealRoomRepository instanceof DealRoomRepository) {
-                // リレーション付きで取得するメソッドを使用
-                $dealRoomModels = $this->dealRoomRepository->findByUserIdWithRelations($userId);
+            // リレーション付きで取得するメソッドを使用
+            $dealRoomModels = $this->dealRoomRepository->findByUserIdWithRelations($userId);
 
-                return array_map(function($dealRoomModel) {
-                    return DealRoomWithRelationsDto::fromEloquentModel($dealRoomModel);
-                }, $dealRoomModels);
-            }
+            return array_map(function($dealRoomModel) {
+                return DealRoomWithRelationsDto::fromEloquentModel($dealRoomModel);
+            }, $dealRoomModels);
 
+        } catch (Exception $e) {
+            HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), []);
+            throw $e;
         } finally {
             AppLog::end(__METHOD__);
         }
