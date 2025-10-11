@@ -7,10 +7,8 @@ namespace App\Platform\UseCases\TextbookDeal;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Deal\DealStatus;
-use App\Platform\Domains\DealEvent\ActorType;
-use App\Platform\Domains\DealEvent\DealEvent;
+use App\Platform\Domains\Deal\DealDomainService;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
-use App\Platform\Domains\DealEvent\EventType;
 use App\Platform\Domains\Textbook\TextbookId;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
@@ -26,6 +24,7 @@ readonly class ReportDeliveryAction
         private TransactionInterface $transaction,
         private DealRepositoryInterface $dealRepository,
         private DealEventRepositoryInterface $dealEventRepository,
+        private DealDomainService $dealDomainService,
         private UserRepositoryInterface $userRepository,
     ) {
     }
@@ -33,7 +32,6 @@ readonly class ReportDeliveryAction
     /**
      * @throws DomainException
      * @throws NotFoundException
-     * @throws AuthorizationException
      */
     public function __invoke(
         ReportDeliveryActionValuesInterface $values,
@@ -64,21 +62,11 @@ readonly class ReportDeliveryAction
                 throw new NotFoundException('取引が見つかりません。');
             }
 
-            //取引情報を更新（配送報告処理）
-            $updatedDeal = $deal->reportDelivery();
-
-            $dealEvent = DealEvent::create(
-                $authenticatedUser->getUserId(),
-                $deal->id,
-                ActorType::create('seller'),
-                EventType::create('ReportDelivery')
-            );
+            //取引情報を更新（配送報告処理）& DealEventを作成
+            [$updatedDeal, $dealEvent] = $this->dealDomainService->reportDelivery($deal);
 
             $this->transaction->begin();
-            //取引のstatusが購入済みから配送中に変更
             $this->dealRepository->update($updatedDeal);
-
-            //DealEventにsellerが配送報告した履歴を追加
             $this->dealEventRepository->insert($dealEvent);
 
             $this->transaction->commit();

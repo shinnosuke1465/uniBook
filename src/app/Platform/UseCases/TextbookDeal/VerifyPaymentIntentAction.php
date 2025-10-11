@@ -9,10 +9,8 @@ use App\Exceptions\NotFoundException;
 use App\Platform\Domains\Deal\Buyer;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Deal\DealStatus;
-use App\Platform\Domains\DealEvent\ActorType;
-use App\Platform\Domains\DealEvent\DealEvent;
+use App\Platform\Domains\Deal\DealDomainService;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
-use App\Platform\Domains\DealEvent\EventType;
 use App\Platform\Domains\DealRoom\DealRoom;
 use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
 use App\Platform\Domains\PaymentIntent\PaymentIntentRepositoryInterface;
@@ -30,6 +28,7 @@ readonly class VerifyPaymentIntentAction
         private TransactionInterface $transaction,
         private DealRepositoryInterface $dealRepository,
         private DealEventRepositoryInterface $dealEventRepository,
+        private DealDomainService $dealDomainService,
         private UserRepositoryInterface $userRepository,
         private DealRoomRepositoryInterface $dealRoomRepository,
         private PaymentIntentRepositoryInterface $paymentIntentRepository,
@@ -88,14 +87,10 @@ readonly class VerifyPaymentIntentAction
                 throw new AuthorizationException('PaymentIntentの検証に失敗しました。');
             }
 
-            //取引情報を更新（購入処理）
-            $updatedDeal = $deal->purchase(new Buyer($buyer->id));
-
-            $dealEvent = DealEvent::create(
-                $authenticatedUser->getUserId(),
-                $deal->id,
-                ActorType::create('buyer'),
-                EventType::create('Purchase')
+            //取引情報を更新（購入処理）+ DealEventを作成
+            [$updatedDeal, $dealEvent] = $this->dealDomainService->purchase(
+                $deal,
+                new Buyer($buyer->id)
             );
 
             // 参加ユーザーIDリスト
@@ -109,18 +104,11 @@ readonly class VerifyPaymentIntentAction
                 $userIds,
             );
 
-
             $this->transaction->begin();
-            //取引の購入者のuseridを挿入
-            //取引のstatusが出品中から購入済みに変更
             $this->dealRepository->update($updatedDeal);
-
-            //DealEventにbuyerが購入した履歴を追加
             $this->dealEventRepository->insert($dealEvent);
-
             //取引ルーム作成
             $this->dealRoomRepository->insert($dealRoom);
-
             $this->transaction->commit();
 
         } catch (NotFoundException $e) {

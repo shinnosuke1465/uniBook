@@ -288,6 +288,9 @@ class GetDealRoomApiTest extends TestCase
         ]);
 
         // then
-        $response->assertStatus(500); // DomainExceptionは500になる
+        $response->assertStatus(403); // AuthorizationExceptionは403になる
+        $response->assertJson([
+            'message' => 'この取引ルームにアクセスする権限がありません。'
+        ]);
     }
 }

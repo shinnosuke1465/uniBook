@@ -47,4 +47,15 @@ readonly class UserIdList
             fn (UserId $userId) => clone $userId
         )->all();
     }
+
+    /**
+     * 指定されたUserIdがリストに含まれているかチェック
+     *
+     * @param UserId $userId
+     * @return bool
+     */
+    public function contains(UserId $userId): bool
+    {
+        return $this->collection->has($userId->value);
+    }
 }

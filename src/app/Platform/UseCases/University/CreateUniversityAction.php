@@ -47,9 +47,7 @@ readonly class CreateUniversityAction
             );
 
             $this->transaction->begin();
-            $this->universityRepository->insert(
-                $university
-            );
+            $this->universityRepository->insert($university);
             $this->transaction->commit();
         } catch (Exception $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);

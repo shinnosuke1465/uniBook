@@ -9,9 +9,11 @@ use App\Exceptions\NotFoundException;
 use App\Platform\Domains\DealRoom\DealRoomId;
 use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
 use App\Platform\Domains\User\UserRepositoryInterface;
-use App\Platform\Infrastructures\DealRoom\DealRoomRepository;
 use App\Platform\UseCases\DealRoom\Dtos\DealRoomDetailDto;
+use App\Platform\UseCases\Shared\HandleUseCaseLogs;
 use AppLog;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 
 readonly class GetDealRoomAction
 {
@@ -34,32 +36,33 @@ readonly class GetDealRoomAction
         try {
             $dealRoomId = new DealRoomId($dealRoomIdString);
 
-            // ログインユーザー情報取得
+            // 認証ユーザー取得
             $authenticatedUser = $this->userRepository->getAuthenticatedUser();
             if (!$authenticatedUser) {
                 throw new DomainException('認証済みユーザー情報が取得できませんでした。');
             }
 
-            $userId = $authenticatedUser->getUserId();
-
-            // Repositoryを通じて取引ルームを取得
-            if ($this->dealRoomRepository instanceof DealRoomRepository) {
-                $dealRoomModel = $this->dealRoomRepository->findByIdWithRelations($dealRoomId);
-
-                if (!$dealRoomModel) {
-                    throw new NotFoundException('指定された取引ルームが存在しません。');
-                }
-
-                // ユーザーが取引ルームに参加しているか確認
-                $userIds = $dealRoomModel->users->pluck('id')->toArray();
-                if (!in_array($userId->value, $userIds, true)) {
-                    throw new DomainException('この取引ルームにアクセスする権限がありません。');
-                }
-
-                return DealRoomDetailDto::fromEloquentModel($dealRoomModel);
+            // ドメインオブジェクトを取得（認可チェック用）
+            $dealRoom = $this->dealRoomRepository->findById($dealRoomId);
+            if (!$dealRoom) {
+                throw new NotFoundException('指定された取引ルームが存在しません。');
             }
 
-            throw new DomainException('取引ルームの取得に失敗しました。');
+            // 認可チェック（ドメインメソッドを使用）
+            if (!$dealRoom->hasUser($authenticatedUser->getUserId())) {
+                throw new AuthorizationException(
+                    'この取引ルームにアクセスする権限がありません。'
+                );
+            }
+
+            // 表示用データ取得（リレーション込み）
+            $dealRoomModel = $this->dealRoomRepository->findByIdWithRelations($dealRoomId);
+
+            return DealRoomDetailDto::fromEloquentModel($dealRoomModel);
+
+        } catch (Exception $e) {
+            HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), []);
+            throw $e;
         } finally {
             AppLog::end(__METHOD__);
         }

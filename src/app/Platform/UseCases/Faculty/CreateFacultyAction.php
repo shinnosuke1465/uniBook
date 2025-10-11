@@ -50,9 +50,7 @@ readonly class CreateFacultyAction
             );
 
             $this->transaction->begin();
-            $this->facultyRepository->insert(
-                $faculty
-            );
+            $this->facultyRepository->insert($faculty);
             $this->transaction->commit();
         } catch (Exception $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);
