@@ -8,12 +8,10 @@ use App\Exceptions\DomainException;
 use App\Platform\Domains\Deal\Deal;
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Deal\DealStatus;
+use App\Platform\Domains\Deal\DealDomainService;
 use App\Platform\Domains\Deal\Seller;
 use App\Platform\Domains\Deal\Buyer;
-use App\Platform\Domains\DealEvent\DealEvent;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
-use App\Platform\Domains\DealEvent\ActorType;
-use App\Platform\Domains\DealEvent\EventType;
 use App\Platform\Domains\Faculty\FacultyRepositoryInterface;
 use App\Platform\Domains\Textbook\TextbookRepositoryInterface;
 use App\Platform\Domains\Textbook\Textbook;
@@ -33,6 +31,7 @@ readonly class CreateTextbookAction
         private FacultyRepositoryInterface $facultyRepository,
         private DealRepositoryInterface $dealRepository,
         private DealEventRepositoryInterface $dealEventRepository,
+        private DealDomainService $dealDomainService,
         private UserRepositoryInterface $userRepository,
     ) {
     }
@@ -98,28 +97,16 @@ readonly class CreateTextbookAction
                 $conditionType,
             );
 
-            //Dealを作成（売り手として）
+            //Dealを作成（売り手として）+ DealEventを作成
             $seller = new Seller($authenticatedUser->getUserId());
-            $deal = Deal::create(
-                $seller,
-                null,
-                $textbook->id,
-                DealStatus::create('Listing')
-            );
-
-            //DealEventを作成（出品イベント）
-            $dealEvent = DealEvent::create(
-                $authenticatedUser->getUserId(),
-                $deal->id,
-                ActorType::create('seller'),
-                EventType::create('Listing')
-            );
+            [$deal, $dealEvent] = $this->dealDomainService->createListing($seller, $textbook->id);
 
             $this->transaction->begin();
             $this->textbookRepository->insert($textbook);
             $this->dealRepository->insert($deal);
             $this->dealEventRepository->insert($dealEvent);
             $this->transaction->commit();
+
         } catch (Exception $e) {
             HandleUseCaseLogs::execMessage(__METHOD__, $e->getMessage(), $requestParams);
             $this->transaction->rollback();

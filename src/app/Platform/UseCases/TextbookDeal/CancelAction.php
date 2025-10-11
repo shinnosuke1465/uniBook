@@ -6,10 +6,8 @@ namespace App\Platform\UseCases\TextbookDeal;
 
 use App\Platform\Domains\Deal\DealRepositoryInterface;
 use App\Platform\Domains\Deal\DealStatus;
-use App\Platform\Domains\DealEvent\ActorType;
-use App\Platform\Domains\DealEvent\DealEvent;
+use App\Platform\Domains\Deal\DealDomainService;
 use App\Platform\Domains\DealEvent\DealEventRepositoryInterface;
-use App\Platform\Domains\DealEvent\EventType;
 use App\Platform\Domains\Textbook\TextbookId;
 use App\Platform\Domains\User\UserRepositoryInterface;
 use App\Platform\UseCases\Shared\HandleUseCaseLogs;
@@ -25,6 +23,7 @@ readonly class CancelAction
         private TransactionInterface $transaction,
         private DealRepositoryInterface $dealRepository,
         private DealEventRepositoryInterface $dealEventRepository,
+        private DealDomainService $dealDomainService,
         private UserRepositoryInterface $userRepository,
     ) {
     }
@@ -32,7 +31,6 @@ readonly class CancelAction
     /**
      * @throws DomainException
      * @throws NotFoundException
-     * @throws AuthorizationException
      */
     public function __invoke(
         CancelActionValuesInterface $values,
@@ -63,26 +61,12 @@ readonly class CancelAction
                 throw new NotFoundException('取引が見つかりません。');
             }
 
-
-            //取引情報を更新（キャンセル処理）
-            $updatedDeal = $deal->cancel();
-
-            $dealEvent = DealEvent::create(
-                $authenticatedUser->getUserId(),
-                $deal->id,
-                ActorType::create('seller'),
-                EventType::create('Cancel')
-            );
-
+            //取引情報を更新（キャンセル処理）+ DealEventを作成
+            [$updatedDeal, $dealEvent] = $this->dealDomainService->cancel($deal);
 
             $this->transaction->begin();
-            //取引の購入者のuseridを挿入
-            //取引のstatusが出品中からキャンセルに変更
             $this->dealRepository->update($updatedDeal);
-
-            //DealEventにsellerが出品キャンセルした履歴を追加
             $this->dealEventRepository->insert($dealEvent);
-
             $this->transaction->commit();
 
         } catch (NotFoundException $e) {
