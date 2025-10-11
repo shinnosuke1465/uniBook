@@ -27,7 +27,7 @@
 <p align="center">
   <img width="94" height="107" alt="スクリーンショット 2025-10-06 21 04 20" src="https://github.com/user-attachments/assets/071aadd1-f0a1-4b0f-b36b-59ed4ee05d7d" />
   <img width="162" height="44" alt="スクリーンショット 2025-10-07 21 45 33" src="https://github.com/user-attachments/assets/6f0d8f7f-5dcf-4994-848f-1fb7dc472401" />
-  <img width="129" height="49" alt="スクリーンショット 2025-10-07 1 16 03" src="https://github.com/user-attachments/assets/bd68f843-0458-44cd-9c43-3c426aae63d1" />
+  <img width="113" height="32" alt="スクリーンショット 2025-10-11 15 14 45" src="https://github.com/user-attachments/assets/7bfa8bfb-5aed-499a-bee2-01b638c6d6c8" />
 </p>
 
 
