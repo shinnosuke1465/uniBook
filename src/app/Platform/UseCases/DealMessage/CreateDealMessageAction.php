@@ -7,6 +7,7 @@ namespace App\Platform\UseCases\DealMessage;
 use App\Exceptions\DomainException;
 use App\Exceptions\NotFoundException;
 use App\Platform\Domains\DealMessage\DealMessage;
+use App\Platform\Domains\DealMessage\DealMessageDomainService;
 use App\Platform\Domains\DealMessage\DealMessageRepositoryInterface;
 use App\Platform\Domains\DealRoom\DealRoomId;
 use App\Platform\Domains\DealRoom\DealRoomRepositoryInterface;
@@ -22,8 +23,9 @@ readonly class CreateDealMessageAction
     public function __construct(
         private TransactionInterface $transaction,
         private DealMessageRepositoryInterface $dealMessageRepository,
-        private UserRepositoryInterface $userRepository,
         private DealRoomRepositoryInterface $dealRoomRepository,
+        private DealMessageDomainService $dealMessageDomainService,
+        private UserRepositoryInterface $userRepository,
     ) {
     }
 
@@ -64,15 +66,11 @@ readonly class CreateDealMessageAction
                 throw new DomainException('認証済みユーザー情報が取得できませんでした。');
             }
 
-            // ユーザーが取引ルームに参加しているか確認
-            if (!in_array($authenticatedUser->getUserId()->value, $dealRoom->getUserIds(), true)) {
-                throw new DomainException('この取引ルームにメッセージを送信する権限がありません。');
-            }
-
-            $dealMessage = DealMessage::create(
-                new Sender($authenticatedUser->getUserId()),
-                $dealRoomId,
-                $message,
+            // ドメインサービスでメッセージ作成
+            $dealMessage = $this->dealMessageDomainService->createMessage(
+                dealRoom: $dealRoom,
+                senderId: $authenticatedUser->getUserId(),
+                message: $message
             );
 
             $this->transaction->begin();

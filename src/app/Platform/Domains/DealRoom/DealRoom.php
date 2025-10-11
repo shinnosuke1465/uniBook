@@ -7,6 +7,7 @@ namespace App\Platform\Domains\DealRoom;
 use App\Exceptions\DomainException;
 use App\Platform\Domains\Deal\DealId;
 use App\Platform\Domains\Deal\DealStatus;
+use App\Platform\Domains\User\UserId;
 use App\Platform\Domains\User\UserIdList;
 
 readonly class DealRoom
@@ -51,6 +52,17 @@ readonly class DealRoom
     public function getUserIds(): array
     {
         return $this->userIds->toStringArray();
+    }
+
+    /**
+     * 指定されたユーザーがこのルームに参加しているかチェック
+     *
+     * @param UserId $userId
+     * @return bool
+     */
+    public function hasUser(UserId $userId): bool
+    {
+        return $this->userIds->contains($userId);
     }
 
     /**
