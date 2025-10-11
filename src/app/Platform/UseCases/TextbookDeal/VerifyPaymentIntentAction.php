@@ -107,10 +107,8 @@ readonly class VerifyPaymentIntentAction
             $this->transaction->begin();
             $this->dealRepository->update($updatedDeal);
             $this->dealEventRepository->insert($dealEvent);
-
             //取引ルーム作成
             $this->dealRoomRepository->insert($dealRoom);
-
             $this->transaction->commit();
 
         } catch (NotFoundException $e) {

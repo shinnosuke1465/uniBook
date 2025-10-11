@@ -68,7 +68,6 @@ readonly class ReportReceiptAction
             $this->transaction->begin();
             $this->dealRepository->update($updatedDeal);
             $this->dealEventRepository->insert($dealEvent);
-
             $this->transaction->commit();
 
         } catch (NotFoundException $e) {

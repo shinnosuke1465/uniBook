@@ -37,8 +37,7 @@ readonly class GetDealRoomsAction
 
             $userId = $authenticatedUser->getUserId();
 
-            // Repositoryを通じて取引ルームを取得
-            // リレーション付きで取得するメソッドを使用
+            // 取引ルームを取得
             $dealRoomModels = $this->dealRoomRepository->findByUserIdWithRelations($userId);
 
             return array_map(function($dealRoomModel) {

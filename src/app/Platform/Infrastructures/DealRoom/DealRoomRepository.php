@@ -106,7 +106,7 @@ readonly class DealRoomRepository implements DealRoomRepositoryInterface
      * @param DealRoomId $dealRoomId
      * @return DealRoomDB|null
      */
-    public function findByIdWithRelations(DealRoomId $dealRoomId)
+    public function findByIdWithRelations(DealRoomId $dealRoomId): mixed
     {
         return DealRoomDB::query()
             ->with([

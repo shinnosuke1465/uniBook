@@ -45,7 +45,7 @@ interface DealRoomRepositoryInterface
      * 取引ルームIDでリレーション付きで取得（メッセージ含む）
      *
      * @param DealRoomId $dealRoomId
-     * @return mixed|null
+     * @return mixed
      */
-    public function findByIdWithRelations(DealRoomId $dealRoomId);
+    public function findByIdWithRelations(DealRoomId $dealRoomId): mixed;
 }
