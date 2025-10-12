@@ -29,6 +29,9 @@ return new class extends Migration
 
             // ユニーク制約（同じユーザーが同じ取引ルームに複数回参加することを防ぐ）
             $table->unique(['user_id', 'deal_room_id']);
+
+            // インデックス（UNIQUE制約により複合インデックスは自動作成される）
+            $table->index('deal_room_id', 'idx_deal_room_users_room_id');
         });
     }
 

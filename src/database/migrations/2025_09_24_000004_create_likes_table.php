@@ -18,6 +18,10 @@ return new class extends Migration {
 
             // 同じユーザーが同じ教科書に複数回いいねできないようにユニーク制約を追加
             $table->unique(['user_id', 'textbook_id'], 'unique_user_textbook_like');
+
+            // インデックス（UNIQUE制約により user_id, textbook_id の複合インデックスは自動作成されるため不要）
+            $table->index('textbook_id', 'idx_likes_textbook_id');
+            $table->index('created_at', 'idx_likes_created_at');
         });
     }
 

@@ -38,6 +38,14 @@ return new class extends Migration
                 $table->foreign('faculty_id')
                     ->references('id')
                     ->on('faculties');
+
+                // インデックス
+                $table->index('university_id', 'idx_textbooks_university_id');
+                $table->index('faculty_id', 'idx_textbooks_faculty_id');
+                $table->index(['university_id', 'faculty_id'], 'idx_textbooks_university_faculty');
+                $table->index('price', 'idx_textbooks_price');
+                $table->index('created_at', 'idx_textbooks_created_at');
+                $table->index('condition_type', 'idx_textbooks_condition_type');
         });
     }
 
