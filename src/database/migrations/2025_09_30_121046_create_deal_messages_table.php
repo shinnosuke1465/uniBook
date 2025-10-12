@@ -27,6 +27,11 @@ return new class extends Migration
             $table->foreign('deal_room_id')
                 ->references('id')
                 ->on('deal_rooms');
+
+            // インデックス
+            $table->index('deal_room_id', 'idx_deal_messages_room_id');
+            $table->index('user_id', 'idx_deal_messages_user_id');
+            $table->index(['deal_room_id', 'created_at'], 'idx_deal_messages_room_time');
         });
     }
 
