@@ -18,10 +18,7 @@ return new class extends Migration {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('textbook_id')->references('id')->on('textbooks')->onDelete('cascade');
 
-            // インデックス
-            $table->index('textbook_id', 'idx_comments_textbook_id');
-            $table->index('user_id', 'idx_comments_user_id');
-            $table->index('created_at', 'idx_comments_created_at');
+            $table->index(['textbook_id', 'created_at'], 'idx_comments_textbook_time');
         });
     }
 
