@@ -27,9 +27,6 @@ return new class extends Migration
             $table->foreign('buyer_id')->references('id')->on('users');
             $table->foreign('textbook_id')->references('id')->on('textbooks');
 
-            // インデックス
-            $table->index('seller_id', 'idx_deals_seller_id');
-            $table->index('buyer_id', 'idx_deals_buyer_id');
             $table->index('deal_status', 'idx_deals_status');
             $table->index(['seller_id', 'deal_status'], 'idx_deals_seller_status');
             $table->index(['buyer_id', 'deal_status'], 'idx_deals_buyer_status');
