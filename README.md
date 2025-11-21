@@ -151,7 +151,7 @@ https://docs.google.com/spreadsheets/d/1bwGpMHaAQnwNA1lDeR2nOouwf93TGsFCP8hUzIkH
 
 **ドメインモデル図** 
 
-[https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?invitationId=inv_abb1f54c-e4bf-4209-a8c6-05babb3c0c98](https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?viewport_loc=-4375%2C332%2C3536%2C2008%2C0_0&invitationId=inv_abb1f54c-e4bf-4209-a8c6-05babb3c0c98)
+[https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?invitationId=inv_abb1f54c-e4bf-4209-a8c6-05babb3c0c98](https://lucid.app/lucidchart/3493b2e4-5c0d-4404-b02d-f61cb4068765/edit?from_internal=true)
 
 <img width="2048" height="946" alt="ドメインモデル図 (1)" src="https://github.com/user-attachments/assets/35ee4910-76d3-41d7-a8a4-2d4f4babb555" />
 
