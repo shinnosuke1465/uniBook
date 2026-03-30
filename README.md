@@ -6,7 +6,7 @@
 
 <br>
 
-**▼ サービス URL**
+**▼ サービス URL**　（*現在停止中）
 
 [https://unibook.click/textbook/](https://unibook.click/textbook/)
 
